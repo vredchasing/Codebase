@@ -1,68 +1,74 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: "Karla";
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+
+.header{
+  position: absolute;
+  width: 100%;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+.square {
+  display: flex;
+  width: 40px;
+  padding: 15px;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.landing-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f0f0f0;
+  background-image: url('/public/images/landingpage.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.landing-page-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.landing-page-text-wrapper {
+  display: flex;
+  position: absolute;
+  top: 35%;
+  right: 12%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  text-align: center;
+  color: #333;
+}
+
+.landing-page-text1 {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.landing-page-text2 {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+}
+.landing-page-text1-h1 {
+  font-size: 100px;
+  font-weight: 700;
+  margin: 10px;
+  letter-spacing: -7px;
+  transform: scaleY(0.93);
+}
+
+.landing-page-text2-h1 {
+  font-size: 30px;
+  margin: 10px;
+  letter-spacing: -0.5px;
+  transform: scaleY(0.97);
 }
