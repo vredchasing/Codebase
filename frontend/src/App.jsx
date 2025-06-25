@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import LandingPage from './components/LandingPage'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './Components/Layout'
+import LandingPage from './Components/LandingPage'  // or from your pages folder
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <LandingPage></LandingPage>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<LandingPage />} /> {/* This is your main page content */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
-
-export default App
