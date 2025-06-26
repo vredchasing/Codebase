@@ -1,0 +1,40 @@
+/* SANDBOX CSS */
+
+.sandbox {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  background: #1e1e1e;
+  padding: 10px;
+}
+
+.tabs button {
+  margin-right: 8px;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  background: #444;
+}
+
+.editor-container {
+  flex: 1;
+}
+
+.preview-pane {
+  flex: 1;
+}

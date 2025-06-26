@@ -1,0 +1,93 @@
+.hero-section {
+  display: flex;
+  position: relative;
+  height: 100vh;
+  perspective: 2000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Monaco image container */
+
+.monaco-hero-container {
+  position: relative;
+  perspective: 2000px;
+  width: 900px;
+  height: auto;
+  display: inline-block;
+  overflow: visible;
+}
+
+.monaco-hero-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transform: rotateX(55deg) rotateY(5deg) rotateZ(-35deg) translateX(50px) translateY(200px);
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+
+
+/*Website hero css*/
+.website-hero-container {
+  position: absolute;
+  perspective: 2000px;
+  width: 900px;
+  height: auto;
+  display: inline-block;
+  overflow: visible;
+}
+
+.website-hero-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transform: rotateX(55deg) rotateY(5deg) rotateZ(-35deg) translateX(500px) translateY(-100px) translateZ(-100px);
+  scale: 0.5;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  scale: 0.8;
+}
+
+.website-hero-img:hover {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transform: rotateX(0deg) rotateY(5deg) rotateZ(-35deg) translateX(500px) translateY(-100px) translateZ(-100px);
+  scale: 0.5;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  scale: 0.8;
+}
+
+/*Terminal CSS*/
+
+.terminal-hero-container {
+  position: absolute;
+  perspective: 1500px;
+  width: 900px;
+  height: auto;
+  display: inline-block;
+  overflow: visible;
+}
+
+.terminal-hero-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transform: rotateX(55deg) rotateY(4deg) rotateZ(-50deg) translateX(-20000px) translateY(-500px) translateZ(-90px);
+  scale: 0.5;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+}
