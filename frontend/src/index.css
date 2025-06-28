@@ -16,6 +16,7 @@ body {
   min-height: 100vh;
   font-family: "Karla";
   margin: 0px;
+  background-color: #1f1f1f;
 }
 
 .main {
@@ -52,6 +53,7 @@ body {
   width: 100px;
   align-items: center;
   justify-content: center;
+  opacity: 0.88;
 }
 .square {
   display: flex;
@@ -84,17 +86,28 @@ body {
 }
 
 .header-link {
-  color: white;
+  color: rgb(201, 201, 201);
+  text-decoration: none;
+  font-family: "Karla", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  will-change: color;
+  transition: color 0.3s ease-in;
+}
+
+.header-link:hover {
+  color: rgb(255, 255, 255);
   text-decoration: none;
   font-family: "Karla", sans-serif;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
+
 .header-right-nav {
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: 100%;
   width: 190px;
+  margin-right: 20px;
 }
 
 .header-link-try-for-free {
@@ -141,7 +154,7 @@ body {
 .landing-page-text-wrapper {
   display: flex;
   position: absolute;
-  top: 35%;
+  top: 40%;
   right: 12%;
   transform: translateY(-50%);
   flex-direction: column;
@@ -165,16 +178,22 @@ body {
   width: 100%;
 }
 .landing-page-text1-h1 {
+  display: flex;
   font-size: 100px;
   font-weight: 700;
   margin: 10px;
   letter-spacing: -7px;
   transform: scaleY(0.93);
+  color: #f0f0f0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .landing-page-text2-h1 {
+  display: flex;
   font-size: 30px;
   margin: 10px;
   letter-spacing: -0.5px;
   transform: scaleY(0.97);
+  color: #f0f0f0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
