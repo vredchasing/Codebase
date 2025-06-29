@@ -7,38 +7,85 @@ import FileExplorer from './FileExplorer';
 const initialFiles = [
   {
     type: 'folder',
-    name: 'src',
+    name: 'TEMPLATE INFO',
+    children: [
+      {
+        type: 'file',
+        name: 'template.json',
+        content: JSON.stringify({ name: "react", version: "18.0.0" }, null, 2),
+        language: 'json',
+      }
+    ]
+  },
+  {
+    type: 'folder',
+    name: 'SANDBOX',
     children: [
       {
         type: 'folder',
-        name: 'public',
+        name: 'src',
         children: [
           {
+            type: 'folder',
+            name: 'public',
+            children: [
+              {
+                type: 'file',
+                name: 'favicon.ico'
+              },
+              {
+                type: 'folder',
+                name: 'images',
+                children: [
+                  {
+                    type: 'file',
+                    name: 'logo.png',
+                  }
+                ]
+              }
+            ]
+          },
+          {
             type: 'file',
-            name: 'favicon.ico',}
-          ]
-      },
-      {
-        type: 'file',
-        name: 'index.html',
-        language: 'html',
-        content: '<h1>Hello, world!</h1>',
-      },
-      {
-        type: 'file',
-        name: 'style.css',
-        language: 'css',
-        content: 'h1 { color: red; }',
-      },
-      {
-        type: 'file',
-        name: 'script.js',
-        language: 'javascript',
-        content: "console.log('Hello')",
-      },
-    ],
+            name: 'index.html',
+            language: 'html',
+            content: '<h1>Hello, world!</h1>',
+          },
+          {
+            type: 'file',
+            name: 'style.css',
+            language: 'css',
+            content: 'h1 { color: white; }',
+          },
+          {
+            type: 'file',
+            name: 'script.js',
+            language: 'javascript',
+            content: "console.log('Hello')",
+          },
+        ]
+      }
+    ]
   },
+  {
+    type: 'folder',
+    name: 'DEPENDENCIES',
+    children: [
+      {
+        type: 'file',
+        name: 'package.json',
+        content: JSON.stringify({
+          dependencies: {
+            react: "^18.0.0",
+            "react-dom": "^18.0.0"
+          }
+        }, null, 2),
+        language: 'json',
+      }
+    ]
+  }
 ];
+
 
 export default function Sandbox() {
   const [files, setFiles] = useState(initialFiles);
