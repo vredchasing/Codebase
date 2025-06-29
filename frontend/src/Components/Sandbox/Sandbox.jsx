@@ -105,8 +105,12 @@ export default function Sandbox() {
         <div className="editor-container">
           <Editor
             height="100%"
+            theme="vs-dark" 
             defaultLanguage={activeFile.language}
             value={activeFile.content}
+            options={{
+              minimap: { enabled: false },
+            }}
             onChange={(value) => {
               setFiles(updateFileContent(files, activeFile.name, value));
               setActiveFile((prev) => ({ ...prev, content: value }));
