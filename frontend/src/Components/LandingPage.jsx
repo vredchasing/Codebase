@@ -10,6 +10,9 @@ function LandingPage (){
                 <div className="landing-page-text-wrapper">
                     <div className="landing-page-text1"><h1 className="landing-page-text1-h1">CODEBASE</h1></div>
                     <div className="landing-page-text2"><h1 className="landing-page-text2-h1">CREATE. SAVE. SHARE.</h1></div>
+                    <div className="landing-page-explore-btn-wrapper">
+                        <span className="landing-page-explore-btn">Explore</span>
+                    </div>
                 </div>
             </div>
         </div>
