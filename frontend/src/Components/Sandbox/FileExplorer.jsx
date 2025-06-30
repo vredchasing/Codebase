@@ -10,6 +10,10 @@ import { VscSearch } from "react-icons/vsc";
 import { VscExtensions } from "react-icons/vsc";
 import { IoLogoGithub } from "react-icons/io";
 
+import { VscAccount } from "react-icons/vsc";
+import { VscSettingsGear } from "react-icons/vsc";
+
+
 
 
 
@@ -18,21 +22,34 @@ export default function FileExplorer({ files, activeFile, onFileSelect }) {
     <div className="file-explorer">
 
       <div className='file-explorer-nav-wrapper'>
-        <div className='fe-nav-icon-container'>
-          <VscMenu size={23.5}/>
+        
+        <div className='file-explorer-nav-top-wrapper'>
+          <div className='fe-nav-icon-container'>
+            <VscMenu size={23.5}/>
+          </div>
+          <div className='fe-nav-icon-container'>
+            <VscFiles size={25}/>
+          </div>
+          <div className='fe-nav-icon-container'>
+            <VscSearch size={25}/>
+          </div>
+          <div className='fe-nav-icon-container'>
+            <VscExtensions size={25}/>
+          </div>
+          <div className='fe-nav-icon-container'>
+            <IoLogoGithub size={25}/>  
+          </div>
         </div>
-        <div className='fe-nav-icon-container'>
-          <VscFiles size={25}/>
+
+        <div className='file-explorer-nav-bottom-wrapper'>
+          <div className='fe-nav-icon-container'>
+            <VscAccount size={25}/>  
+          </div>
+          <div className='fe-nav-icon-container'>
+            <VscSettingsGear size={25}/>
+          </div>
         </div>
-        <div className='fe-nav-icon-container'>
-          <VscSearch size={25}/>
-        </div>
-        <div className='fe-nav-icon-container'>
-          <VscExtensions size={25}/>
-        </div>
-        <div className='fe-nav-icon-container'>
-          <IoLogoGithub size={25}/>  
-        </div>
+
       </div>
 
       <div className='file-explorer-content-wrapper'>

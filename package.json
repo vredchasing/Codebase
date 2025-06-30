@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "react-router-dom": "^7.6.3"
+  }
+}
