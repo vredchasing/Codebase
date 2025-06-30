@@ -12,11 +12,29 @@
 .file-explorer-nav-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 20%;
-  padding: 0px 10px 0px 10px;
+  justify-content: space-between;
+  width: 23%;
+  height: 100%;
+  overflow: hidden;
+
 }
 
+.file-explorer-nav-top-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  width: 100%;
+  gap: 15px;
+}
+.file-explorer-nav-bottom-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  width: 100%;
+  gap: 15px;
+}
 .fe-nav-icon-container {
   display: flex;
   align-items: center;
