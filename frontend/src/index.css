@@ -9,14 +9,13 @@ html {
   margin: 0px;
 }
 body {
-  margin: 0;
   display: flex;
   place-items: center;
   min-width: 100%;
   min-height: 100vh;
-  font-family: "Karla";
+  font-family: "Karla", sans-serif;
   margin: 0px;
-  background-color: #1f1f1f;
+  background-color: #1a1a1a;
 }
 
 .main {
@@ -30,13 +29,15 @@ body {
 .header {
   display: flex;
   flex-direction: row;
-  position: relative;
+  position: absolute;
   width: 100%;
   background-color: #0e0e0e;
-  height: 6%;
+  height: 6vh;
   box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   z-index: 9999;
+  top: 0;
+  left: 0;
 }
 
 .header-content {

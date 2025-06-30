@@ -28,25 +28,25 @@ export default function FileExplorer({ files, activeFile, onFileSelect }) {
             <VscMenu size={23.5}/>
           </div>
           <div className='fe-nav-icon-container'>
-            <VscFiles size={25}/>
+            <VscFiles size={26}/>
           </div>
           <div className='fe-nav-icon-container'>
-            <VscSearch size={25}/>
+            <VscSearch size={26}/>
           </div>
           <div className='fe-nav-icon-container'>
-            <VscExtensions size={25}/>
+            <VscExtensions size={26}/>
           </div>
           <div className='fe-nav-icon-container'>
-            <IoLogoGithub size={25}/>  
+            <IoLogoGithub size={26}/>  
           </div>
         </div>
 
         <div className='file-explorer-nav-bottom-wrapper'>
           <div className='fe-nav-icon-container'>
-            <VscAccount size={25}/>  
+            <VscAccount size={26}/>  
           </div>
           <div className='fe-nav-icon-container'>
-            <VscSettingsGear size={25}/>
+            <VscSettingsGear size={26}/>
           </div>
         </div>
 
@@ -56,14 +56,16 @@ export default function FileExplorer({ files, activeFile, onFileSelect }) {
         <div className='file-explorer-title-wrapper'>
           <h1 className='file-explorer-title'>EXPLORER</h1>
         </div>
-        {files.map(file => (
-          <FileNode
-            key={file.name}
-            node={file}
-            activeFile={activeFile}
-            onFileSelect={onFileSelect}
-          />
-        ))}
+        <div className='file-explorer-content-inner-wrapper'>
+          {files.map(file => (
+            <FileNode
+              key={file.name}
+              node={file}
+              activeFile={activeFile}
+              onFileSelect={onFileSelect}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

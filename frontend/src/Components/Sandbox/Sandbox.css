@@ -2,7 +2,8 @@
 
 .sandbox {
   display: flex;
-  height: 100vh;
+  height: 94vh;
+  padding-top: 6vh;
   width: 100%;
   overflow: hidden;
 }
