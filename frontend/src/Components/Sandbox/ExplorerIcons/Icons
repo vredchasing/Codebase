@@ -1,0 +1,23 @@
+export const extensionIconMap = {
+  js: './public/IconImgs/js.svg',
+  jsx: '',
+  ts: 'FaJs',
+  tsx: 'FaReact',
+  json: './public/IconImgs/json.svg',
+  html: './public/IconImgs/html.svg',
+  css: './public/IconImgs/css.svg',
+  md: 'FaFileAlt',
+  default: 'FaFileAlt',
+
+  // 📷 Image file extensions
+  png: './public/IconImgs/image.svg',
+  jpg: './public/IconImgs/image.svg',
+  jpeg: './public/IconImgs/image.svg',
+  webp: './public/IconImgs/image.svg',
+  gif: './public/IconImgs/image.svg',
+  bmp: './public/IconImgs/image.svg',
+  svg: './public/IconImgs/image.svg',
+  tif: './public/IconImgs/image.svg',
+  tiff: './public/IconImgs/image.svg',
+  ico: './public/IconImgs/image.svg',
+};

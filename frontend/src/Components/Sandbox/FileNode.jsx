@@ -2,15 +2,35 @@ import React, { useState } from 'react';
 import './FileExplorer.css';
 import { MdArrowBackIos } from 'react-icons/md';
 
+
+import getIcon from './ExplorerIcons/iconHelperFuncs';
+
+
 export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) {
   const [expanded, setExpanded] = useState(true);
 
   // Generate indent lines per level
-  const renderIndentGuides = () => {
-    return Array.from({ length: level }).map((_, i) => (
-      <span key={i} className="indent-guide" style={{ left: `${i * 13}px` }} />
-    ));
+  const renderIndentGuides = (level) => {
+    if (level <= 1) return null; // No indent guides for root or first level
+
+    // Create an array length level - 1 and map from i=1 to level-1 (skip outermost)
+    return Array.from({ length: level - 1 }).map((_, i) => {
+      const index = i + 1; // shift index by 1 to skip outermost
+      return (
+        <span
+          key={index}
+          className="indent-guide"
+          style={{ left: `${index * 13}px` }}
+        />
+      );
+    });
   };
+
+
+
+  //get icons
+
+  const icon = getIcon(node);
 
   // FOLDER
   if (node.type === 'folder') {
@@ -18,7 +38,7 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
       <>
         <div className="file-label-wrapper">
           <div className="file-indent">
-            {renderIndentGuides()}
+            {renderIndentGuides(level)}
             <div
               className="file-content"
               onClick={() => setExpanded(!expanded)}
@@ -59,11 +79,14 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
       onClick={() => onFileSelect(node)}
     >
       <div className="file-indent">
-        {renderIndentGuides()}
+        {renderIndentGuides(level)}
         <div
           className="file-content"
           style={{ paddingLeft: `${level * 13}px` }}
         >
+          <div className='icon-container'>
+            <img className='icon-img' src={icon}></img>
+          </div>
           {node.name}
         </div>
       </div>
