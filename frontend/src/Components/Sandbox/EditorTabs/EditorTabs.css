@@ -1,0 +1,30 @@
+.editor-tabs-wrapper {
+  display: flex;
+  height: 40px;
+}
+.editor-tabs-container {
+  display: flex;
+}
+.editor-tab {
+  display: flex;
+  align-items: center;
+  background-color: #252525;
+  border-right: 1px solid black;
+}
+.editor-tabs-icon-container {
+  display: flex;
+  width: 18px;
+}
+.editor-tabs-icon-img {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.editor-tabs-text {
+  color: rgba(255, 255, 255, 0.753);
+  font-size: 14.5px;
+  font-family: 'Karla', sans-serif;
+  font-weight: 300;
+}
