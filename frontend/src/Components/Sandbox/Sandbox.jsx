@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, act } from 'react';
 import Editor from '@monaco-editor/react';
 import './Sandbox.css';
 import FileExplorer from './FileExplorer';
+import EditorTabs from './EditorTabs/EditorTabs';
 
 // Initial file + folder structure
 const initialFiles = [
@@ -88,10 +89,14 @@ const initialFiles = [
 
 
 export default function Sandbox() {
+
   const [files, setFiles] = useState(initialFiles);
   const [activeFile, setActiveFile] = useState(
     initialFiles[0].children ? initialFiles[0].children[0] : initialFiles[0]
   );
+  const [tabs, setTabs] = useState([activeFile]);
+  const [activeTab, setActiveTab] = useState(activeFile.name);
+  
   const [srcDoc, setSrcDoc] = useState('');
 
   // Helper to flatten files from folder structure
@@ -102,6 +107,19 @@ export default function Sandbox() {
       return acc;
     }, []);
   };
+
+  // File Selection Handler
+
+  function handleFileSelect(file) {
+    setActiveFile(file);
+    setActiveTab(file.name);
+
+    // Check if the file is already open in tabs
+    const existingTab = tabs.find((tab) => tab.name === file.name);
+    if (!existingTab) {
+      setTabs((prev) => [...prev, file]);
+    }
+  }
 
   // Update srcDoc when any file changes
   useEffect(() => {
@@ -145,15 +163,29 @@ export default function Sandbox() {
       <FileExplorer
         files={files}
         activeFile={activeFile}
-        onFileSelect={setActiveFile}
+        onFileSelect={handleFileSelect}
       />
 
       <div className="editor-pane">
-        <div className='editor-tabs-wrapper'>
-          <div className='tabs-container'>
-            <span className='tabs'>{activeFile.name}</span>
-          </div>
-        </div>
+        <EditorTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabClick={(file) => {
+            setActiveTab(file.name);
+            setActiveFile(file);
+          }}
+          onCloseTab={(fileName) => {
+            setTabs((prev) => prev.filter((tab) => tab.name !== fileName));
+
+            if (activeTab === fileName) {
+              const remainingTabs = tabs.filter((tab) => tab.name !== fileName);
+              if (remainingTabs.length > 0) {
+                setActiveFile(remainingTabs[0]);
+                setActiveTab(remainingTabs[0].name);
+              }
+            }
+          }}
+        />
         <div className="editor-container">
           <Editor
             height="100%"
