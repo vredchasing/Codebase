@@ -149,6 +149,11 @@ export default function Sandbox() {
       />
 
       <div className="editor-pane">
+        <div className='editor-tabs-wrapper'>
+          <div className='tabs-container'>
+            <span className='tabs'>{activeFile.name}</span>
+          </div>
+        </div>
         <div className="editor-container">
           <Editor
             height="100%"
