@@ -1,0 +1,91 @@
+.hero-section-wrapper {
+  display: flex;
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+.hero-section {
+  display: flex;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden; /* Important to clip overflow */
+}
+
+.slides-track {
+  display: flex;
+  /* Adjust width to twice total slides width: 6 slides * 300px each = 1800px * 2 = 3600px */
+  width: 3600px; /* Adjust according to actual slide width */
+  animation: scroll-left 55s linear infinite;
+  will-change: transform;
+}
+
+.hero-slide {
+  display: flex;
+  position: relative;
+  height: 100%;
+  width: 200px; /* Set slide width to a fixed value */
+  margin-right: 0px; /* Optional gap between slides */
+  cursor: pointer;
+  overflow: visible;
+  will-change: scale;
+  transition: scale 0.3s ease;
+  /* Keep your original styling */
+}
+
+.hero-slide:hover {
+  scale: 1.05;
+}
+
+.hero-img {
+  display: flex;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  box-shadow: 15px 20px 100px rgba(0, 0, 0, 0.5);
+  scale: 1;
+}
+
+/** Slideshow text styling remains unchanged **/
+
+.slideshow-text {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  font-size: 14px;
+  font-weight: bold;
+
+  background: linear-gradient(
+    90deg,
+    #b0b0b0,
+    #d0d0d0,
+    #b8b8b8,
+    #d8d8d8,
+    #b0b0b0
+  );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.3),
+    0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

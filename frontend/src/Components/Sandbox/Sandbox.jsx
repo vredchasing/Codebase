@@ -166,49 +166,50 @@ export default function Sandbox() {
         onFileSelect={handleFileSelect}
       />
 
-      <div className="editor-pane">
-        <EditorTabs
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabClick={(file) => {
-            setActiveTab(file.name);
-            setActiveFile(file);
-          }}
-          onCloseTab={(fileName) => {
-            setTabs((prev) => prev.filter((tab) => tab.name !== fileName));
-
-            if (activeTab === fileName) {
-              const remainingTabs = tabs.filter((tab) => tab.name !== fileName);
-              if (remainingTabs.length > 0) {
-                setActiveFile(remainingTabs[0]);
-                setActiveTab(remainingTabs[0].name);
-              }
-            }
-          }}
-        />
-        <div className="editor-container">
-          <Editor
-            height="100%"
-            theme="vs-dark" 
-            defaultLanguage={activeFile.language}
-            value={activeFile.content}
-            options={{
-              minimap: { enabled: false },
+      <div className='sandbox-right'>
+        <div className="editor-pane">
+          <EditorTabs
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabClick={(file) => {
+              setActiveTab(file.name);
+              setActiveFile(file);
             }}
-            onChange={(value) => {
-              setFiles(updateFileContent(files, activeFile.name, value));
-              setActiveFile((prev) => ({ ...prev, content: value }));
+            onCloseTab={(fileName) => {
+              setTabs((prev) => prev.filter((tab) => tab.name !== fileName));
+
+              if (activeTab === fileName) {
+                const remainingTabs = tabs.filter((tab) => tab.name !== fileName);
+                if (remainingTabs.length > 0) {
+                  setActiveFile(remainingTabs[0]);
+                  setActiveTab(remainingTabs[0].name);
+                }
+              }
             }}
           />
+          <div className="editor-container">
+            <Editor
+              height="100%"
+              theme="vs-dark" 
+              defaultLanguage={activeFile.language}
+              value={activeFile.content}
+              options={{
+                minimap: { enabled: false },
+              }}
+              onChange={(value) => {
+                setFiles(updateFileContent(files, activeFile.name, value));
+                setActiveFile((prev) => ({ ...prev, content: value }));
+              }}
+            />
+          </div>
         </div>
+        <iframe
+          srcDoc={srcDoc}
+          title="Live Preview"
+          sandbox="allow-scripts"
+          className="preview-pane"
+        />
       </div>
-
-      <iframe
-        srcDoc={srcDoc}
-        title="Live Preview"
-        sandbox="allow-scripts"
-        className="preview-pane"
-      />
     </div>
   );
 }

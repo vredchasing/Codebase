@@ -5,7 +5,7 @@ function Header (){
     <header className="header">
       <div className="header-content">
         <div className="custom-logo-container">
-          <img className= 'square' src="\public\images\square-logo.png"></img>
+          <img className= 'square' src="\public\images\square-logo.svg"></img>
           <p className="logo-c">C</p>
         </div>
 

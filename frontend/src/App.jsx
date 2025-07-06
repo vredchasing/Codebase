@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
-import LandingPage from './Components/LandingPage'  // or from your pages folder
+import LandingPage from './Components/LandingPageContent/LandingPage'
 import Sandbox from './Components/Sandbox/Sandbox'
 
 export default function App() {
-  return (
+  return ( 
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
