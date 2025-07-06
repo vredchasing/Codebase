@@ -1,15 +1,21 @@
 .editor-tabs-wrapper {
   display: flex;
-  height: 40px;
+  align-items: center;
+  height: 50px;
+  background-color: #1e1e1e;
 }
 .editor-tabs-container {
   display: flex;
+  height: 100%;
 }
 .editor-tab {
   display: flex;
+  justify-content: space-around;
   align-items: center;
   background-color: #252525;
-  border-right: 1px solid black;
+  border-radius: 8px;
+  min-width: 160px;
+  height: 100%;
 }
 .editor-tabs-icon-container {
   display: flex;

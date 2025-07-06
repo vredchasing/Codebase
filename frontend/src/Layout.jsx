@@ -7,7 +7,7 @@ import Footer from './Components/Footer'
 
 const Layout = () => {
 
-  useEffect(() => {
+    useEffect(() => {
     const lenis = new Lenis({
       smooth: true,
       lerp: 0.1, // Adjust smoothness (default is 0.1)
@@ -25,7 +25,7 @@ const Layout = () => {
       lenis.destroy(); // Cleanup on unmount
     };
   }, []);
-
+  
   return (
     <>
       <Header />
