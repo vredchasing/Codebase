@@ -33,13 +33,14 @@ export default function LandingPage() {
       tl.to(codeRef.current, { x: '-100px', opacity: 0.6, ease: 'power1.out' }, 0);
       tl.to(baseRef.current, { x: '100px', opacity: 0.6, ease: 'power1.out' }, 0);
 
+      tl.to(heroRef.current, {opacity: 0, ease: 'power1.inOut', scale: 1.3}, 0.1)
       // Scale-in center text
 
       // Scale-in core wrapper at the same time
       tl.fromTo(coreWrapperRef.current,
-        { scale: 0, opacity: 1, transformOrigin: 'center center' },
-        { scale: 1, opacity: 1, ease: 'power2.out' },
-        0.2
+        { scale: 0, opacity: 1, transformOrigin: 'center center', backgroundColor : '#ebebeb'},
+        { scale: 1, opacity: 1,backgroundColor : 'white', ease: 'power2.out' },
+        0.15
       );
 
     }, sectionRef);
@@ -48,7 +49,8 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <section className="landing-page-main-wrapper">
+    <section className="landing-page-main-wrapper"
+    >
       <section
         ref={sectionRef}
         style={{
@@ -65,6 +67,7 @@ export default function LandingPage() {
             position: 'absolute',
             width: '100%',
             zIndex: 0,
+            overflow: 'hidden'
           }}
         >
           <HeroShowcase />
@@ -80,6 +83,7 @@ export default function LandingPage() {
             width: '100%',
             zIndex: 1,
             pointerEvents: 'none',
+            overflow: 'hidden'
           }}
         >
           <CodeSplitAnimation
@@ -89,9 +93,9 @@ export default function LandingPage() {
           />
         </div>
         
-      <div className="core-wrapper" ref={coreWrapperRef}>
-        <Core />
-      </div>
+        <div className="core-wrapper" ref={coreWrapperRef}>
+          <Core />
+        </div>
       </section>
     </section>
   );

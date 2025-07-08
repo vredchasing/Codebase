@@ -1,0 +1,29 @@
+.window-controls-wrapper {
+    display: flex;
+    width: max-content;
+    overflow: hidden;
+    gap:7px;
+    padding-right: 15px;
+}
+
+.wc-minimize {
+    width: 9px;
+    height: 9px;
+    background-color: rgb(233, 233, 51);
+    color: transparent;
+    border-radius: 100%;
+}
+.wc-expand {
+    width: 9px;
+    height: 9px;
+    background-color: rgb(3, 186, 3);
+    color: transparent;
+    border-radius: 100%;
+}
+.wc-close {
+    width: 9px;
+    height: 9px;
+    background-color: rgb(223, 39, 39);
+    color: transparent;
+    border-radius: 100%;
+}

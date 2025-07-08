@@ -1,8 +1,11 @@
 .editor-tabs-wrapper {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 50px;
-  background-color: #1e1e1e;
+  height: max-content;
+  background-color: #0000004f;
+  backdrop-filter: blur(30px);          /* the actual blur effect */
+  -webkit-backdrop-filter: blur(10px);  /* for Safari support */
 }
 .editor-tabs-container {
   display: flex;
@@ -10,12 +13,13 @@
 }
 .editor-tab {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  gap: 5px;
   align-items: center;
-  background-color: #252525;
-  border-radius: 8px;
-  min-width: 160px;
+  background-color: #cfcfcf1a;
+  min-width: 120px;
   height: 100%;
+  padding: 0px 5px 0px 5px;
 }
 .editor-tabs-icon-container {
   display: flex;
@@ -29,8 +33,18 @@
 }
 
 .editor-tabs-text {
-  color: rgba(255, 255, 255, 0.753);
-  font-size: 14.5px;
-  font-family: 'Karla', sans-serif;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 1px;
   font-weight: 300;
+  color: white;
+}
+
+.editor-tabs-close-btn {
+  display: flex;
+  width: 9px;
+  height: 9px;
+  background-color: rgba(109, 109, 109, 0.416);
+  border-radius: 100%;
+  color:  transparent;
 }

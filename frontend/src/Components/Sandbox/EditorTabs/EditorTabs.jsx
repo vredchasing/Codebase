@@ -2,6 +2,7 @@ import React from 'react';
 import './EditorTabs.css';
 
 import getIcon from '../ExplorerIcons/iconHelperFuncs';
+import WindowControls from '../../FunctionalComponents/WindowControls';
 
 export default function EditorTabs({ tabs, activeTab, onTabClick, onCloseTab }) {
   
@@ -17,17 +18,21 @@ export default function EditorTabs({ tabs, activeTab, onTabClick, onCloseTab }) 
               <img className='editor-tabs-icon-img' src={getIcon(tab)}></img>
             </div>
             <h1 className='editor-tabs-text'h1>{tab.name}</h1>
-            <button
+            <span
+              className='editor-tabs-close-btn'
               onClick={(e) => {
                 e.stopPropagation(); // prevent triggering onClick
                 onCloseTab(tab.name);
               }}
             >
-              ✕
-            </button>
+              .
+            </span>
           </div>
         </div>
       ))}
+      <div className='editor-window-controls'>
+        <WindowControls></WindowControls>
+      </div>
     </div>
   );
 }
