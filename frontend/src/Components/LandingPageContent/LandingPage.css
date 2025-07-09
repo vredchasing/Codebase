@@ -1,0 +1,115 @@
+/* Landing Page Styles */
+/* Landing Page Styles */
+/* Landing Page Styles */
+/* Landing Page Styles */
+
+.landing-page-main-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.landing-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+/* LANDING PAGE HERO CSS PARTIAL*/
+
+.landing-page-text-wrapper {
+  display: flex;
+}
+
+
+.lp-text1-wrapper {
+  display: flex;
+  z-index: 1;
+  color: black;
+  z-index: 1;
+  transform: translateY(-1vh);
+}
+
+.lp-codebase-container {
+  display: flex;
+  width: max-content;
+}
+
+.lp-codebase-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Karla', sans-serif;
+  height: max-content;
+  font-size: 150px;
+  font-weight: 700;
+  margin: 0px;
+  transform: scaleY(0.95);
+  color: #000000;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.lp-text2-wrapper {
+  display: flex;
+}
+
+.lp-text2-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1.5vh;
+}
+
+
+.lp-text2-h1 {
+  color: black;
+  font-size: 30px;
+  font-family: 'Inter';
+  font-weight: 400;
+  margin: 0px;
+  color: #ffffff;
+  background: linear-gradient(120deg, #141414, #dedede);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.lp-explore-wrapper {
+  display: flex;
+  gap: clamp(12px, 1.5vw, 24px);
+  padding-top: 4vh;
+}
+
+.lp-explore-btn {
+  display: flex;
+  color: black;
+  font-size: 20px;
+  font-family: 'Inter';
+  margin: 0px;
+  padding: 10px 25px 10px 25px;
+  background: rgba(255, 255, 255, 0.1); /* translucent white */
+  backdrop-filter: blur(10px);
+  border-radius: 7px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(120deg, #141414, #b5b5b5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.lp-learn-more-btn {
+  display: flex;
+  align-items: center;
+  color: black;
+  font-size: 20px;
+  font-family: 'Inter';
+  margin: 0px;
+  text-decoration: underline;
+  z-index: 1;
+}
+

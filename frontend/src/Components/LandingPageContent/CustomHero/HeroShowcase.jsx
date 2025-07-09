@@ -19,7 +19,6 @@ const slidesToRender = [...heroSlides];
   return (
     <>
       <section className="hero-section-wrapper">
-        <span className="slideshow-text">SLIDESHOW</span>
         <div className="hero-section">
           <div className="slides-track">
             {slidesToRender.map((slide, index) => (

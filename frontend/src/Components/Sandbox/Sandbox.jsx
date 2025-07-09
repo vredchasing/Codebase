@@ -165,12 +165,13 @@ export default function Sandbox() {
   return (
     <section className= 'sandbox-wrapper'>
       <div className="sandbox">
-        <FileExplorer
-          files={files}
-          activeFile={activeFile}
-          onFileSelect={handleFileSelect}
-        />
-
+        <div className='sandbox-fe-wrapper'>
+          <FileExplorer
+            files={files}
+            activeFile={activeFile}
+            onFileSelect={handleFileSelect}
+          />
+        </div>
         <div className='sandbox-right'>
           <div className='sandbox-right-contents'>
             <div className="editor-pane">

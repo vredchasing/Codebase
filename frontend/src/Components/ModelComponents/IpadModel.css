@@ -1,0 +1,9 @@
+.landing-page-ipad-wrapper {
+    display: flex;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    background-color: transparent;
+}
