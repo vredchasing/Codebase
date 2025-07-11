@@ -15,8 +15,8 @@ const Ipad = forwardRef(({ onLoad }, ref) => {
     <primitive
       ref={ref}
       object={gltf.scene}
-      scale={[4, 4, 4]}
-      position={[1.57, -0.5, 1.57]}
+      scale={[3, 3, 3]}
+      position={[1.1555, -0.2, 1.75]}
       rotation={[-1.57, 0, 1.57]}
     />
   );
@@ -25,7 +25,7 @@ const Ipad = forwardRef(({ onLoad }, ref) => {
 
 export default function IpadModel({ ipadRef, onLoad }) {
   return (
-    <div style={{display:'flex', width: '100%', height: '100vh'}}>
+    <div style={{display:'flex', width: '100%', height: '110vh', overflow: 'visible'}}>
       <Canvas
         camera={{ position: [0, 1, 3], fov: 45 }}
         gl={{ alpha: true }}

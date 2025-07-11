@@ -1,0 +1,85 @@
+.lp-b-section-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.lp-b-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.lp-b-text-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: max-content;
+}
+
+.lp-b-text {
+    color: black;
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 60px;
+    background: linear-gradient(120deg, #141414, #9b9b9b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.lp-b-icons-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    padding-top: 4vw;
+    gap: 2vw;
+}
+
+.lp-b-icon-main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.lp-b-icon-container {
+    display: flex;
+    width: 100px;
+    height: 100px;
+}
+
+.lp-b-icon {
+    display: flex;
+    width: 100%;
+    opacity: 0.85;
+}
+
+.lp-b-span {
+    display: flex;
+    height: 5px;
+    width: 325px;
+    background-color: rgba(0, 0, 0, 0.842);
+    overflow: hidden;
+    color: transparent;
+    border-radius: 5px;
+}
+
+.lp-b-icon-label {
+    position: absolute;
+    display: flex;
+    color: black;
+    font-size: 20px;
+    font-family: 'Inter';
+    font-weight: 500;
+    background: linear-gradient(120deg, #141414, #696969);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    bottom: -40px;
+}

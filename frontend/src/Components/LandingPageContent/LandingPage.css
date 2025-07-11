@@ -5,6 +5,7 @@
 
 .landing-page-main-wrapper {
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 }
@@ -15,10 +16,22 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  overflow-y: visible;
 }
 
 /* LANDING PAGE HERO CSS PARTIAL*/
+
+.landing-page-main-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  left: 0;
+  top: 0;
+}
 
 .landing-page-text-wrapper {
   display: flex;
@@ -48,7 +61,7 @@
   font-weight: 700;
   margin: 0px;
   transform: scaleY(0.95);
-  color: #000000;
+  color: black;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
@@ -100,16 +113,23 @@
   -webkit-text-fill-color: transparent;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 1;
+  cursor: pointer;
 }
 
 .lp-learn-more-btn {
   display: flex;
   align-items: center;
-  color: black;
+  color: hsl(207, 100%, 62%);
   font-size: 20px;
   font-family: 'Inter';
   margin: 0px;
   text-decoration: underline;
   z-index: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.lp-learn-more-btn:hover {
+  color: hsl(207, 71%, 64%);
 }
 
