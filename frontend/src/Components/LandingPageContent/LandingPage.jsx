@@ -10,6 +10,8 @@ import LPHero from './LPHeroApps/LPHero';
 import IpadModel from '../ModelComponents/IpadModel';
 import CodebaseLogo from './LogoSplitAnimationB';
 import LandingPageB from './LandingPageComponents/LandingPageB';
+import LandingPageC from './LandingPageComponents/LandingPageC';
+import LandingPageD from './LandingPageComponents/LandingPageD';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -132,6 +134,13 @@ useEffect(() => {
         <LandingPageB></LandingPageB>
       </section>
 
+      <section className='lp-c-section-wrapper'>
+        <LandingPageC></LandingPageC>
+      </section>
+
+      <section className='lp-d-section-wrapper'>
+        <LandingPageD></LandingPageD>
+      </section>
     </section>
   );
 }

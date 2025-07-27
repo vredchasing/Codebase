@@ -1,0 +1,26 @@
+.lp-c-section-wrapper {
+
+}
+
+.lp-c-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.lp-c-text-wrapper {
+    display: flex;
+    width: 40%;
+}
+.lp-c-text {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 37px;
+}
+
+
+.lp-c-tablet-model-wrapper {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}

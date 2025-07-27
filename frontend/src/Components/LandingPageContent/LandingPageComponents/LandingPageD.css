@@ -1,0 +1,44 @@
+.lp-d-section-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.lp-d-section {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.lp-d-category-wrapper {
+}
+
+.lp-d-category {
+  display: flex;
+  width: max-content;
+  color: black;
+  font-size: 1.5rem;
+  font-family: 'Inter';
+  font-weight: 600;
+  background: linear-gradient(120deg, #141414, #5c5c5c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding-left: 2vw;
+}
+
+.lp-d-container {
+  
+}
+
+.lp-d-img-container {
+  display: flex;
+  width: 450px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.lp-d-img {
+  display: flex;
+  width: 100%;
+}
