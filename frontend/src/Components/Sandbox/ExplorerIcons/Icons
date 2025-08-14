@@ -1,6 +1,6 @@
 export const extensionIconMap = {
   js: './public/IconImgs/js.svg',
-  jsx: '',
+  jsx: './public/IconImgs/css.svg',
   ts: 'FaJs',
   tsx: 'FaReact',
   json: './public/IconImgs/json.svg',
