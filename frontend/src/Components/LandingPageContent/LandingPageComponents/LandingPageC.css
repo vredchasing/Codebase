@@ -11,6 +11,7 @@
 .lp-c-text-wrapper {
     display: flex;
     width: 40%;
+    border: 1px solid red;
 }
 .lp-c-text {
     font-family: 'Inter';
