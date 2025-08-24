@@ -1,0 +1,102 @@
+
+.lp-d-section-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+}
+.lp-d-section {
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
+  width: 55%;
+  padding-top: 5vh;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.lp-d-chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.lp-d-chat-history {
+  display: flex;
+  gap: 20px;
+  max-height: 60vh;
+  overflow-y: scroll;
+  padding: 20px;
+}
+
+.lp-d-chat-message {
+  max-width: 45%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.4;
+  white-space: pre-wrap; /* preserves formatting for code blocks */
+}
+
+/* Kira’s messages → left side */
+.kira-message {
+  align-self: flex-start;
+  background: #ffffff;
+  color: rgb(19, 19, 19);
+  border-radius: 15px;
+}
+
+/* User’s messages → right side */
+.user-message {
+  align-self: flex-end;
+  background: #e9e4e4;
+  color: rgb(19, 19, 19);
+  border-radius: 15px;
+}
+
+/* Chat Input */
+.lp-d-chat-input-wrapper {
+  padding: 15px;
+  background: #fff;
+}
+
+.lp-d-chat-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  padding: 8px 12px;
+}
+
+.lp-d-chat-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+}
+
+
+
+
+/*self code kira*/
+
+.kira-section-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.kira-section {
+  width: 60vw;
+  margin-bottom: 4vh;
+}
+
+

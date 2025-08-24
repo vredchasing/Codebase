@@ -25,8 +25,8 @@
 
 .lp-app-container {
   display: flex;
-  width: 85px;
-  height: 80px;
+  width: 5vw;
+  height: 5vw;
   border-radius: 10px;
   overflow: hidden;
   transform: translateZ(0); /* triggers hardware acceleration */
