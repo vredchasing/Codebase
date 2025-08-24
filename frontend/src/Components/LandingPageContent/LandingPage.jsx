@@ -12,6 +12,7 @@ import CodebaseLogo from './LogoSplitAnimationB';
 import LandingPageB from './LandingPageComponents/LandingPageB';
 import LandingPageC from './LandingPageComponents/LandingPageC';
 import LandingPageD from './LandingPageComponents/LandingPageD';
+import LandingPageE from './LandingPageComponents/LandingPageE';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -118,7 +119,7 @@ useEffect(() => {
           </div>
 
           <div className='lp-text1-wrapper'>
-            <CodebaseLogo codeRef={codeRef} baseRef={baseRef}></CodebaseLogo>
+            <h1 className='lp-codebase-text'>CODEBASE</h1>
           </div>
           <div className="lp-text2-wrapper">
             <CodeSplitAnimation
@@ -140,6 +141,10 @@ useEffect(() => {
 
       <section className='lp-d-section-wrapper'>
         <LandingPageD></LandingPageD>
+      </section>
+
+      <section className='lp-e-section-wrapper'>
+        <LandingPageE></LandingPageE>
       </section>
     </section>
   );

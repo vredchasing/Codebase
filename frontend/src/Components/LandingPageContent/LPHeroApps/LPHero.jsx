@@ -7,18 +7,6 @@ const LPHero = forwardRef((props, ref) => {
         <section className="lp-hero-section" ref={ref}>
             <div className="lp-apps-wrapper">
 
-                <div className="lp-app-container">
-                    <img className="lp-app" src="/public/images/CustomHeroImages/website.PNG" />
-                </div>
-                <div className="lp-app-container">
-                    <img className="lp-app" src="/public/images/CustomHeroImages/website.PNG" />
-                </div>
-                <div className="lp-app-container">
-                    <img className="lp-app" src="/public/images/CustomHeroImages/website.PNG" />
-                </div>
-                <div className="lp-app-container">
-                    <img className="lp-app" src="/public/images/CustomHeroImages/website.PNG" />
-                </div>
 
             </div>
         </section>

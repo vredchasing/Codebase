@@ -1,6 +1,28 @@
 {
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
-    "react-router-dom": "^7.6.3"
-  }
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "react-router-dom": "^7.6.3",
+    "type": "module"
+  },
+  "name": "codebase",
+  "version": "1.0.0",
+  "description": "Codebase is a free and open-source application that lets users create, save and share code.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vredchasing/Codebase.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vredchasing/Codebase/issues"
+  },
+  "homepage": "https://github.com/vredchasing/Codebase#readme"
 }

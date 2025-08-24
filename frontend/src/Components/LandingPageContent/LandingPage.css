@@ -55,14 +55,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Karla', sans-serif;
+  font-family: 'Inter', sans-serif;
   height: max-content;
-  font-size: 150px;
+  font-size: 7vw;
   font-weight: 700;
   margin: 0px;
-  transform: scaleY(0.95);
   color: black;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(120deg, #141414, #4e4e4e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: -12px 12px 4px rgba(0, 0, 0, 0.1);
 }
 
 .lp-text2-wrapper {
@@ -80,7 +82,7 @@
 .lp-text2-h1 {
   color: black;
   font-size: 30px;
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   margin: 0px;
   color: #ffffff;
