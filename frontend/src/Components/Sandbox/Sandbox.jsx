@@ -5,6 +5,8 @@ import FileExplorer from './FileExplorer';
 import EditorTabs from './EditorTabs/EditorTabs';
 
 import { PiTextAlignLeft } from "react-icons/pi";
+import { RxAvatar } from "react-icons/rx";
+
 import WindowControls from '../FunctionalComponents/WindowControls';
 
 
@@ -164,6 +166,17 @@ export default function Sandbox() {
 
   return (
     <section className= 'sandbox-wrapper'>
+      <div className='sandbox-nav-wrapper'>
+        <div className='sandbox-nav'>
+          <span className='sandbox-nav-icon'></span>
+          <span className='sandbox-nav-icon'></span>
+          <span className='sandbox-nav-icon'></span>
+          <span className='sandbox-nav-icon'></span>
+        </div>
+        <div className='sandbox-nav-right'>
+          <RxAvatar size={35} color='white'/>
+        </div>
+      </div>
       <div className="sandbox">
         <div className='sandbox-fe-wrapper'>
           <FileExplorer

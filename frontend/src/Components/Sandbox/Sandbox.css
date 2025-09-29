@@ -2,9 +2,36 @@
 
 .sandbox-wrapper {
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100vh;
-  background-color: #272727;
+  background-color: #0f0f0f;
+}
+
+.sandbox-nav-wrapper {
+  display: flex;
+  width: 100%;
+  height: 10%;
+  background-color: #101010;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.sandbox-nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Karla', sans-serif;
+  font-weight: 400;
+  color: white;
+  padding-left: 20px;
+}
+.sandbox-nav-icon {
+  width: 45px;
+  height: 45px;
+  background-color: rgb(38, 38, 38);
+  border-radius: 8px;
 }
 .sandbox {
   display: flex;
@@ -14,15 +41,11 @@
 
 .sandbox-fe-wrapper {
   display: flex;
-  padding: 15px 0px 15px 15px;
 }
 .sandbox-right {
   display: flex;
   width: 100%;
   overflow: hidden;
-  margin: 15px;
-  border: 2.5px solid rgb(58, 58, 58);
-  border-radius: 7px;
 }
 
 .sandbox-right-contents {

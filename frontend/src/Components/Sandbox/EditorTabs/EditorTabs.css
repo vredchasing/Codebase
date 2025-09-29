@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   height: max-content;
-  background-color: #0000004f;
+  background-color: #101010;
   backdrop-filter: blur(30px);          /* the actual blur effect */
   -webkit-backdrop-filter: blur(10px);  /* for Safari support */
 }
