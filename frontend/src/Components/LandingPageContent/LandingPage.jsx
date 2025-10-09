@@ -138,11 +138,7 @@ useEffect(() => {
       <section className='lp-c-section-wrapper'>
         <LandingPageC></LandingPageC>
       </section>
-
-      <section className='lp-d-section-wrapper'>
-        <LandingPageD></LandingPageD>
-      </section>
-
+      
       <section className='lp-e-section-wrapper'>
         <LandingPageE></LandingPageE>
       </section>

@@ -39,8 +39,8 @@ function Header() {
         </div>
 
         <div className="header-right-nav">
-          <Link to="/signin" className="header-link">Sign In</Link>
-          <Link to="/signup" className="header-link-try-for-free">Try for free</Link>
+          <Link to="/login" className="header-link">Login</Link>
+          <Link to="/register" className="header-link-try-for-free">Sign Up</Link>
         </div>
       </div>
     </header>

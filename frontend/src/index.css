@@ -37,7 +37,6 @@ body {
   top: 0;
   left: 0;
   position: fixed;
-  display: none;
 }
 
 .header-hidden {
@@ -123,10 +122,6 @@ body {
 }
 
 .header-link:hover {
-  color: rgb(255, 255, 255);
-  text-decoration: none;
-  font-family: "Karla", sans-serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .header-right-nav {
@@ -135,19 +130,20 @@ body {
   align-items: center;
   height: 100%;
   margin-right: 20px;
-  gap: 0.5vw
+  gap: 1rem;
 }
 
 .header-link-try-for-free {
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   text-decoration: none;
   font-family: "Inter", sans-serif;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.7px;
   will-change: color;
   transition: color 0.3s ease-in;
   text-wrap: nowrap;
-  border: 1px solid red;
+  padding: 6px 10px;
+  border-radius: 5px;
+  background-color: #000000;
 }
 
 .header-link-try-for-free:hover{

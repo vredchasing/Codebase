@@ -1,0 +1,214 @@
+.signup-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-logo-container-signup {
+  display: flex;
+  height: 55px;
+  width: 100px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.83;
+}
+
+.square-signup {
+  display: flex;
+  width: 60px;
+  position: absolute;
+}
+
+.logo-c-signup {
+  font-size: 2.5rem;
+  font-family: 'Karla' sans-serif;
+  font-weight: 700;
+  transform: scaleY(0.9);
+}
+
+.signup-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0px;
+  margin-top: 1rem;
+  font-family: 'Inter';
+}
+.signup-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: max-content;
+  gap: 1rem;
+}
+
+.external-signup-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  height: 6.5vh;
+}
+
+.signup-google {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: rgb(241, 241, 241);
+  width: 100%;
+  border-radius: 0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.signup-google-icon-container {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+.google-icon {
+  display: flex;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.or-span {
+  display: flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgb(120, 120, 120);
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+}
+.line {
+  height: 1px;
+  background-color: rgb(200, 200, 200);
+  flex: 1;
+}
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+  width: 100%;
+  height: max-content;
+  gap: 1.7rem;
+}
+
+.name-input-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.signup-input-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 100%;
+  position: relative;
+}
+.name-input {
+  height: 4vh;
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif  ;
+  padding: 0.5rem 1rem;
+  background-color: rgb(241, 241, 241);
+  border: none;
+  outline: none;
+  border-radius: 0.3rem;
+  width: 100%;
+  color: rgba(20, 20, 20, 0.922);
+}
+
+.email-input {
+  height: 4vh;
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif  ;
+  padding: 0.5rem 1rem;
+  background-color: rgb(241, 241, 241);
+  border: none;
+  outline: none;
+  border-radius: 0.3rem;
+  width: 100%;
+  color: rgba(20, 20, 20, 0.922);
+
+}
+
+.password-input {
+  height: 4vh;
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif  ;
+  padding: 0.5rem 1rem;
+  background-color: rgb(241, 241, 241);
+  border: none;
+  outline: none;
+  border-radius: 0.3rem;
+  width: 100%;
+  color: rgba(20, 20, 20, 0.922);
+
+}
+
+.signup-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6.5vh;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 1rem;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: rgb(0, 0, 0);
+}
+
+.signup-login-option {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin: 0px;
+}
+
+.signup-login {
+  display: flex;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  padding-left: 0.1rem;
+  color: #F54E00;
+}
+
+.error-icon {
+  position: absolute;
+  right: 1rem;
+  color: rgb(248, 54, 54);
+  margin:0px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+}
