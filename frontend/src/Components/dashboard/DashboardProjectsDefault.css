@@ -1,0 +1,16 @@
+.dashboard-project-default-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.dashboard-project-default-container {
+  
+}
+
+.dashboard-project-default-span {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.413);
+}

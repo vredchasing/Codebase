@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60 * 1000, // 1 hour in ms
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     // Optionally you could send user info as JSON

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import LandingPage from './Components/LandingPageContent/LandingPage'
-import Sandbox from './Components/Sandbox/Sandbox'
+import Sandbox from './Components/Sandbox/SandboxContent/Sandbox'
 import Kira from './Components/Kira/Kira'
 import SignUp from './Components/Auth/SignUp'
 import Login from './Components/Auth/Login'
@@ -14,7 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPage />} /> {/* This is your main page content */}
-          <Route path="workspace" element={<Sandbox></Sandbox>} />
+          <Route path="workspace/:projectId" element={<Sandbox></Sandbox>} />
           <Route path="kira" element = {<Kira></Kira>}/>
           <Route path="register" element={<SignUp></SignUp>} />
           <Route path="login" element={<Login></Login>} />

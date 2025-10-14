@@ -1,7 +1,7 @@
 
 import React from 'react';
 import './FileExplorer.css';
-import FileNode from './FileNode';
+import FileNode from '../FileNode';
 
 //Icon imports
 import { VscMenu } from "react-icons/vsc";
@@ -27,7 +27,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect }) {
       <div className='file-explorer-content-wrapper'>
         <div className='file-explorer-title-wrapper'>
           <h1 className='file-explorer-title'>Explorer</h1>
-          <SlOptions />
+          <SlOptions className='explorer-options' />
         </div>
         <div className='file-explorer-content-inner-wrapper'>
           {files.map(file => (

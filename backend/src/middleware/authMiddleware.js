@@ -19,3 +19,18 @@ export const verifyToken = (req, res, next) => {
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };
+
+
+export const decodeToken = (token) => {
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded)
+    return decoded;
+     // contains user info, e.g., { userId: 1, iat: ..., exp: ... }
+  } catch (err) {
+    console.error("Invalid token:", err.message);
+    return null;
+  }
+};

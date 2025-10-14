@@ -3,6 +3,8 @@ import cors from 'cors';
 import signUpRouter from './src/auth/signup.js';
 import loginRouter from './src/auth/login.js';
 import getUserRouter from './src/auth/getUser.js';
+import getUserProjectsRouter from './src/routes/projects/getUserProjects.js'
+import projectRouter from './src/routes/projects/projectRoutes.js'
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
@@ -21,6 +23,8 @@ app.use(cors(corsOptions));
 app.use('/api/auth', signUpRouter);
 app.use('/api/auth', loginRouter);
 app.use('/api/auth', getUserRouter);
+app.use('/api/dashboard', getUserProjectsRouter)
+app.use('/api/projects', projectRouter)
 
 console.log(process.env.DB_PASSWORD);
 

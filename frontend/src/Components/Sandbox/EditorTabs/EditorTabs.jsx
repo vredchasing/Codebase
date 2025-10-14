@@ -31,7 +31,6 @@ export default function EditorTabs({ tabs, activeTab, onTabClick, onCloseTab }) 
         </div>
       ))}
       <div className='editor-window-controls'>
-        <WindowControls></WindowControls>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import "./Dashboard.css";
 
 
@@ -8,13 +9,37 @@ import { IoIosFolderOpen } from "react-icons/io";
 import { FaRegFile } from "react-icons/fa6";
 import { IoSearchSharp } from "react-icons/io5";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-
-
+import axios from "axios";
+import DashboardProjectsDefault from "./DashboardProjectsDefault";
+import ProjectCard from "./ProjectCard";
 
 
 
 
 function Dashboard(){
+
+  const [userProjects, setUserProjects] = useState([])
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/dashboard/get-user-projects", {
+          withCredentials: true,
+        });
+
+        setUserProjects(response.data);
+        console.log(response.data) // backend returns array of projects
+      } catch (err) {
+        console.error("Error fetching projects:", err);
+        setUserProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProjects();
+  }, []);
 
   return (
     <section className="dashboard-wrapper">
@@ -72,25 +97,13 @@ function Dashboard(){
               </div>
               <div className="dashboard-projects-content">
                 <div className="dashboard-project-wrapper">
-                  <div className="dashboard-project-card">
-                    <div className="last-modified-date-container">
-                      <h2 className="last-modified-date">10/7/2025</h2>
-                    </div>
-                    <div className="project-file-info-container">
-                      <div className="projects-file-name-container">
-                        <h2 className="project-file-name">Untitled Folder</h2>
-                      </div>
-                      <div className="project-collaborators-container">
-                        <div className="project-collaborators-avatar-container">
-                          <img className="project-colloborator-avatar" src="/public/images/background-images/background2.webp"></img>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="dashboard-project-card"></div>
-                  <div className="dashboard-project-card"></div>
-                  <div className="dashboard-project-card"></div>
-                  <div className="dashboard-project-card"></div> 
+                  {userProjects.length > 0 ? (
+                    userProjects.map(project => (
+                      <ProjectCard key={project.id} data={project}></ProjectCard>
+                    ))
+                  ) : (
+                    <DashboardProjectsDefault></DashboardProjectsDefault>
+                  )}
                 </div>
               </div>
             </div>

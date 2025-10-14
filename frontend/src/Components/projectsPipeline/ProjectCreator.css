@@ -1,23 +1,241 @@
 .project-creator-section-wrapper {
   display: flex;
   width: 100%;
-  height: 100vh;
+  height: max-content;
   justify-content: center;
-  align-items: center;
 }
 
 .project-creator-section-inner {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+  width: 60%;
+  height: max-content;
+  margin-top: 8vh;
+}
+
+.create-project-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+  padding-top: 2rem;
+}
+.create-project-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin: 0;
+  padding-left: 3rem;
+}
+.create-project-title-2{
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+  margin: 0;
+  padding-left: 3rem;
+  color: rgba(0, 0, 0, 0.527);
+}
+.project-form-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.form-label-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.step-container {
+  display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4rem;
-  width: 80%;
-  height: 80%;
+  border-radius: 100%;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgb(230, 230, 230);
+}
+.step {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter';
+  font-weight: 600;
+  width: 1rem;
+  height: 1rem;
+
+}
+.form-label {
+  display: flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.create-project-form-container {
+  display: flex;
+  width: 100%;
+  height: max-content;
+  position: relative;
+  padding-left: 3rem;
+}
+.create-project-form-1 {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  gap: 2rem;
+  padding: 1rem 0rem;
+}
+.create-project-form-2 {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  gap: 2rem;
+  padding-top: 1rem;
 }
 
 
+.step-line {
+  height: 100%;
+  width: 0.21rem;
+  background-color: rgb(232, 232, 232);
+  position: absolute;
+  left: 0.895rem;
+}
+
+/*INPUTS*/
+
+.input-label {
+  font-family: 'Inter';
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.custom-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.create-project-owners-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selected-owners-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6vh;
+  width: 100%;
+  border-radius: 7px;
+  background-color: #e4e4e4;
+  cursor: pointer;
+}
+.selected-owners-container:hover {
+  outline: 1.4px solid rgb(35, 123, 255);
+}
+.selected-owners {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  gap: 0.5rem;
+}
+
+.selected-owners-avatar-container {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+.selected-owners-avatar {
+  width: 100%;
+  height: 100%;
+
+}
+
+.selected-owner-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.create-project-name-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+}
+.project-name-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 6vh;
+  width: 100%;
+  border-radius: 7px;
+  border: none;
+  background-color: rgb(240, 240, 240);
+  outline: none;
+  padding-left: 0.75rem;
+  font-size: 0.75rem;
+}
 
 .project-creator-create-file:hover{
   border: 1.4px solid rgb(35, 123, 255);
   scale: 1.03;
+}
+
+
+
+.create-button-container {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  padding-bottom: 3rem;
+}
+
+.create-button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #238236;
+  border-radius: 5px;
+  margin: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+  
+
+
+
+
+/*ORGANIZE*/
+
+.input-label-1a {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter';
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+
+.input-label-1b {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Inter';
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.527);
+  padding-top: 0.35rem;
+  margin: 0px;
 }

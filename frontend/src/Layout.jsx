@@ -7,6 +7,7 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import { AuthProvider } from './Components/Auth/AuthContext'; // Adjust the path as necessary
 import HeaderDashboard from './Components/HeaderDashboard';
+import HeaderWorkspace from './Components/HeaderWorkspace';
 
 const Layout = () => {
   useEffect(() => {
@@ -29,7 +30,7 @@ const Layout = () => {
   }, []);
 
   const location = useLocation()
-  const [headerType, setHeaderType] = useState('non-dashboard')
+  const [headerType, setHeaderType] = useState('default')
 
   function renderHeader (){
     if(headerType === 'dashboard'){
@@ -37,9 +38,14 @@ const Layout = () => {
         <HeaderDashboard></HeaderDashboard>
       )
     }
+    if(headerType === 'workspace'){
+      return (
+        <HeaderWorkspace></HeaderWorkspace>
+      )
+    }
     else{
       return(
-        <Header></Header>
+        <HeaderDashboard></HeaderDashboard>
       )
     }
   }
@@ -48,8 +54,11 @@ const Layout = () => {
     if(location.pathname.startsWith('/dashboard')){
       setHeaderType('dashboard')
     }
+    if(location.pathname.startsWith('/workspace')){
+      setHeaderType('workspace')
+    }
     else(
-      setHeaderType('non-dashboard')
+      setHeaderType('default')
     )
   }, [location.pathname])
 

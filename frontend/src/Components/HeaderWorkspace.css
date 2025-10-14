@@ -1,0 +1,70 @@
+.workspace-header {
+  display: flex;
+  width: 100%;
+  height: 5vh;
+  background-color: rgb(25, 25, 25);
+  position: fixed;
+  top:0;
+  left: 0;
+  z-index: 999;
+  border-bottom: 1.5px solid rgba(45, 45, 45, 0.537);
+}
+
+.workspace-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 1rem;
+}
+
+.workspace-header-nav-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.workspace-header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.workspace-nav-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: max-content;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: rgba(237, 237, 237, 0.758);
+}
+
+.nav-arrows-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.workspace-header-right-wrapper {
+  display: flex;
+}
+.workspace-header-right-inner {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.workspace-header-avatar-container {
+  display: flex;
+  width: 3vh;
+  height: 3vh;
+  border-radius: 100%;
+  overflow: hidden;
+
+}
+
+.workspace-header-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

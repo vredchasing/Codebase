@@ -1,12 +1,11 @@
 
 .file-explorer {
   display: flex;
-  width: 230px;
+  width: 17vw;
   overflow-y: auto;
-  background-color: #101010;
+  background-color: #1e1e1ebe;
   color: white;
-  padding: 10px;
-  border-right: 1px solid #333;
+  border-right: 1.5px solid rgba(45, 45, 45, 0.537);
 
 }
 
@@ -50,46 +49,65 @@
 }
 .file-explorer-title-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  height: 40px;
+  height: 5vh;
 }
 .file-explorer-title {
   display: flex;
   margin: 0px;
-  font-family: 'Karla', sans-serif;
-  font-weight: 300;
-  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
   letter-spacing: 0.5px;
-  color: white;
+  color: rgba(147, 147, 147, 0.756);
+  margin-left: 1rem;
+  display: none;
+}
+.explorer-options {
+  margin-right: 1rem;
+  opacity: 0.9;
+  scale: 0.8;
+  color: #4e4e4e;
 }
 .file-explorer-content-wrapper {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
+
+.file-explorer-content-inner-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 .icon-container {
   display: flex;
-  width: 18px;
+  width: 15px;
+  height: 15px;
+  padding-right: 0.1rem;
 }
 .icon-img {
   display: flex;
   height: 100%;
   width: 100%;
   object-fit: contain;
+  opacity: 0.7;
 }
 .file-label-wrapper {
+  display: flex;
   width: 100%;
   position: relative;
   cursor: pointer;
 }
 
 .file-label-wrapper.active {
-  background-color: #4e4e4e;
+  background-color: #3d3d3dd8;
+  outline: 1px solid rgb(40, 129, 255);
 }
 
 .file-label-wrapper:hover {
-  background-color: #4e4e4e94;
+  background-color: #3a3a3a94;
 }
 
 .file-indent {
@@ -104,13 +122,12 @@
   align-items: center;
   height: 100%;
   gap: 3px;
-  font-size: 14.5px;
-  font-weight: 3    00;
-  letter-spacing: 0.5px;
-  padding-left: 4px;
+  font-size: 0.73rem;
+  font-weight: 400;
   z-index: 1; /* so it's above indent guides */
-  color: rgb(255, 255, 255);
-  font-family: 'Inter';
+  color: rgba(236, 236, 236, 0.687);
+  font-family: 'Roboto', sans-serif;
+  text-shadow: 0.25px 0.25px 2px rgb(52, 52, 52);
 }
 
 .indent-guide {

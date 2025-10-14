@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
-import './FileExplorer.css';
-import { MdArrowBackIos } from 'react-icons/md';
+import './FileExplorer/FileExplorer.css';
+import { MdKeyboardArrowRight } from "react-icons/md";
+import { MdKeyboardArrowDown } from "react-icons/md";
+
 
 
 import getIcon from './ExplorerIcons/iconHelperFuncs';
 
 
 export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+
+  function arrowStatus (){
+    if(expanded){
+      return (
+        <MdKeyboardArrowRight size={18}></MdKeyboardArrowRight>
+      )
+    }
+    else {
+      return (
+        <MdKeyboardArrowDown size={18}></MdKeyboardArrowDown>
+      )
+    }
+  }
 
   // Generate indent lines per level
   const renderIndentGuides = (level) => {
@@ -44,12 +59,7 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
               onClick={() => setExpanded(!expanded)}
               style={{ paddingLeft: `${level * 13}px` }}
             >
-              <MdArrowBackIos
-                size={13}
-                style={{
-                  transform: expanded ? 'rotate(270deg)' : 'rotate(180deg)'
-                }}
-              />
+              {arrowStatus()}
               {node.name}
             </div>
           </div>
