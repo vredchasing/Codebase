@@ -2,11 +2,9 @@
 .file-explorer {
   display: flex;
   width: 17vw;
-  overflow-y: auto;
   background-color: #1e1e1ebe;
   color: white;
   border-right: 1.5px solid rgba(45, 45, 45, 0.537);
-
 }
 
 .file-explorer-nav-wrapper {
@@ -94,19 +92,25 @@
   object-fit: contain;
   opacity: 0.7;
 }
-.file-label-wrapper {
+
+.file-explorer-container {
+  display: flex;
+  width: 100%;
+}
+.file-label-container {
   display: flex;
   width: 100%;
   position: relative;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
-.file-label-wrapper.active {
+.file-label-container.active {
   background-color: #3d3d3dd8;
-  outline: 1px solid rgb(40, 129, 255);
+  border: 1px solid rgb(40, 129, 255);
 }
 
-.file-label-wrapper:hover {
+.file-label-container:hover {
   background-color: #3a3a3a94;
 }
 

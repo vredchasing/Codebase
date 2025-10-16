@@ -51,7 +51,7 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
   if (node.type === 'folder') {
     return (
       <>
-        <div className="file-label-wrapper">
+        <div className="file-label-container">
           <div className="file-indent">
             {renderIndentGuides(level)}
             <div
@@ -85,7 +85,7 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
   // FILE
   return (
     <div
-      className={`file-label-wrapper ${node.name === activeFile.name ? 'active' : ''}`}
+      className={`file-label-container ${node.name === activeFile.name ? 'active' : ''}`}
       onClick={() => onFileSelect(node)}
     >
       <div className="file-indent">

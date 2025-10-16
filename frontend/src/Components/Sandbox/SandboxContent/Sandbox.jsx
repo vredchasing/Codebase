@@ -6,8 +6,10 @@ import FileExplorer from '../FileExplorer/FileExplorer';
 import EditorTabs from '../EditorTabs/EditorTabs';
 import KiraWorkspace from '../../Kira/KiraWorkspace/KiraWorkspace';
 import CodeEditor from '../CodeEditor/CodeEditor';
+import { useParams } from 'react-router-dom';
 
 export default function Sandbox() {
+  const { projectId } = useParams();
   const [files, setFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
   const [tabs, setTabs] = useState([]);
@@ -19,28 +21,52 @@ export default function Sandbox() {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const response = await axios.get('/api/files');
-        if (!response.ok) {
-          throw new Error('Failed to fetch files');
-        }
-        const data = await response.json();
+        const response = await axios.get(
+          `http://localhost:3000/api/projects/get-project/${projectId}`,
+          {
+            withCredentials: true, // if you’re using cookies for auth
+          }
+        );
+
+        const data = response.data || []; 
+        console.log('Fetched file tree:', data);
         setFiles(data);
-        const initialFile = data[0]?.children ? data[0].children[0] : data[0];
-        setActiveFile(initialFile);
-        setTabs([initialFile]);
-        setActiveTab(initialFile?.name || null);
+
+        if (data.length > 0) {
+          // Prefer first file if possible
+          let initialFile = null;
+
+          const first = data[0];
+          if (first.children && first.children.length > 0) {
+            initialFile = first.children[0];
+          } else {
+            initialFile = first;
+          }
+
+          setActiveFile(initialFile);
+          setTabs([initialFile]);
+          setActiveTab(initialFile?.name || null);
+        } else {
+          // No files => leave activeFile null, tabs empty
+          setActiveFile(null);
+          setTabs([]);
+          setActiveTab(null);
+        }
       } catch (err) {
-        setError(err.message);
+        console.error('Error fetching files:', err);
+        setError(err.message || 'Unknown error');
       } finally {
         setLoading(false);
       }
     };
 
     fetchFiles();
-  }, []);
+  }, [projectId]);
 
   // Handle file selection
   const handleFileSelect = (file) => {
+    if (!file) return;
+
     setActiveFile(file);
     setActiveTab(file.name);
 
@@ -57,41 +83,42 @@ export default function Sandbox() {
         return { ...node, content: newContent };
       }
       if (node.type === 'folder') {
-        return { ...node, children: updateFileContent(node.children, targetName, newContent) };
+        return {
+          ...node,
+          children: updateFileContent(node.children || [], targetName, newContent),
+        };
       }
       return node;
     });
   };
 
   // Prepare props for CodeEditor
-  const fileData = activeFile ? {
-    content: activeFile.content,
-    language: activeFile.language,
-    name: activeFile.name,
-    files,
-  } : {};
+  const fileData = activeFile
+    ? {
+        content: activeFile.content,
+        language: activeFile.language,
+        name: activeFile.name,
+        files,
+      }
+    : null;
 
-  const editorFunctions = {
-    setFiles,
-    updateFileContent,
-    setActiveFile,
-  };
+  const editorFunctions = { setFiles, updateFileContent, setActiveFile };
 
   return (
-    <section className='sandbox-wrapper'>
+    <section className="sandbox-wrapper">
       <div className="sandbox">
-        <div className='sandbox-fe-wrapper'>
+        <div className="sandbox-fe-wrapper">
           <FileExplorer
             files={files}
             activeFile={activeFile}
             onFileSelect={handleFileSelect}
           />
         </div>
-        <div className='sandbox-right'>
-          <div className='sandbox-right-contents'>
+        <div className="sandbox-right">
+          <div className="sandbox-right-contents">
             <div className="editor-pane">
-              <div className='editor-tabs-wrapper'>
-                <div className='editor-tabs-container-main'>
+              <div className="editor-tabs-wrapper">
+                <div className="editor-tabs-container-main">
                   <EditorTabs
                     tabs={tabs}
                     activeTab={activeTab}
@@ -100,34 +127,42 @@ export default function Sandbox() {
                       setActiveFile(file);
                     }}
                     onCloseTab={(fileName) => {
-                      setTabs((prev) => prev.filter((tab) => tab.name !== fileName));
+                      const newTabs = tabs.filter((tab) => tab.name !== fileName);
+                      setTabs(newTabs);
                       if (activeTab === fileName) {
-                        const remainingTabs = tabs.filter((tab) => tab.name !== fileName);
-                        if (remainingTabs.length > 0) {
-                          setActiveFile(remainingTabs[0]);
-                          setActiveTab(remainingTabs[0].name);
+                        if (newTabs.length > 0) {
+                          const next = newTabs[0];
+                          setActiveFile(next);
+                          setActiveTab(next.name);
+                        } else {
+                          setActiveFile(null);
+                          setActiveTab(null);
                         }
                       }
                     }}
                   />
                 </div>
               </div>
-              <div className='editor-path-wrapper'>
-                <span className='editor-path'>
+              <div className="editor-path-wrapper">
+                <span className="editor-path">
                   {/* Display file path if needed */}
                 </span>
               </div>
-              <div className='editor-wrapper'>
+              <div className="editor-wrapper">
                 {loading ? (
                   <div>Loading...</div>
                 ) : error ? (
                   <div>Error: {error}</div>
-                ) : (
+                ) : activeFile ? (
                   <CodeEditor fileData={fileData} editorFunctions={editorFunctions} />
+                ) : (
+                  <div className="no-files-placeholder">
+                    No files in this project. Create a new file or folder to get started.
+                  </div>
                 )}
               </div>
             </div>
-            <div className='preview-wrapper'>
+            <div className="preview-wrapper">
               <KiraWorkspace />
             </div>
           </div>
