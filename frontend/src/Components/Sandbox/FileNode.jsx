@@ -48,7 +48,7 @@ export default function FileNode({ node, activeFile, onFileSelect, level = 0 }) 
   const icon = getIcon(node);
 
   // FOLDER
-  if (node.type === 'folder') {
+  if (node.node_type === 'folder') {
     return (
       <>
         <div className="file-label-container">

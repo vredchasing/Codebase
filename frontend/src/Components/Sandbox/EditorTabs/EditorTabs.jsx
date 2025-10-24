@@ -18,14 +18,15 @@ export default function EditorTabs({ tabs, activeTab, onTabClick, onCloseTab }) 
               <img className='editor-tabs-icon-img' src={getIcon(tab)}></img>
             </div>
             <h1 className='editor-tabs-text'h1>{tab.name}</h1>
-            <span
-              className='editor-tabs-close-btn'
+            <span className='editor-tabs-close-btn-container'
               onClick={(e) => {
                 e.stopPropagation(); // prevent triggering onClick
                 onCloseTab(tab.name);
               }}
             >
-              .
+              <span className='editor-tabs-close-btn'>
+                x
+              </span>
             </span>
           </div>
         </div>

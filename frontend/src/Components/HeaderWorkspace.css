@@ -39,6 +39,7 @@
   font-weight: 500;
   font-size: 0.75rem;
   color: rgba(237, 237, 237, 0.758);
+  cursor: default;
 }
 
 .nav-arrows-wrapper {

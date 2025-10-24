@@ -1,0 +1,126 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  width: 100%;
+  background-color: transparent;
+  height: 8vh;
+  overflow: hidden;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  position: fixed;
+}
+
+.header-hidden {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 450px;
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.header-visible {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 450px;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  transform: translate(-50%, 0);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+} 
+
+
+.header-content {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+
+.custom-logo-container {
+  display: flex;
+  height: 55px;
+  width: 100px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.83;
+}
+.square {
+  display: flex;
+  width: 35px;
+  position: absolute;
+}
+
+.logo-c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  font-family: "Karla", sans-serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin: 0px;
+  padding: 0px;
+  transform: scaleY(0.9);
+  color: rgb(0, 0, 0);
+}
+.circle {
+  width: 7px;
+  transform: translateX(0.9px) translateY(1px);
+}
+
+.header-link {
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.7px;
+  will-change: color;
+  transition: color 0.3s ease-in;
+  text-wrap: nowrap;
+}
+
+.header-link:hover {
+}
+
+.header-right-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  margin-right: 20px;
+  gap: 1rem;
+}
+
+.header-link-try-for-free {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-size: 0.8rem;
+  will-change: color;
+  transition: color 0.3s ease-in;
+  text-wrap: nowrap;
+  padding: 6px 10px;
+  border-radius: 5px;
+  background-color: #000000;
+}
+
+.header-link-try-for-free:hover{
+
+}
+

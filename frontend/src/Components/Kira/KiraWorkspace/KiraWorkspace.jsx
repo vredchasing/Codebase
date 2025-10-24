@@ -5,6 +5,11 @@ import { RiClaudeFill } from "react-icons/ri";
 import { BsCardImage } from "react-icons/bs";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
+import { RiAddFill } from "react-icons/ri";
+import { MdHistory } from "react-icons/md";
+
+
+
 
 
 
@@ -12,6 +17,21 @@ function KiraWorkspace (){
 
   return(
     <section className="kira-workspace-wrapper">
+      <div className='kira-workspace-nav-wrapper'>
+        <div className='kira-workspace-nav-inner'>
+          <div className='kira-workspace-nav-left'>
+            <span className="agent-nav-tab">New Chat</span>
+          </div>
+          <div className='kira-workspace-nav-right'>
+            <span className="agent-nav-option-container">
+              <RiAddFill></RiAddFill>
+            </span>
+            <span className="agent-nav-option-container">
+              <MdHistory></MdHistory>
+            </span>
+          </div>
+        </div>
+      </div>
       <div className="kira-workspace-inner">
         <div className="kira-workspace-chat-history-wrapper">
         </div>
@@ -39,6 +59,8 @@ function KiraWorkspace (){
             </div>
           </div>
         </div>
+      </div>
+      <div className='kira-workspace-footer-wrapper'>
       </div>
     </section>
   )

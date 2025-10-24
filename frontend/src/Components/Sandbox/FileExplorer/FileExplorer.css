@@ -45,22 +45,23 @@
   height: 30px;
   cursor: pointer;
 }
-.file-explorer-title-wrapper {
+.file-explorer-header-wrapper {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  height: 5vh;
+  height: 7vh;
 }
-.file-explorer-title {
+.file-explorer-quick-nav-container {
   display: flex;
-  margin: 0px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  color: rgba(147, 147, 147, 0.756);
-  margin-left: 1rem;
-  display: none;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+.file-explorer-quick-nav-widget {
+  display: flex;
+  background-color: rgba(46, 46, 46, 0.594);
+  width: 25px;
+  height: 25px;
+  border-radius: 0.3rem;
 }
 .explorer-options {
   margin-right: 1rem;
@@ -94,6 +95,10 @@
 }
 
 .file-explorer-container {
+  display: flex;
+  width: 100%;
+}
+.file-explorer-inner-container {
   display: flex;
   width: 100%;
 }

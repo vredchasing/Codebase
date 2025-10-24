@@ -157,7 +157,7 @@ export default function Sandbox() {
                   <CodeEditor fileData={fileData} editorFunctions={editorFunctions} />
                 ) : (
                   <div className="no-files-placeholder">
-                    No files in this project. Create a new file or folder to get started.
+                    <span className='editor-no-files'>CODEBASE</span>
                   </div>
                 )}
               </div>

@@ -97,6 +97,7 @@
   display: flex;
   height: 100%;
   width: 100%;
+  background-color: #161616;
 }
 
 
@@ -135,3 +136,27 @@
   border: none;
 }
 
+
+
+/*NO FILES*/
+
+.no-files-placeholder {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+
+}
+
+.editor-no-files {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 8vh;
+  color: #1e1e1e9a;
+  text-shadow: 0px 0.5px 1px rgb(53, 53, 53);
+}

@@ -1,0 +1,35 @@
+.context-menu {
+  position: absolute;
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  width: max-content;
+}
+.menu-option-span {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.13s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  gap: 3rem;
+}
+
+.menu-option-span:hover {
+  background-color: rgb(47, 47, 47);
+}
+.menu-option-label {
+  padding: 8px 1.5rem;
+  color: rgb(172, 172, 172);
+}
+
+.menu-option-label-right {
+  padding: 8px 1.5rem;
+  color: rgba(200, 200, 200, 0.336);
+}
