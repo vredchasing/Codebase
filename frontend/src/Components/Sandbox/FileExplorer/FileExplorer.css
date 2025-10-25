@@ -96,10 +96,13 @@
 
 .file-explorer-container {
   display: flex;
+
+  flex-direction: column;
   width: 100%;
 }
 .file-explorer-inner-container {
   display: flex;
+  flex-direction: column;
   width: 100%;
 }
 .file-label-container {
@@ -146,4 +149,15 @@
   width: 1px;
   border-left: 1px solid rgba(255, 255, 255, 0.19);
   z-index: 0;
+}
+
+
+.file-explorer-new-input {
+  outline: none;
+  background-color: #3d3d3dd8;
+  border: 1px solid rgb(40, 129, 255);
+  color: white;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  padding: 0.25rem;
 }

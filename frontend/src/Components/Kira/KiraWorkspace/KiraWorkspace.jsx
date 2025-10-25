@@ -4,6 +4,7 @@ import './KiraWorkspace.css'
 import { RiClaudeFill } from "react-icons/ri";
 import { BsCardImage } from "react-icons/bs";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 import { RiAddFill } from "react-icons/ri";
 import { MdHistory } from "react-icons/md";
@@ -61,6 +62,9 @@ function KiraWorkspace (){
         </div>
       </div>
       <div className='kira-workspace-footer-wrapper'>
+        <div className='kira-workspace-footer-inner'>
+          <span className="past-chats-label"></span>
+        </div>
       </div>
     </section>
   )
