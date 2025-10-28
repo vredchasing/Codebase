@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './FileExplorer.css';
 import FileNode from '../FileNode';
-import { VscMenu, VscFiles, VscSearch, VscExtensions, VscAccount, VscSettingsGear } from "react-icons/vsc";
-import { IoLogoGithub } from "react-icons/io";
 import { SlOptions } from "react-icons/sl";
 import ContextMenu from './ContextMenu';
 import axios from 'axios';
@@ -13,13 +11,11 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
   const inputRef = useRef(null);
 
   async function createFileOrFolderAPI(name, parentId, projectId, nodeType) {
-    if (!name?.trim()) {
-      return null;
-    }
+    if (!name?.trim()) return null;
     try {
-      const payload = { name: name.trim(), parentId, nodeType };
+      const payload = { name: name.trim(), parentId, nodeType, projectId };
       const response = await axios.post(
-        `http://localhost:3000/api/projects/${projectId}/files`,
+        `http://localhost:3000/api/projects/files/file-folder-creation`,
         payload,
         { withCredentials: true }
       );
@@ -34,9 +30,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
     setCreatingNode({ parentId, nodeType });
   };
 
-  const handleCancelCreate = () => {
-    setCreatingNode(null);
-  };
+  const handleCancelCreate = () => setCreatingNode(null);
 
   const handleConfirmCreate = async (name) => {
     const trimmed = name?.trim();
@@ -45,17 +39,21 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
       return;
     }
     const newNode = await createFileOrFolderAPI(trimmed, creatingNode.parentId, projectId, creatingNode.nodeType);
-    if (newNode) {
-      onFileCreate(newNode);
-    }
+    if (newNode) onFileCreate(newNode);
     handleCancelCreate();
   };
 
   useEffect(() => {
-    if (creatingNode && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (creatingNode && inputRef.current) inputRef.current.focus();
   }, [creatingNode]);
+
+  const handleMenu = (e, file) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenu({ x: e.clientX, y: e.clientY, file });
+  };
+
+  const closeMenu = () => setMenu(null);
 
   const menuOptions = menu ? [
     { label: 'New File...',   onClick: () => { handleStartCreate(menu.file.id, 'file'); closeMenu(); } },
@@ -67,18 +65,6 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
     { label: 'Delete',        onClick: () => console.log('Delete', menu.file) },
   ] : [];
 
-  const handleMenu = (e, file) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const x = e.clientX;
-    const y = e.clientY;
-    setMenu({ x, y, file });
-  };
-
-  const closeMenu = () => {
-    setMenu(null);
-  };
-
   return (
     <div className="file-explorer">
       {menu && (
@@ -89,6 +75,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
           onClose={closeMenu}
         />
       )}
+
       <div className='file-explorer-content-wrapper'>
         <div className='file-explorer-header-wrapper'>
           <div className='file-explorer-quick-nav-container'>
@@ -108,11 +95,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
         <div className='file-explorer-content-inner-wrapper'>
           <div className='file-explorer-container'>
             {files && files.map(node => (
-              <div
-                key={node.id}
-                className='file-explorer-inner-container'
-                onContextMenu={e => handleMenu(e, node)}
-              >
+              <div key={node.id} className='file-explorer-inner-container'>
                 <FileNode
                   node={node}
                   activeFile={activeFile}
@@ -122,6 +105,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
                   inputRef={inputRef}
                   onConfirmCreate={handleConfirmCreate}
                   onCancelCreate={handleCancelCreate}
+                  onContextMenu={handleMenu}
                   level={0}
                 />
               </div>

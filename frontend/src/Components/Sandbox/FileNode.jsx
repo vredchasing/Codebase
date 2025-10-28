@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './FileExplorer/FileExplorer.css';
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import getIcon from './ExplorerIcons/iconHelperFuncs';
+import { getInputIcon } from './ExplorerIcons/iconHelperFuncs';
+import { extensionIconMap } from './ExplorerIcons/Icons';
 
 export default function FileNode({
   node,
@@ -12,9 +14,14 @@ export default function FileNode({
   inputRef,
   onConfirmCreate,
   onCancelCreate,
+  onContextMenu,
+  filesMap,
+  setFilesMap,
   level = 0
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [inputIcon, setInputIcon] = useState(extensionIconMap.default);
 
   const arrowStatus = () => {
     return expanded ? (
@@ -35,12 +42,24 @@ export default function FileNode({
     ));
   };
 
+  function handleInputIcon(e) {
+    const value = e.target.value;
+    setInputValue(value);
+    const iconSrc = getInputIcon(value);
+    setInputIcon(iconSrc);
+  }
+
   const icon = getIcon(node);
 
   if (node.node_type === 'folder') {
     return (
       <>
-        <div className="file-label-container">
+        <div
+          className="file-label-container"
+          onContextMenu={(e) => {
+            if (onContextMenu) onContextMenu(e, node);
+          }}
+        >
           <div className="file-indent">
             {renderIndentGuides(level)}
             <div
@@ -56,7 +75,7 @@ export default function FileNode({
 
         {expanded && (
           <div className="folder-contents">
-            {node.children.map(child => (
+            {node.children && node.children.map(child => (
               <FileNode
                 key={child.id}
                 node={child}
@@ -67,6 +86,7 @@ export default function FileNode({
                 inputRef={inputRef}
                 onConfirmCreate={onConfirmCreate}
                 onCancelCreate={onCancelCreate}
+                onContextMenu={onContextMenu}
                 level={level + 1}
               />
             ))}
@@ -81,26 +101,50 @@ export default function FileNode({
               width: `calc(100% - ${(level + 1) * 13}px)`
             }}
           >
-            <input
-              ref={inputRef}
-              className="file-explorer-new-input"
-              placeholder={
-                creatingNode.nodeType === 'folder'
-                  ? ''
-                  : ''
-              }
-              onBlur={e => onConfirmCreate(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  onConfirmCreate(e.target.value);
-                }
-                if (e.key === 'Escape') {
-                  onCancelCreate();
-                }
+            <div
+              className="input-wrapper"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%'
               }}
-              style={{ width: '100%', boxSizing: 'border-box' }}
-            />
+            >
+              {inputIcon && (
+                <div className="input-icon-container">
+                  <img
+                    src={inputIcon}
+                    alt="file icon"
+                    className="icon-img"
+                  />
+                </div>
+              )}
+              <input
+                ref={inputRef}
+                className="file-explorer-new-input"
+                value={inputValue}
+                onChange={handleInputIcon}
+                placeholder=""
+                onBlur={e => {
+                  onConfirmCreate(e.target.value);
+                  setInputValue('');
+                  setInputIcon(extensionIconMap.default);
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    onConfirmCreate(e.target.value);
+                    setInputValue('');
+                    setInputIcon(extensionIconMap.default);
+                  }
+                  if (e.key === 'Escape') {
+                    onCancelCreate();
+                    setInputValue('');
+                    setInputIcon(extensionIconMap.default);
+                  }
+                }}
+                style={{ flex: 1, boxSizing: 'border-box' }}
+              />
+            </div>
           </div>
         )}
       </>
@@ -110,9 +154,12 @@ export default function FileNode({
   return (
     <div
       className={`file-label-container ${
-        node.name === activeFile.name ? 'active' : ''
+        activeFile && node.name === activeFile.name ? 'active' : ''
       }`}
       onClick={() => onFileSelect(node)}
+      onContextMenu={(e) => {
+        if (onContextMenu) onContextMenu(e, node);
+      }}
     >
       <div className="file-indent">
         {renderIndentGuides(level)}

@@ -92,6 +92,34 @@ export default function Sandbox() {
     });
   };
 
+// Inside Sandbox.jsx, replace your empty onFileCreate function with:
+
+  function onFileCreate(newNode) {
+    setFiles(prevFiles => {
+      // Recursive function to insert the new node into the correct parent
+      const insertNode = (nodes) => {
+        return nodes.map(node => {
+          if (node.id === newNode.parentId) {
+            const updatedChildren = node.children
+              ? [...node.children, newNode]
+              : [newNode];
+            return { ...node, children: updatedChildren };
+          }
+          if (node.children && node.children.length > 0) {
+            return { ...node, children: insertNode(node.children) };
+          }
+          return node;
+        });
+      };
+
+      // If no parentId, add as a root node
+      if (!newNode.parentId) return [...prevFiles, newNode];
+
+      return insertNode(prevFiles);
+    });
+  }
+
+
   // Prepare props for CodeEditor
   const fileData = activeFile
     ? {
@@ -112,6 +140,8 @@ export default function Sandbox() {
             files={files}
             activeFile={activeFile}
             onFileSelect={handleFileSelect}
+            projectId={projectId}
+            onFileCreate={onFileCreate}
           />
         </div>
         <div className="sandbox-right">

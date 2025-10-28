@@ -3,34 +3,43 @@ import { query } from '../../postgresdb.js';
 export async function getFilesForProject(projectId) {
   const { rows } = await query(
     `
-    WITH RECURSIVE file_tree AS (
-      -- Anchor: root files/folders from project_root
+    WITH RECURSIVE file_tree(
+      id,
+      parent_id,
+      project_id,
+      name,
+      created_at,
+      modified_at,
+      content_key,
+      node_type
+    ) AS (
+      -- Root nodes (parent_id IS NULL)
       SELECT
-        pr.id AS id,
+        id,
         CAST(NULL AS INT) AS parent_id,
-        pr.project_id,
-        pr.name,
-        pr.created_at,
-        pr.modified_at,
-        pr.content_key,
-        pr.node_type
-      FROM projects.project_root AS pr
-      WHERE pr.project_id = $1
+        project_id,
+        name,
+        created_at,
+        modified_at,
+        CAST(content_key AS text),
+        CAST(node_type AS varchar(10))
+      FROM projects.project_node
+      WHERE project_id = $1 AND parent_id IS NULL
 
       UNION ALL
 
-      -- Recursive: children from project_node
+      -- Recursive: children
       SELECT
-        pn.id AS id,
-        pn.parent_id AS parent_id,
+        pn.id,
+        pn.parent_id,
         pn.project_id,
         pn.name,
         pn.created_at,
         pn.modified_at,
-        pn.content_key,
-        pn.node_type
-      FROM projects.project_node AS pn
-      INNER JOIN file_tree AS ft
+        CAST(pn.content_key AS text),
+        CAST(pn.node_type AS varchar(10))
+      FROM projects.project_node pn
+      INNER JOIN file_tree ft
         ON pn.parent_id = ft.id
       WHERE pn.project_id = $1
     )
@@ -41,22 +50,8 @@ export async function getFilesForProject(projectId) {
     [projectId]
   );
 
-  // Fetch the project info separately
-  const { rows: projectRows } = await query(
-    `SELECT id, name FROM projects.project WHERE id = $1`,
-    [projectId]
-  );
-
-  if (projectRows.length === 0) return []; // Project not found
-
-  const projectRoot = {
-    id: projectRows[0].id,
-    name: projectRows[0].name,
-    node_type: 'folder',
-    children: buildFileTree(rows), // this will be empty if no children exist
-  };
-
-  return [projectRoot];
+  // Build tree starting from parent_id = NULL
+  return buildFileTree(rows);
 }
 
 function buildFileTree(items, parentId = null) {

@@ -8,6 +8,7 @@ router.post('/file-folder-creation', async (req, res) => {
 
   try {
     const newFile = await createFileOrFolder({ name, parentId, projectId, nodeType });
+    console.log('function working')
     res.status(201).json(newFile);
   } catch (error) {
     console.error(error);
