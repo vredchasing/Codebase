@@ -16,6 +16,7 @@ export default function Sandbox() {
   const [activeTab, setActiveTab] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filesMap, setFilesMap] = useState({});
 
   // Fetch files from the database
   useEffect(() => {
@@ -31,6 +32,9 @@ export default function Sandbox() {
         const data = response.data || []; 
         console.log('Fetched file tree:', data);
         setFiles(data);
+        let flattendMap = flattenFiles(data);
+        setFilesMap(flattendMap)
+    
 
         if (data.length > 0) {
           // Prefer first file if possible
@@ -62,6 +66,16 @@ export default function Sandbox() {
 
     fetchFiles();
   }, [projectId]);
+
+  function flattenFiles(nodes, parentId = null, level = 0, result = {}) {
+    for (const node of nodes) {
+      result[node.id] = { ...node, parent_id: parentId, depth: level };
+      if (node.children?.length) {
+        flattenFiles(node.children, node.id, level + 1, result);
+      }
+    }
+    return result;
+  }
 
   // Handle file selection
   const handleFileSelect = (file) => {
@@ -117,6 +131,15 @@ export default function Sandbox() {
 
       return insertNode(prevFiles);
     });
+    setFilesMap(prevMap => {
+      const parentDepth = prevMap[newNode.parent_id]?.depth;
+      console.log('Parent Depth:', parentDepth);
+      return {
+        ...prevMap,
+        [newNode.id]: { ...newNode, parent_id: newNode.parentId, depth: parentDepth + 1}
+      };
+    });
+
   }
 
 
@@ -142,6 +165,8 @@ export default function Sandbox() {
             onFileSelect={handleFileSelect}
             projectId={projectId}
             onFileCreate={onFileCreate}
+            filesMap={filesMap}
+            setFilesMap={setFilesMap}
           />
         </div>
         <div className="sandbox-right">

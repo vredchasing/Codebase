@@ -31,6 +31,20 @@ export default function FileNode({
     );
   };
 
+  function calculateLevel(nodeId, filesMap) {
+    let level = 0;
+    let current = filesMap[nodeId];
+
+    while (current && current.parent_id !== null) {
+      level++;
+      current = filesMap[current.parent_id];
+    }
+
+    return level;
+  }
+
+  const depth = filesMap[node.id]?.depth ?? 0; // ✅ use depth from filesMap
+
   const renderIndentGuides = (level) => {
     if (level <= 1) return null;
     return Array.from({ length: level - 1 }).map((_, i) => (
@@ -61,11 +75,11 @@ export default function FileNode({
           }}
         >
           <div className="file-indent">
-            {renderIndentGuides(level)}
+            {renderIndentGuides(depth)}
             <div
               className="file-content"
               onClick={() => setExpanded(!expanded)}
-              style={{ paddingLeft: `${level * 13}px` }}
+              style={{ paddingLeft: `${depth * 13}px` }}
             >
               {arrowStatus()}
               {node.name}
@@ -87,7 +101,8 @@ export default function FileNode({
                 onConfirmCreate={onConfirmCreate}
                 onCancelCreate={onCancelCreate}
                 onContextMenu={onContextMenu}
-                level={level + 1}
+                filesMap={filesMap}
+                setFilesMap={setFilesMap}
               />
             ))}
           </div>
@@ -97,8 +112,8 @@ export default function FileNode({
           <div
             className="new-node-input-container"
             style={{
-              paddingLeft: `${(level + 1) * 13}px`,
-              width: `calc(100% - ${(level + 1) * 13}px)`
+              paddingLeft: `${(depth + 1) * 13}px`,
+              width: `calc(100% - ${(depth + 1) * 13}px)`
             }}
           >
             <div
@@ -162,10 +177,10 @@ export default function FileNode({
       }}
     >
       <div className="file-indent">
-        {renderIndentGuides(level)}
+        {renderIndentGuides(depth)}
         <div
           className="file-content"
-          style={{ paddingLeft: `${level * 13}px` }}
+          style={{ paddingLeft: `${depth * 13}px` }}
         >
           <div className="icon-container">
             <img className="icon-img" src={icon} alt={node.name} />

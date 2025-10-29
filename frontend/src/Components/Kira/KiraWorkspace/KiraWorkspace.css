@@ -54,6 +54,14 @@
 
 .kira-workspace-chat-history-wrapper {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+.kira-workspace-chat-history-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
 }
 
 .kira-workspace-chat-input-wrapper {
@@ -161,4 +169,38 @@
   font-size: 0.75rem;
   color: rgba(199, 199, 199, 0.377);
   gap: 0.1rem;
+}
+
+.chat-message-wrapper {
+  display: flex;
+  margin: 4px 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(232, 232, 232, 0.929);
+  line-height: 1.8;
+}
+
+.chat-message-wrapper.user {
+  justify-content: flex-end; /* right side */
+}
+
+.chat-message-wrapper.assistant {
+  justify-content: flex-start; /* left side */
+}
+
+.chat-message-bubble {
+  max-width: 75%; /* max half of container */
+  padding: 0.25rem 12px;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+.chat-message-wrapper.user .chat-message-bubble {
+  background-color: #464646; /* user bubble color */
+  border: 1px solid #5a5a5a;
+}
+
+.chat-message-wrapper.assistant .chat-message-bubble {/* assistant bubble color */
+  border-bottom-left-radius: 0; /* optional for a bubble style */
+  max-width: 100%;
 }

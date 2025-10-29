@@ -5,7 +5,7 @@ import { SlOptions } from "react-icons/sl";
 import ContextMenu from './ContextMenu';
 import axios from 'axios';
 
-export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId }) {
+export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId, filesMap, setFilesMap }) {
   const [menu, setMenu] = useState(null);
   const [creatingNode, setCreatingNode] = useState(null);  // { parentId | null, nodeType }
   const inputRef = useRef(null);
@@ -19,6 +19,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
         payload,
         { withCredentials: true }
       );
+      console.log('Created file/folder response:', response.data);  
       return response.data;
     } catch (error) {
       console.error('Error creating file or folder:', error);
@@ -106,6 +107,8 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
                   onConfirmCreate={handleConfirmCreate}
                   onCancelCreate={handleCancelCreate}
                   onContextMenu={handleMenu}
+                  filesMap={filesMap}
+                  setFilesMap={setFilesMap}
                   level={0}
                 />
               </div>

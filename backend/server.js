@@ -6,6 +6,8 @@ import getUserRouter from './src/auth/getUser.js';
 import getUserProjectsRouter from './src/routes/projects/getUserProjects.js'
 import projectRouter from './src/routes/projects/projectRoutes.js'
 import fileOrFolderCreation from './src/routes/fileExplorerRoutes/fileExplorerRoutes.js'
+
+import agentRoutes from './src/routes/agentRoutes/agentRoutes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
@@ -27,6 +29,7 @@ app.use('/api/auth', getUserRouter);
 app.use('/api/dashboard', getUserProjectsRouter)
 app.use('/api/projects', projectRouter)
 app.use('/api/projects/files', fileOrFolderCreation)
+app.use('/api/agent', agentRoutes);
 
 console.log(process.env.DB_PASSWORD);
 
