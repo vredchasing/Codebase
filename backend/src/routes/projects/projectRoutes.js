@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from '../../../postgresdb.js';
 import { decodeToken } from '../../middleware/authMiddleware.js';
-import { getFilesForProject } from '../../services/getFilesForProject.js';
+import { buildFileTreeWithContent, getFilesForProject } from '../../services/getFilesForProject.js';
 
 const router = express.Router();
 
@@ -77,5 +77,19 @@ router.get('/get-project/:projectId', async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 });
+
+router.post('/get-file-tree-content', async (req, res) => {
+  const {data} = req.body;
+  console.log('Received data for building file tree with content:', data);
+  try{
+    const mainTreeWithContent = await buildFileTreeWithContent(data);
+    return res.json(mainTreeWithContent);
+  }
+  catch(error){
+    console.error('Error building file tree with content:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 export default router;

@@ -60,15 +60,19 @@ export default function Sandbox() {
     lastUpdated: null,
   }
 
-
-
   function updateLocalStorageUIState(updates) {
     const key = `workspaceUIState_${projectId}`;
     const value = JSON.stringify();
     localStorage.setItem(key, value);
   }
 
+  function getLocalStorageUIState() {
+    const key = `workspaceUIState_${projectId}`;
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : persistentUIState;
+  }
 
+  
 
   
   // Fetch files from the database

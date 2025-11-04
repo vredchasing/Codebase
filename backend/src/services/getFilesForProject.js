@@ -62,3 +62,39 @@ function buildFileTree(items, parentId = null) {
       children: buildFileTree(items, item.id),
     }));
 }
+
+export async function buildFileTreeWithContent(data) {
+  const result = await Promise.all(
+    data.map(async (node) => {
+      if (node.node_type === 'folder') {
+        // ensure children array exists
+        const children = node.children || [];
+        const updatedChildren = await buildFileTreeWithContent(children);
+        return {
+          ...node,
+          children: updatedChildren,
+        };
+      } else if (node.node_type === 'file') {
+        try {
+          const content = await fetchContentFromStorage(node.content_key);
+          return {
+            ...node,
+            content,
+          };
+        } catch (err) {
+          console.error('Failed to fetch content for key', node.content_key, err);
+          return {
+            ...node,
+            content: null,
+            error: err,
+          };
+        }
+      } else {
+        // unknown type: just return as-is
+        return { ...node };
+      }
+    })
+  );
+  
+  return result;
+}
