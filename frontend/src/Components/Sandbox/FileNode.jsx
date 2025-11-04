@@ -31,18 +31,6 @@ export default function FileNode({
     );
   };
 
-  function calculateLevel(nodeId, filesMap) {
-    let level = 0;
-    let current = filesMap[nodeId];
-
-    while (current && current.parent_id !== null) {
-      level++;
-      current = filesMap[current.parent_id];
-    }
-
-    return level;
-  }
-
   const depth = filesMap[node.id]?.depth ?? 0; // ✅ use depth from filesMap
 
   const renderIndentGuides = (level) => {
@@ -65,6 +53,11 @@ export default function FileNode({
 
   const icon = getIcon(node);
 
+  function handleFolderClick() {
+    setExpanded(!expanded);
+    
+  }
+
   if (node.node_type === 'folder') {
     return (
       <>
@@ -78,7 +71,7 @@ export default function FileNode({
             {renderIndentGuides(depth)}
             <div
               className="file-content"
-              onClick={() => setExpanded(!expanded)}
+              onClick={handleFolderClick}
               style={{ paddingLeft: `${depth * 13}px` }}
             >
               {arrowStatus()}

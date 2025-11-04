@@ -7,6 +7,7 @@ import EditorTabs from '../EditorTabs/EditorTabs';
 import KiraWorkspace from '../../Kira/KiraWorkspace/KiraWorkspace';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { useParams } from 'react-router-dom';
+import getLangFromExt from '../CodeEditor/getExtHelper';
 
 export default function Sandbox() {
   const { projectId } = useParams();
@@ -17,7 +18,59 @@ export default function Sandbox() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filesMap, setFilesMap] = useState({});
+  const [mainTree, setMainTree] = useState([]);
+  const [expandedFolders, setExpandedFolders] = useState([]);
+  // create trees functions
 
+  async function buildContentTree (data){
+    try {
+      const response = await axios.post(`http://localhost:3000/api/projects/get-file-tree-content`, {
+        withCredentials: true,
+        data: data,
+      });
+      if(response.data){
+        const treeDataWithContent = response.data;
+        setMainTree(treeDataWithContent);
+        console.log('Built content tree:', treeDataWithContent);
+      }
+    }
+    catch(error){
+      console.error('Error building content tree:', error);
+    }
+  }
+
+    function flattenFiles(nodes, parentId = null, level = 0, result = {}) {
+    for (const node of nodes) {
+      result[node.id] = { ...node, parent_id: parentId, depth: level };
+      if (node.children?.length) {
+        flattenFiles(node.children, node.id, level + 1, result);
+      }
+    }
+    return result;
+  }
+
+
+  // Render initial user UI states for the file explorer & editor
+
+  const persistentUIState = {
+    projectId: projectId,
+    scrollPositions: {},
+    openedTabs: [],
+    activeTab: [],
+    lastUpdated: null,
+  }
+
+
+
+  function updateLocalStorageUIState(updates) {
+    const key = `workspaceUIState_${projectId}`;
+    const value = JSON.stringify();
+    localStorage.setItem(key, value);
+  }
+
+
+
+  
   // Fetch files from the database
   useEffect(() => {
     const fetchFiles = async () => {
@@ -28,13 +81,13 @@ export default function Sandbox() {
             withCredentials: true, // if you’re using cookies for auth
           }
         );
-
         const data = response.data || []; 
-        console.log('Fetched file tree:', data);
         setFiles(data);
         let flattendMap = flattenFiles(data);
         setFilesMap(flattendMap)
-    
+        console.log('data fetched from backend:', data);
+        // call buildContentTree to populate mainTree with file contents, sets mainTree state within func
+        buildContentTree(data);
 
         if (data.length > 0) {
           // Prefer first file if possible
@@ -46,7 +99,6 @@ export default function Sandbox() {
           } else {
             initialFile = first;
           }
-
           setActiveFile(initialFile);
           setTabs([initialFile]);
           setActiveTab(initialFile?.name || null);
@@ -67,20 +119,10 @@ export default function Sandbox() {
     fetchFiles();
   }, [projectId]);
 
-  function flattenFiles(nodes, parentId = null, level = 0, result = {}) {
-    for (const node of nodes) {
-      result[node.id] = { ...node, parent_id: parentId, depth: level };
-      if (node.children?.length) {
-        flattenFiles(node.children, node.id, level + 1, result);
-      }
-    }
-    return result;
-  }
-
   // Handle file selection
   const handleFileSelect = (file) => {
     if (!file) return;
-
+    console.log('Selected file:', file);
     setActiveFile(file);
     setActiveTab(file.name);
 
@@ -106,7 +148,8 @@ export default function Sandbox() {
     });
   };
 
-// Inside Sandbox.jsx, replace your empty onFileCreate function with:
+
+// File creation
 
   function onFileCreate(newNode) {
     setFiles(prevFiles => {
@@ -144,10 +187,11 @@ export default function Sandbox() {
 
 
   // Prepare props for CodeEditor
+
   const fileData = activeFile
     ? {
         content: activeFile.content,
-        language: activeFile.language,
+        language: getLangFromExt(activeFile.name),
         name: activeFile.name,
         files,
       }
@@ -218,7 +262,9 @@ export default function Sandbox() {
               </div>
             </div>
             <div className="preview-wrapper">
-              <KiraWorkspace />
+              <div className='preview-container'>
+                <KiraWorkspace />
+              </div>
             </div>
           </div>
         </div>
