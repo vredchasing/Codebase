@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from '../../../postgresdb.js';
 import { decodeToken } from '../../middleware/authMiddleware.js';
 import { buildFileTreeWithContent, getFilesForProject } from '../../services/getFilesForProject.js';
+import { updateFileContent } from '../../services/FileExplorerServices.js';
 
 const router = express.Router();
 
@@ -111,6 +112,84 @@ router.post('/get-file-tree-content', async (req, res) => {
   } catch (error) {
     console.error('Error building file tree with content:', error);
     return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/updateFile', async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: 'Token not found' });
+
+    const decodedToken = decodeToken(token);
+    if (!decodedToken) return res.status(401).json({ message: 'Invalid token' });
+
+    const { fileName, content, fileId, projectId } = req.body;
+
+    if (!fileName && !fileId) {
+      return res.status(400).json({ message: 'File name or file ID is required' });
+    }
+
+    if (content === undefined) {
+      return res.status(400).json({ message: 'Content is required' });
+    }
+
+    let resolvedFileId = fileId;
+    let resolvedProjectId = projectId;
+
+    // If fileId not provided, find it by fileName and projectId
+    if (!resolvedFileId) {
+      if (!resolvedProjectId) {
+        return res.status(400).json({ message: 'Project ID is required when file ID is not provided' });
+      }
+
+      const findFileQuery = `
+        SELECT id, project_id 
+        FROM projects.project_node 
+        WHERE name = $1 AND project_id = $2 AND node_type = 'file'
+        LIMIT 1
+      `;
+      const fileResult = await query(findFileQuery, [fileName, resolvedProjectId]);
+      
+      if (fileResult.rows.length === 0) {
+        return res.status(404).json({ message: 'File not found' });
+      }
+
+      resolvedFileId = fileResult.rows[0].id;
+      resolvedProjectId = fileResult.rows[0].project_id;
+    }
+
+    // If projectId not provided, get it from the file
+    if (!resolvedProjectId) {
+      const fileQuery = `
+        SELECT project_id 
+        FROM projects.project_node 
+        WHERE id = $1
+      `;
+      const fileResult = await query(fileQuery, [resolvedFileId]);
+      
+      if (fileResult.rows.length === 0) {
+        return res.status(404).json({ message: 'File not found' });
+      }
+
+      resolvedProjectId = fileResult.rows[0].project_id;
+    }
+
+    // Update the file content
+    const updatedFile = await updateFileContent({
+      fileId: resolvedFileId,
+      fileName,
+      content: content || '',
+      projectId: resolvedProjectId,
+    });
+
+    return res.json({ 
+      success: true, 
+      message: 'File updated successfully',
+      file: updatedFile 
+    });
+  } catch (error) {
+    console.error('Error updating file:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

@@ -3,6 +3,7 @@
   width: 100%;
   min-height: 100vh;
   margin-top: 8vh;
+  background-color: rgb(20, 18, 11);
 }
 
 .dashboard-inner-content {
@@ -16,7 +17,6 @@
   flex-direction: column;
   width: 15%;
   height: 100vh;
-  border-right: 1.5px solid rgb(234, 234, 234);
   position: fixed;
 }
 .dashboard-nav-header {
@@ -54,7 +54,7 @@
   font-size: 0.7rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  color: rgba(0, 0, 0, 0.674);
+  color: rgba(255, 255, 255, 0.674);
 }
 
 .dashboard-support-container {
@@ -83,7 +83,7 @@
   font-weight: 700;
   margin: 0px;
   color: rgba(0, 0, 0, 0.674);
-  background-color: rgb(235, 235, 235);
+  background-color: rgba(184, 184, 184, 0.845);
   width: 1rem;
   height: 1rem;
   border-radius: 100%;
@@ -95,7 +95,7 @@
   font-size: 0.7rem;
   font-weight: 500;
   margin: 0px;
-  color: rgba(0, 0, 0, 0.674);
+  color: rgba(255, 255, 255, 0.674);
 }
 .dashboard-main-content-wrapper {
   display: flex;
@@ -123,6 +123,7 @@
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 1.7rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 /*PROJECTS*/
 
@@ -135,8 +136,8 @@
   border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgb(234, 234, 234);
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  background-color: #1b1913;
 }
 .dashboard-projects-header {
   display: flex;
@@ -144,6 +145,7 @@
   align-items: center;
   width: 100%;
   gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 .projects-header-left {
   display: flex;
@@ -165,7 +167,7 @@
 .projects-search-input {
   height: 25px;
   width: 250px;
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(53, 53, 53);
   border-radius: 0.9rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.6rem;
@@ -173,7 +175,7 @@
   outline: none;
   border: none;
   padding-left: 1.9rem;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
 }
 .projects-search-icon {
   position: absolute;
@@ -190,7 +192,7 @@
 }
 .projects-filter-container {
   display: flex;
-  border: 1px solid rgb(217, 217, 217);
+  border: 1px solid rgb(78, 78, 78);
   width: max-content;
   align-items: center;
   border-radius: 0.4rem;
@@ -204,13 +206,13 @@
   font-weight: 500;
   width: 100%;
   padding: 0.3rem 0.3rem;
-  color: rgb(58, 58, 58);
+  color: rgb(234, 234, 234);
   gap: 0.3rem;
 }
 
 .projects-filter-file-size-container{
   display: flex;
-  border: 1px solid rgb(217, 217, 217);
+  border: 1px solid rgb(78, 78, 78);
   width: max-content;
   align-items: center;
   border-radius: 0.4rem;
@@ -224,13 +226,13 @@
   font-weight: 500;
   width: 100%;
   padding: 0.3rem 0.3rem;
-  color: rgb(58, 58, 58);
+  color: rgb(234, 234, 234);
   gap: 0.3rem;
 }
 
 .projects-filter-date-modified-container {
   display: flex;
-  border: 1px solid rgb(217, 217, 217);
+  border: 1px solid rgb(78, 78, 78);
   width: max-content;
   align-items: center;
   border-radius: 0.4rem;
@@ -245,7 +247,7 @@
   font-weight: 500;
   width: 100%;
   padding: 0.3rem 0.3rem;
-  color: rgb(58, 58, 58);
+  color: rgb(234, 234, 234);
   gap: 0.3rem;
 }
 
@@ -256,12 +258,13 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.6rem;
   font-weight: 500;
-  background-color: rgb(241, 241, 241);
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   cursor: pointer;
   text-decoration: none;
-  color: black;
+  color: rgb(255, 255, 255);
+  text-wrap: nowrap;
+  border: 1px solid rgb(78, 78, 78);
 }
 
 .projects-create-button:hover {
@@ -286,8 +289,8 @@
 .dashboard-project-card {
   min-width: 200px;
   height: 120px;
-  background-color: rgb(250, 250, 250);
-  border: 1px solid rgb(220, 220, 220);
+  background-color: rgb(53, 53, 53);
+  border: 1px solid rgb(56, 56, 56);
   border-radius: 0.5rem;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -325,8 +328,8 @@
   display: flex;
   font-family: 'Inter', sans-serif;
   font-size: 0.55rem;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.482);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
 }
 .project-file-info-container {
   display: flex;
@@ -337,6 +340,7 @@
   width: 100%;
   height: 2rem;
   bottom: 0;
+  color: white;
 }
 .project-file-name {
   font-family: 'Inter', sans-serif;
@@ -371,14 +375,15 @@
   border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgb(234, 234, 234);
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  background-color: #1b1913;
 }
 .dashboard-collections-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .dashboard-collections-header h2 {
@@ -387,4 +392,20 @@
   font-size: 0.7rem;
   margin: 0px;
   padding: 1rem;
+}
+
+.dashboard-collections-content {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+}
+.no-collections-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1rem;
+  width: 100%;
 }

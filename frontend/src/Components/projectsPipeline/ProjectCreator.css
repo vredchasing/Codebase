@@ -3,6 +3,7 @@
   width: 100%;
   height: max-content;
   justify-content: center;
+  background-color: rgb(20, 18, 11);
 }
 
 .project-creator-section-inner {
@@ -28,6 +29,7 @@
   font-size: 1.3rem;
   margin: 0;
   padding-left: 3rem;
+  color: white;
 }
 .create-project-title-2{
   font-family: 'Inter', sans-serif;
@@ -35,7 +37,7 @@
   font-size: 0.75rem;
   margin: 0;
   padding-left: 3rem;
-  color: rgba(0, 0, 0, 0.527);
+  color: rgba(255, 255, 255, 0.527);
 }
 .project-form-main-wrapper {
   display: flex;
@@ -56,7 +58,7 @@
   border-radius: 100%;
   width: 2rem;
   height: 2rem;
-  background-color: rgb(230, 230, 230);
+  background-color: rgb(199, 199, 199);
 }
 .step {
   display: flex;
@@ -74,6 +76,7 @@
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 600;
+  color: white;
 }
 
 .create-project-form-container {
@@ -102,7 +105,7 @@
 .step-line {
   height: 100%;
   width: 0.21rem;
-  background-color: rgb(232, 232, 232);
+  background-color: rgb(199, 199, 199);
   position: absolute;
   left: 0.895rem;
 }
@@ -113,6 +116,7 @@
   font-family: 'Inter';
   font-size: 0.75rem;
   font-weight: 600;
+  color: white;
 }
 .custom-input-label {
   display: flex;
@@ -133,8 +137,9 @@
   height: 6vh;
   width: 100%;
   border-radius: 7px;
-  background-color: #e4e4e4;
+  background-color: rgb(59, 59, 59);
   cursor: pointer;
+  color: white;
 }
 .selected-owners-container:hover {
   outline: 1.4px solid rgb(35, 123, 255);
@@ -181,10 +186,11 @@
   width: 100%;
   border-radius: 7px;
   border: none;
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(59, 59, 59);
   outline: none;
   padding-left: 0.75rem;
   font-size: 0.75rem;
+  color: white;
 }
 
 .project-creator-create-file:hover{
@@ -226,6 +232,7 @@
   font-family: 'Inter';
   font-size: 0.75rem;
   font-weight: 600;
+  color: white;
 }
 
 
@@ -235,7 +242,7 @@
   font-family: 'Inter';
   font-size: 0.66rem;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.527);
+  color: rgba(255, 255, 255, 0.527);
   padding-top: 0.35rem;
   margin: 0px;
 }

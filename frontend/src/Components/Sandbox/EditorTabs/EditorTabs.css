@@ -12,17 +12,22 @@
   padding: 0.15rem 0.5rem;
   background-color: #212121b5;
   border-right: 1.5px solid rgba(45, 45, 45, 0.537);
-
+  border-top: 1px solid rgba(45, 45, 45, 0.537);
+  cursor: pointer;
 }
+.editor-tabs-container.active {
+  border-top: 1px solid rgb(40, 129, 255);
+}
+
 .editor-tab {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
   align-items: center;
   min-width: 90px;
-
   height: 100%;
 }
+
 .editor-tabs-icon-container {
   display: flex;
   width: 1.12vw;

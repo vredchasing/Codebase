@@ -20,25 +20,24 @@ export default function FileNode({
   uiState,
   setUIState,
   updateLocalStorageUIState,
-  level = 0
+  level = 0,
+  isLastChild = false
 }) {
-  // remove local expanded state (we’ll derive it from uiState)
+  // remove local expanded state (we'll derive it from uiState)
   // const [expanded, setExpanded] = useState(false);  
 
   const [inputValue, setInputValue] = useState('');
   const [inputIcon, setInputIcon] = useState(extensionIconMap.default);
 
   const depth = filesMap[node.id]?.depth ?? 0;
+  const nodeIsLastChild = filesMap[node.id]?.isLastChild ?? isLastChild;
 
-  const renderIndentGuides = (level) => {
-    if (level <= 1) return null;
-    return Array.from({ length: level - 1 }).map((_, i) => (
-      <span
-        key={i}
-        className="indent-guide"
-        style={{ left: `${(i + 1) * 13}px` }}
-      />
-    ));
+  // No longer rendering individual indent guides - lines are rendered as continuous segments
+  // This function is kept for potential horizontal connector lines if needed
+  const renderIndentGuides = (level, isLast) => {
+    // Lines are now rendered as continuous segments in FileExplorer
+    // This can be used for horizontal connectors if needed
+    return null;
   };
 
   function handleInputIcon(e) {
@@ -102,7 +101,7 @@ export default function FileNode({
           }}
         >
           <div className="file-indent">
-            {renderIndentGuides(depth)}
+            {renderIndentGuides(depth, nodeIsLastChild)}
             <div
               className="file-content"
               onClick={handleFolderClick}
@@ -116,25 +115,29 @@ export default function FileNode({
 
         {isExpanded && (
           <div className="folder-contents">
-            {node.children && node.children.map(child => (
-              <FileNode
-                key={child.id}
-                node={child}
-                activeFile={activeFile}
-                onFileSelect={onFileSelect}
-                onStartCreate={onStartCreate}
-                creatingNode={creatingNode}
-                inputRef={inputRef}
-                onConfirmCreate={onConfirmCreate}
-                onCancelCreate={onCancelCreate}
-                onContextMenu={onContextMenu}
-                filesMap={filesMap}
-                setFilesMap={setFilesMap}
-                uiState={uiState}
-                setUIState={setUIState}
-                updateLocalStorageUIState={updateLocalStorageUIState}
-              />
-            ))}
+            {node.children && node.children.map((child, index) => {
+              const childIsLast = index === node.children.length - 1;
+              return (
+                <FileNode
+                  key={child.id}
+                  node={child}
+                  activeFile={activeFile}
+                  onFileSelect={onFileSelect}
+                  onStartCreate={onStartCreate}
+                  creatingNode={creatingNode}
+                  inputRef={inputRef}
+                  onConfirmCreate={onConfirmCreate}
+                  onCancelCreate={onCancelCreate}
+                  onContextMenu={onContextMenu}
+                  filesMap={filesMap}
+                  setFilesMap={setFilesMap}
+                  uiState={uiState}
+                  setUIState={setUIState}
+                  updateLocalStorageUIState={updateLocalStorageUIState}
+                  isLastChild={childIsLast}
+                />
+              );
+            })}
           </div>
         )}
 
@@ -208,7 +211,7 @@ export default function FileNode({
       }}
     >
       <div className="file-indent">
-        {renderIndentGuides(depth)}
+        {renderIndentGuides(depth, nodeIsLastChild)}
         <div
           className="file-content"
           style={{ paddingLeft: `${depth * 13}px` }}

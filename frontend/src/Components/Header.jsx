@@ -28,8 +28,7 @@ function Header() {
     >
       <div className="header-content">
         <div className="custom-logo-container">
-          <img className="square" src="/public/images/square-logo.svg" alt="Logo" />
-          <p className="logo-c">C</p>
+          <p className="logo">CODEBASE</p>
         </div>
 
         <div className={`${scrollDirection === 'down' ? 'header-hidden' : 'header-visible'}`}>

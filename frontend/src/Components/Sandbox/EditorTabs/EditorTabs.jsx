@@ -18,10 +18,7 @@ export default function EditorTabs({
   const activeTabName = uiState.activeTab;
 
   const handleTabClick = useCallback((tab) => {
-    // Only handle click if we have a valid tab (not a folder)
-    if (!tab || tab.node_type === 'folder') {
-      return;
-    }
+    if (!tab) return;
 
     // If parent provides onTabClick callback, use it
     if (onTabClick) {
@@ -93,7 +90,7 @@ export default function EditorTabs({
         const isActive = tab.name === activeTabName;
 
         return (
-          <div key={tab.name} className="editor-tabs-container">
+          <div key={tab.name} className={`editor-tabs-container ${isActive ? 'active' : ''}`}>
             <div
               className={`editor-tab ${isActive ? 'active' : ''}`}
               onClick={() => handleTabClick(tab)}

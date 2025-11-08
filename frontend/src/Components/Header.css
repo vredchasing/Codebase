@@ -54,29 +54,18 @@
 .custom-logo-container {
   display: flex;
   height: 55px;
-  width: 100px;
+  width: 13%;
   align-items: center;
   justify-content: center;
   opacity: 0.83;
 }
-.square {
-  display: flex;
-  width: 35px;
-  position: absolute;
-}
 
-.logo-c {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  font-family: "Karla", sans-serif;
+.logo {
+  font-size: 1.5rem;
   font-weight: 700;
-  font-size: 1.6rem;
-  margin: 0px;
-  padding: 0px;
-  transform: scaleY(0.9);
-  color: rgb(0, 0, 0);
+  letter-spacing: -0.1px;
+  margin: 0.75rem 0rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 .circle {
   width: 7px;
@@ -84,7 +73,7 @@
 }
 
 .header-link {
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   text-decoration: none;
   font-family: "Inter", sans-serif;
   font-size: 0.8rem;
@@ -117,7 +106,8 @@
   text-wrap: nowrap;
   padding: 6px 10px;
   border-radius: 5px;
-  background-color: #000000;
+  background-color: #1c1c1c;
+  font-weight: 500;
 }
 
 .header-link-try-for-free:hover{

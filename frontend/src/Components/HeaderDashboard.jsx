@@ -20,7 +20,7 @@ function HeaderDashboard (){
         <div className="header-dashboard-avatar-container">
           <img className="header-dashboard-avatar" src="/public/images/background-images/background2.webp"></img>
         </div>
-        <SlOptions></SlOptions>
+        <SlOptions color='white'></SlOptions>
       </div>
     </header>
   )

@@ -67,3 +67,51 @@ export async function createFileOrFolder({ name, parentId, projectId, nodeType }
   console.log('Inserted row:', res.rows[0]);
   return res.rows[0];
 }
+
+// Update file content in R2 and database
+export async function updateFileContent({ fileId, fileName, content, projectId }) {
+  try {
+    // First, get the file's content_key from the database
+    const fileQuery = `
+      SELECT content_key, name, project_id 
+      FROM projects.project_node 
+      WHERE id = $1 AND project_id = $2 AND node_type = 'file'
+    `;
+    const fileResult = await query(fileQuery, [fileId, projectId]);
+    
+    if (fileResult.rows.length === 0) {
+      throw new Error('File not found or is not a file');
+    }
+
+    const file = fileResult.rows[0];
+    const contentKey = file.content_key;
+
+    if (!contentKey || contentKey === '') {
+      throw new Error('File does not have a content key');
+    }
+
+    // Update content in R2
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: 'codebase-file-content',
+        Key: contentKey,
+        Body: content || '', // Ensure content is a string
+      })
+    );
+
+    // Update modified_at timestamp in database
+    const updateQuery = `
+      UPDATE projects.project_node 
+      SET modified_at = NOW() 
+      WHERE id = $1
+      RETURNING *
+    `;
+    const updateResult = await query(updateQuery, [fileId]);
+
+    console.log('Updated file content in R2 and database:', updateResult.rows[0]);
+    return updateResult.rows[0];
+  } catch (error) {
+    console.error('Error updating file content:', error);
+    throw error;
+  }
+}

@@ -82,14 +82,25 @@
 
 .editor-path-wrapper {
   background-color: #1e1e1e;
+  border-bottom: 1px solid rgba(45, 45, 45, 0.537);
 }
 .editor-path {
   display: flex;
-  color: white;
+  align-items: center;
+  color: #888;
   font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
-  height: 4vh;
+  height: 28px;
   width: 100%;
+  padding: 0 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.editor-path span {
+  color: #a3a3a3;
+  font-size: 0.7rem;;
+  font-weight: 500;
 }
 
 
@@ -159,4 +170,5 @@
   font-size: 8vh;
   color: #1e1e1e9a;
   text-shadow: 0px 0.5px 1px rgb(53, 53, 53);
+  pointer-events: none;
 }

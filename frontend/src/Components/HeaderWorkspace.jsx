@@ -5,6 +5,9 @@ import './HeaderWorkspace.css'
 import { LiaLongArrowAltLeftSolid } from "react-icons/lia";
 import { LiaLongArrowAltRightSolid} from "react-icons/lia"
 import { SlOptions } from "react-icons/sl";
+import { MdFullscreen } from "react-icons/md";
+import { MdFullscreenExit } from "react-icons/md";
+
 
 
 
@@ -28,6 +31,7 @@ function HeaderWorkspace (){
           </div>
         </div>
         <div className="workspace-header-right-wrapper">
+
           <div className="workspace-header-right-inner">
             <div className="workspace-header-avatar-container">
               <img className="workspace-header-avatar" src="/public/images/background-images/background2.webp"></img>

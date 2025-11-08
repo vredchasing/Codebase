@@ -7,11 +7,19 @@ import "./Dashboard.css";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosFolderOpen } from "react-icons/io";
 import { FaRegFile } from "react-icons/fa6";
-import { IoSearchSharp } from "react-icons/io5";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import axios from "axios";
 import DashboardProjectsDefault from "./DashboardProjectsDefault";
 import ProjectCard from "./ProjectCard";
+
+import { MdSpaceDashboard } from "react-icons/md";
+import { MdOutlineBookmark } from "react-icons/md";
+import { AiOutlineTeam } from "react-icons/ai";
+import { PiFileFill } from "react-icons/pi";
+import { IoSearchSharp } from "react-icons/io5";
+
+
+
 
 
 
@@ -41,6 +49,23 @@ function Dashboard(){
     fetchProjects();
   }, []);
 
+  const [collections, setCollections] = useState([]);
+
+  useEffect(() => {
+    async function fetchCollections() {
+      try{
+        const response = await axios.get("http://localhost:3000/api/collections/get-user-collections", {
+          withCredentials: true,
+        });
+        setCollections(response.data);
+      }
+      catch(err){
+        console.error("Error fetching collections:", err);
+      }
+    }
+  }, []);
+  
+
   return (
     <section className="dashboard-wrapper">
       <div className="dashboard-inner-content">
@@ -49,11 +74,11 @@ function Dashboard(){
           </div>
           <div className="dashboard-options-wrapper">
             <div className="dashboard-options-inner-wrapper">
-              <span className="dashboard-option">Dashboard</span>
-              <span className="dashboard-option">Files</span>
-              <span className="dashboard-option">Collections</span>
-              <span className="dashboard-option">Explore</span>
-              <span className="dashboard-option">Teams</span>
+              <span className="dashboard-option"><MdSpaceDashboard size={15}></MdSpaceDashboard>Dashboard</span>
+              <span className="dashboard-option"><PiFileFill size={15}></PiFileFill>Files</span>
+              <span className="dashboard-option"><MdOutlineBookmark size={15}></MdOutlineBookmark>Collections</span>
+              <span className="dashboard-option"><IoSearchSharp size={15}></IoSearchSharp>Explore</span>
+              <span className="dashboard-option"><AiOutlineTeam size={15}></AiOutlineTeam>Teams</span>
             </div>
             <div className="dashboard-support-container">
               <div className="dashboard-support-container-inner">
@@ -112,6 +137,17 @@ function Dashboard(){
               <div className="dashboard-collections-header">
                 <h2 className="dashboard-collections-title">Your Collections</h2>
               </div> 
+              <div className="dashboard-collections-content">
+                  {collections.length > 0 ? (
+                    userProjects.map(project => (
+                      <ProjectCard key={project.id} data={project}></ProjectCard>
+                    ))
+                  ) : (
+                    <div className="no-collections-wrapper">
+                      <p className="no-collections-text"><MdOutlineBookmark size={60} color="gray"></MdOutlineBookmark></p>
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
         </div>

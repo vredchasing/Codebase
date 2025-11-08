@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import Editor from '@monaco-editor/react';
 import './Sandbox.css';
@@ -8,6 +8,7 @@ import KiraWorkspace from '../../Kira/KiraWorkspace/KiraWorkspace';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { useParams } from 'react-router-dom';
 import getLangFromExt from '../CodeEditor/getExtHelper';
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 export default function Sandbox() {
   const { projectId } = useParams();
@@ -22,7 +23,8 @@ export default function Sandbox() {
   const [expandedFolders, setExpandedFolders] = useState([]);
 
   // --- Helper function to find a file in tree by name ---
-  function findFileInTree(tree, fileName) {
+  // Memoized to avoid recreation on every render
+  const findFileInTree = useCallback((tree, fileName) => {
     for (const node of tree) {
       if (node.name === fileName && node.node_type === 'file') {
         return node;
@@ -33,7 +35,33 @@ export default function Sandbox() {
       }
     }
     return null;
-  }
+  }, []);
+
+  // Helper to strip content from file objects for localStorage (only store metadata)
+  const stripContentFromTabs = useCallback((tabs) => {
+    return tabs.map(tab => {
+      const { content, ...tabWithoutContent } = tab;
+      return tabWithoutContent;
+    });
+  }, []);
+
+  // Helper to restore tabs with content from files/mainTree state
+  const restoreTabsWithContent = useCallback((tabsMetadata) => {
+    return tabsMetadata.map(tabMeta => {
+      // Try to find file with content from files state
+      const fileWithContent = findFileInTree(files, tabMeta.name);
+      if (fileWithContent && fileWithContent.content !== undefined) {
+        return fileWithContent;
+      }
+      // Fallback to mainTree
+      const fileFromMainTree = findFileInTree(mainTree, tabMeta.name);
+      if (fileFromMainTree && fileFromMainTree.content !== undefined) {
+        return fileFromMainTree;
+      }
+      // Return metadata only if content not found (will be empty)
+      return { ...tabMeta, content: '' };
+    });
+  }, [files, mainTree, findFileInTree]);
 
   // --- Build Tree from Backend ---
   async function buildContentTree(data) {
@@ -70,8 +98,15 @@ export default function Sandbox() {
   }
 
   function flattenFiles(nodes, parentId = null, level = 0, result = {}) {
-    for (const node of nodes) {
-      result[node.id] = { ...node, parent_id: parentId, depth: level };
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      const isLastChild = i === nodes.length - 1;
+      result[node.id] = { 
+        ...node, 
+        parent_id: parentId, 
+        depth: level,
+        isLastChild 
+      };
       if (node.children?.length) {
         flattenFiles(node.children, node.id, level + 1, result);
       }
@@ -158,31 +193,9 @@ export default function Sandbox() {
         // Build content tree
         buildContentTree(data);
 
-        // Only restore tabs if they exist in uiState (from previous session)
-        // Don't auto-load any files - user must explicitly click to open files
-        if (uiState.openedTabs && uiState.openedTabs.length > 0) {
-          // Restore from uiState (user had tabs open in previous session)
-          const restoredTabs = uiState.openedTabs.filter(tab => tab && tab.node_type === 'file');
-          const restoredActiveTab = uiState.activeTab;
-          setTabs(restoredTabs);
-          if (restoredActiveTab) {
-            const activeFileObj = restoredTabs.find(t => t.name === restoredActiveTab);
-            if (activeFileObj) {
-              setActiveFile(activeFileObj);
-              setActiveTab(restoredActiveTab);
-            } else if (restoredTabs.length > 0) {
-              // If active tab was removed, set the last tab as active
-              const lastTab = restoredTabs[restoredTabs.length - 1];
-              setActiveFile(lastTab);
-              setActiveTab(lastTab.name);
-            }
-          }
-        } else {
-          // No tabs in previous session - start with empty state
-          setActiveFile(null);
-          setTabs([]);
-          setActiveTab(null);
-        }
+        // Note: Tab restoration with content happens in the useEffect hook
+        // after files and mainTree are loaded (see useEffect at line 203)
+        // This ensures content is fetched from backend/R2, not stale localStorage
       } catch (err) {
         console.error('Error fetching files:', err);
         setError(err.message || 'Unknown error');
@@ -231,12 +244,15 @@ export default function Sandbox() {
       }
       
       // Filter out any folders that might have been added incorrectly
-      const validTabs = uiState.openedTabs.filter(tab => tab && tab.node_type === 'file');
+      const tabsMetadata = uiState.openedTabs.filter(tab => tab && tab.node_type === 'file');
+      
+      // Restore tabs with content from files/mainTree (localStorage only has metadata)
+      const validTabs = restoreTabsWithContent(tabsMetadata);
       
       // If folders were filtered out, update the state (but only once per unique state)
-      if (validTabs.length !== uiState.openedTabs.length) {
-        updateLocalStorageUIState({ openedTabs: validTabs });
-        lastProcessedTabsRef.current = JSON.stringify(validTabs.map(t => t?.name));
+      if (tabsMetadata.length !== uiState.openedTabs.length) {
+        updateLocalStorageUIState({ openedTabs: tabsMetadata });
+        lastProcessedTabsRef.current = JSON.stringify(tabsMetadata.map(t => t?.name));
         lastProcessedActiveTabRef.current = currentActiveTab;
         return; // Return early - the update will trigger this effect again with new state
       }
@@ -299,8 +315,9 @@ export default function Sandbox() {
   }, [uiState.openedTabs, uiState.activeTab, files.length]);
 
   // --- File selection ---
-  const handleFileSelect = (file) => {
-    if (!file || file.node_type === 'folder') return; // Don't open folders as tabs
+  // Memoized to prevent recreation on every render
+  const handleFileSelect = useCallback((file) => {
+    if (!file) return;
     setActiveFile(file);
     setActiveTab(file.name);
 
@@ -309,28 +326,56 @@ export default function Sandbox() {
     if (!exists) {
       const updatedTabs = [...currentOpenedTabs, file];
       setTabs(updatedTabs);
-      updateLocalStorageUIState({ openedTabs: updatedTabs, activeTab: file.name });
+      // Store only metadata in localStorage (no content)
+      updateLocalStorageUIState({ 
+        openedTabs: stripContentFromTabs(updatedTabs), 
+        activeTab: file.name 
+      });
     } else {
       updateLocalStorageUIState({ activeTab: file.name });
     }
-  };
+  }, [uiState.openedTabs, updateLocalStorageUIState, stripContentFromTabs]);
 
   // --- Update file content ---
-  const updateFileContent = (tree, targetName, newContent) =>
-    tree.map((node) => {
-      if (node.node_type === 'file' && node.name === targetName) {
-        return { ...node, content: newContent };
-      }
-      if (node.node_type === 'folder') {
-        return {
-          ...node,
-          children: updateFileContent(node.children || [], targetName, newContent),
-        };
-      }
-      return node;
+  // Memoized to prevent recreation on every render
+  // Note: setFiles, setMainTree, setTabs, setUIState are stable from useState, so safe to omit from deps
+  const updateFileContent = useCallback((fileId, newContent) => {
+    // Helper to update a file in a tree structure
+    const updateFileInTree = (nodes) => {
+      return nodes.map((node) => {
+        if (node.node_type === 'file' && node.id === fileId) {
+          return { ...node, content: newContent };
+        }
+        if (node.node_type === 'folder' && node.children) {
+          return {
+            ...node,
+            children: updateFileInTree(node.children),
+          };
+        }
+        return node;
+      });
+    };
+
+    // Update files state
+    setFiles((prevFiles) => updateFileInTree(prevFiles));
+
+    // Update mainTree state
+    setMainTree((prevTree) => updateFileInTree(prevTree));
+
+    // Update tabs if the file is open in a tab
+    setTabs((prevTabs) => {
+      const updatedTabs = prevTabs.map((tab) =>
+        tab.id === fileId ? { ...tab, content: newContent } : tab
+      );
+      return updatedTabs;
     });
 
-  // --- File creation ---
+    // Note: We don't update localStorage with content - only metadata is stored
+    // Content is fetched from backend/R2 when needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   function onFileCreate(newNode) {
     setFiles((prevFiles) => {
       const insertNode = (nodes) =>
@@ -364,8 +409,34 @@ export default function Sandbox() {
     });
   }
 
+  // Build file path from root to current file (VS Code style)
+  // Memoized based on activeFile and filesMap
+  const getFilePath = useCallback((file) => {
+    if (!file || !filesMap[file.id]) return [];
+    
+    const pathParts = [];
+    let currentId = file.id;
+    
+    // Traverse up the parent chain
+    while (currentId && filesMap[currentId]) {
+      const node = filesMap[currentId];
+      // Skip root folder (usually has project name, parent_id is null)
+      if (node.parent_id === null) {
+        break; // Stop at root
+      }
+      pathParts.unshift(node.name); // Add to beginning of array
+      currentId = node.parent_id;
+    }
+    
+    // Add the filename at the end
+    pathParts.push(file.name);
+    
+    return pathParts;
+  }, [filesMap]);
+
   // Get file data with content - ensure content is loaded
-  const getFileData = () => {
+  // Memoized to avoid recalculation on every render
+  const fileData = useMemo(() => {
     if (!activeFile) return null;
     
     // Try to get content from activeFile first
@@ -388,13 +459,18 @@ export default function Sandbox() {
       content,
       language: getLangFromExt(activeFile.name),
       name: activeFile.name,
+      id: activeFile.id,
+      projectId: projectId,
       files,
     };
-  };
+  }, [activeFile, mainTree, projectId, files, findFileInTree]);
 
-  const fileData = getFileData();
-
-  const editorFunctions = { setFiles, updateFileContent, setActiveFile };
+  // Memoize editorFunctions to prevent unnecessary re-renders of CodeEditor
+  const editorFunctions = useMemo(() => ({
+    setFiles,
+    updateFileContent,
+    setActiveFile
+  }), [setFiles, updateFileContent, setActiveFile]);
 
   return (
     <section className="sandbox-wrapper">
@@ -422,7 +498,7 @@ export default function Sandbox() {
                     tabs={tabs}
                     activeTab={activeTab}
                     onTabClick={(file) => {
-                      if (!file || file.node_type === 'folder') return; // Don't open folders
+                      if (!file) return;
                       setActiveTab(file.name);
                       setActiveFile(file);
                       
@@ -432,8 +508,9 @@ export default function Sandbox() {
                       if (!exists) {
                         const updatedTabs = [...currentOpenedTabs, file];
                         setTabs(updatedTabs);
+                        // Store only metadata in localStorage (no content)
                         updateLocalStorageUIState({ 
-                          openedTabs: updatedTabs, 
+                          openedTabs: stripContentFromTabs(updatedTabs), 
                           activeTab: file.name 
                         });
                       } else {
@@ -471,8 +548,9 @@ export default function Sandbox() {
                       
                       setActiveFile(next);
                       setActiveTab(nextActiveTab);
+                      // Store only metadata in localStorage (no content)
                       updateLocalStorageUIState({
-                        openedTabs: newTabs,
+                        openedTabs: stripContentFromTabs(newTabs),
                         activeTab: nextActiveTab,
                       });
                     }}
@@ -482,6 +560,27 @@ export default function Sandbox() {
                   />
                 </div>
               </div>
+              {useMemo(() => {
+                if (!activeFile) return null;
+                const filePath = getFilePath(activeFile);
+                return (
+                  <div className="editor-path-wrapper">
+                    <div className="editor-path">
+                      {filePath.map((part, index) => (
+                        <React.Fragment key={index}>
+                          <span>{part}</span>
+                          {index < filePath.length - 1 && (
+                            <MdKeyboardArrowRight 
+                              size={14} 
+                              style={{ margin: '0 0.25rem', color: '#b0b0b0ff' }} 
+                            />
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }, [activeFile, getFilePath])}
               <div className="editor-wrapper">
                 {loading ? (
                   <div>Loading...</div>

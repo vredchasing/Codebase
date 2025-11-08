@@ -209,6 +209,7 @@
   font-size: 0.75rem;
   color: rgba(232, 232, 232, 0.929);
   line-height: 1.8;
+  text-shadow: #323232 0px 0px 2px;
 }
 
 .chat-message-wrapper.user {

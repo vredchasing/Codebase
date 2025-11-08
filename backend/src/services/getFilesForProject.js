@@ -1,4 +1,39 @@
 import { query } from '../../postgresdb.js';
+import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// R2 client for fetching and updating file content
+const r2 = new S3Client({
+  region: 'auto',
+  endpoint: `https://afb2329febfba04cd607548195f7b518.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+  },
+});
+
+// Fetch content from R2 storage
+export async function fetchContentFromStorage(contentKey) {
+  if (!contentKey || contentKey === '') {
+    return '';
+  }
+
+  try {
+    const command = new GetObjectCommand({
+      Bucket: 'codebase-file-content',
+      Key: contentKey,
+    });
+
+    const response = await r2.send(command);
+    const content = await response.Body.transformToString();
+    return content;
+  } catch (error) {
+    console.error('Error fetching content from R2:', error);
+    throw error;
+  }
+}
 
 export async function getFilesForProject(projectId) {
   const { rows } = await query(
