@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './FileExplorer/FileExplorer.css';
 import { MdKeyboardArrowRight, MdKeyboardArrowDown } from "react-icons/md";
 import getIcon from './ExplorerIcons/iconHelperFuncs';
@@ -17,21 +17,18 @@ export default function FileNode({
   onContextMenu,
   filesMap,
   setFilesMap,
+  uiState,
+  setUIState,
+  updateLocalStorageUIState,
   level = 0
 }) {
-  const [expanded, setExpanded] = useState(false);
+  // remove local expanded state (we’ll derive it from uiState)
+  // const [expanded, setExpanded] = useState(false);  
+
   const [inputValue, setInputValue] = useState('');
   const [inputIcon, setInputIcon] = useState(extensionIconMap.default);
 
-  const arrowStatus = () => {
-    return expanded ? (
-      <MdKeyboardArrowDown size={18} />
-    ) : (
-      <MdKeyboardArrowRight size={18} />
-    );
-  };
-
-  const depth = filesMap[node.id]?.depth ?? 0; // ✅ use depth from filesMap
+  const depth = filesMap[node.id]?.depth ?? 0;
 
   const renderIndentGuides = (level) => {
     if (level <= 1) return null;
@@ -53,10 +50,47 @@ export default function FileNode({
 
   const icon = getIcon(node);
 
-  function handleFolderClick() {
-    setExpanded(!expanded);
-    
-  }
+  // Derive expanded status from UI state
+  const isExpanded = uiState.expandedFolders
+    ? uiState.expandedFolders.includes(node.id)
+    : false;
+
+  const arrowStatus = () => {
+    return isExpanded ? (
+      <MdKeyboardArrowDown size={18} />
+    ) : (
+      <MdKeyboardArrowRight size={18} />
+    );
+  };
+
+  // Define the click handler for folder toggling
+  const handleFolderClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const folderId = node.id;
+      const currentlyExpanded = uiState.expandedFolders ?? [];
+
+      let newExpanded;
+      if (currentlyExpanded.includes(folderId)) {
+        // folder already expanded → collapse it (remove from list)
+        newExpanded = currentlyExpanded.filter(id => id !== folderId);
+      } else {
+        // folder not expanded → expand it (add to list)
+        newExpanded = [...currentlyExpanded, folderId];
+      }
+
+      // Update UI state
+      setUIState({
+        ...uiState,
+        expandedFolders: newExpanded
+      });
+      // Optionally persist
+      if (updateLocalStorageUIState) {
+        updateLocalStorageUIState({ expandedFolders: newExpanded });
+      }
+    },
+    [node.id, uiState, setUIState, updateLocalStorageUIState]
+  );
 
   if (node.node_type === 'folder') {
     return (
@@ -72,7 +106,7 @@ export default function FileNode({
             <div
               className="file-content"
               onClick={handleFolderClick}
-              style={{ paddingLeft: `${depth * 13}px` }}
+              style={{ paddingLeft: `${depth * 13}px`, cursor: 'pointer' }}
             >
               {arrowStatus()}
               {node.name}
@@ -80,7 +114,7 @@ export default function FileNode({
           </div>
         </div>
 
-        {expanded && (
+        {isExpanded && (
           <div className="folder-contents">
             {node.children && node.children.map(child => (
               <FileNode
@@ -96,6 +130,9 @@ export default function FileNode({
                 onContextMenu={onContextMenu}
                 filesMap={filesMap}
                 setFilesMap={setFilesMap}
+                uiState={uiState}
+                setUIState={setUIState}
+                updateLocalStorageUIState={updateLocalStorageUIState}
               />
             ))}
           </div>
@@ -159,6 +196,7 @@ export default function FileNode({
     );
   }
 
+  // non-folder (file) branch
   return (
     <div
       className={`file-label-container ${

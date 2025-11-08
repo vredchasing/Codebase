@@ -40,7 +40,6 @@ function KiraWorkspace() {
 
         aiMessage += decoder.decode(value);
         setMessages((prev) => {
-          // update last message in place
           const updated = [...prev];
           updated[updated.length - 1].content = aiMessage;
           return updated;
@@ -56,6 +55,8 @@ function KiraWorkspace() {
       setLoading(false);
     }
   };
+
+  const isEmpty = messages.length === 0;
 
   return (
     <section className="kira-workspace-wrapper">
@@ -75,9 +76,9 @@ function KiraWorkspace() {
         </div>
       </div>
 
-      <div className="kira-workspace-inner">
+      <div className={`kira-workspace-chat-history-main-wrapper ${isEmpty ? "collapsed" : "expanded"}`}>
         <div className="kira-workspace-chat-history-wrapper">
-          <div className='kira-workspace-chat-history-container'>
+          <div className="kira-workspace-chat-history-container">
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -85,44 +86,46 @@ function KiraWorkspace() {
               >
                 <div className="chat-message-bubble">
                   {msg.content}
-                  {loading && <div className="chat-message loading">Thinking...</div>}
+                  {loading && msg.role === "assistant" && i === messages.length - 1 && (
+                    <div className="chat-message loading">Thinking...</div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        <form className="kira-workspace-chat-input-wrapper" onSubmit={handleSend}>
-          <div className="kira-workspace-chat-input-inner">
-            <div className="kira-workspace-chat-top">
-              <div className="kira-workspace-chat-top-inner">
-                <div className="add-context-container">
-                  <span className="add-context-button">@</span>
-                </div>
+      <div className="kira-workspace-chat-input-wrapper">
+        <form className="kira-workspace-chat-input-inner" onSubmit={handleSend}>
+          <div className="kira-workspace-chat-top">
+            <div className="kira-workspace-chat-top-inner">
+              <div className="add-context-container">
+                <span className="add-context-button">@</span>
               </div>
             </div>
+          </div>
 
-            <input
-              className="kira-workspace-chat-input"
-              placeholder="Plan, search, build anything"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
+          <input
+            className="kira-workspace-chat-input"
+            placeholder="Plan, search, build anything"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
 
-            <div className="kira-workspace-chat-bottom">
-              <div className="kira-workspace-chat-bottom-inner">
-                <div className="current-mode-container">
-                  <span className="current-mode">
-                    <RiClaudeFill /> Agent
-                    <MdOutlineKeyboardArrowDown size={14} />
+          <div className="kira-workspace-chat-bottom">
+            <div className="kira-workspace-chat-bottom-inner">
+              <div className="current-mode-container">
+                <span className="current-mode">
+                  <RiClaudeFill /> Agent
+                  <MdOutlineKeyboardArrowDown size={14} />
+                </span>
+              </div>
+              <div className="kira-workspace-chat-bottom-right">
+                <div className="upload-photo-container">
+                  <span>
+                    <BsCardImage color="gray" />
                   </span>
-                </div>
-                <div className="kira-workspace-chat-bottom-right">
-                  <div className="upload-photo-container">
-                    <span>
-                      <BsCardImage color="gray" />
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>

@@ -8,33 +8,39 @@ const router = express.Router();
 router.post('/create-project', async (req, res) => {
   try {
     const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: 'Token not found' });
+    if (!token) {
+      return res.status(401).json({ message: 'Token not found' });
+    }
 
     const decodedToken = decodeToken(token);
-    if (!decodedToken) return res.status(401).json({ message: 'Invalid token' });
+    if (!decodedToken) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
 
     const userId = decodedToken.user.id;
-    const { name, description, privacy } = req.body;
+    const { name, description = '', privacy = false } = req.body;
 
-    if (!name) return res.status(400).json({ message: 'Project name is required' });
+    if (!name.trim()) {
+      return res.status(400).json({ message: 'Project name is required' });
+    }
 
     // Step 1: Create project
     const projectResult = await query(
       `INSERT INTO projects.project (owner_user_id, name, description, privacy, parent_id)
        VALUES ($1, $2, $3, $4, NULL)
        RETURNING *;`,
-      [userId, name, description || '', privacy || false]
+      [userId, name, description, privacy]
     );
     const newProject = projectResult.rows[0];
 
-    // Step 2: Add user-project relation
+    // Step 2: Link user to project as owner
     await query(
       `INSERT INTO projects.project_users (user_id, project_id, role)
        VALUES ($1, $2, 'owner');`,
       [userId, newProject.id]
     );
 
-    // Step 3: Create root node (folder)
+    // Step 3: Create the root folder node for the project
     const rootContentKey = `root-${newProject.id}-${Date.now()}`;
     const rootNodeResult = await query(
       `INSERT INTO projects.project_node (name, parent_id, project_id, content_key, node_type)
@@ -44,21 +50,39 @@ router.post('/create-project', async (req, res) => {
     );
     const rootNode = rootNodeResult.rows[0];
 
-    // Step 4: (Optional) Link root node to project table
-    // await query(
-    //   `UPDATE projects.project SET root_node_id = $1 WHERE id = $2`,
-    //   [rootNode.id, newProject.id]
-    // );
+    // Step 4: Create default UI state entry
+    const now = new Date().toISOString();
+    const defaultUIState = {
+      projectId: newProject.id,
+      scrollPositions: {},
+      openedFolders: [],
+      openedTabs: [],
+      activeFile: null,
+      layout: 'default',
+      lastUpdated: now
+    };
 
+    const uiStateResult = await query(
+      `INSERT INTO projects.workspace_ui_state (project_id, user_id, ui_state, last_updated)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *;`,
+      [newProject.id, userId, JSON.stringify(defaultUIState), now]
+    );
+    const projectUI = uiStateResult.rows[0];
+
+    // Step 5: Return all created/linked data
     return res.status(201).json({
       project: newProject,
       rootNode,
+      uiState: projectUI
     });
+
   } catch (error) {
     console.error('Error creating project:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 router.get('/get-project/:projectId', async (req, res) => {
   try {
@@ -79,17 +103,15 @@ router.get('/get-project/:projectId', async (req, res) => {
 });
 
 router.post('/get-file-tree-content', async (req, res) => {
-  const {data} = req.body;
+  const { data } = req.body;
   console.log('Received data for building file tree with content:', data);
-  try{
+  try {
     const mainTreeWithContent = await buildFileTreeWithContent(data);
     return res.json(mainTreeWithContent);
-  }
-  catch(error){
+  } catch (error) {
     console.error('Error building file tree with content:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
-
 
 export default router;

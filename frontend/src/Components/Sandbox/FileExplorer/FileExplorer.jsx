@@ -5,7 +5,7 @@ import { SlOptions } from "react-icons/sl";
 import ContextMenu from './ContextMenu';
 import axios from 'axios';
 
-export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId, filesMap, setFilesMap }) {
+export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId, filesMap, setFilesMap, uiState,setUIState, updateLocalStorageUIState }) {
   const [menu, setMenu] = useState(null);
   const [creatingNode, setCreatingNode] = useState(null);  // { parentId | null, nodeType }
   const inputRef = useRef(null);
@@ -109,7 +109,9 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
                   onContextMenu={handleMenu}
                   filesMap={filesMap}
                   setFilesMap={setFilesMap}
-                  level={0}
+                  uiState={uiState}
+                  setUIState={setUIState}
+                  updateLocalStorageUIState={updateLocalStorageUIState}
                 />
               </div>
             ))}
