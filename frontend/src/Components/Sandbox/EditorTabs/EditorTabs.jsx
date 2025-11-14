@@ -85,33 +85,35 @@ export default function EditorTabs({
   const validTabs = openedTabs.filter(tab => tab && tab.node_type === 'file');
 
   return (
-    <div className="editor-tabs-wrapper">
-      {validTabs.map(tab => {
-        const isActive = tab.name === activeTabName;
+    <div className='editor-tabs-main-wrapper'>
+      <div className="editor-tabs-wrapper">
+        {validTabs.map(tab => {
+          const isActive = tab.name === activeTabName;
 
-        return (
-          <div key={tab.name} className={`editor-tabs-container ${isActive ? 'active' : ''}`}>
-            <div
-              className={`editor-tab ${isActive ? 'active' : ''}`}
-              onClick={() => handleTabClick(tab)}
-            >
-              <div className='editor-tabs-icon-container'>
-                <img className='editor-tabs-icon-img' src={getIcon(tab)} alt={tab.name} />
-              </div>
-              <h1 className='editor-tabs-text'>{tab.name}</h1>
-              <span
-                className='editor-tabs-close-btn-container'
-                onClick={(e) => {
-                  e.stopPropagation(); // prevent triggering the tab click
-                  handleCloseTab(tab.name);
-                }}
+          return (
+            <div key={tab.name} className={`editor-tabs-container ${isActive ? 'active' : ''}`}>
+              <div
+                className={`editor-tab ${isActive ? 'active' : ''}`}
+                onClick={() => handleTabClick(tab)}
               >
-                <span className='editor-tabs-close-btn'>×</span>
-              </span>
+                <div className='editor-tabs-icon-container'>
+                  <img className='editor-tabs-icon-img' src={getIcon(tab)} alt={tab.name} />
+                </div>
+                <h1 className='editor-tabs-text'>{tab.name}</h1>
+                <span
+                  className='editor-tabs-close-btn-container'
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent triggering the tab click
+                    handleCloseTab(tab.name);
+                  }}
+                >
+                  <span className='editor-tabs-close-btn'>×</span>
+                </span>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

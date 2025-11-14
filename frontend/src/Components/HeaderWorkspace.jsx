@@ -30,8 +30,10 @@ function HeaderWorkspace (){
             <LiaLongArrowAltRightSolid color="gray"></LiaLongArrowAltRightSolid>
           </div>
         </div>
+        <div className='workspace-header-center-wrapper'>
+          
+        </div>
         <div className="workspace-header-right-wrapper">
-
           <div className="workspace-header-right-inner">
             <div className="workspace-header-avatar-container">
               <img className="workspace-header-avatar" src="/public/images/background-images/background2.webp"></img>

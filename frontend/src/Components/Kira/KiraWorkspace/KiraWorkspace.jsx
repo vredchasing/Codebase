@@ -5,6 +5,7 @@ import { BsCardImage } from "react-icons/bs";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiAddFill } from "react-icons/ri";
 import { MdHistory } from "react-icons/md";
+import AgentChatLoader from "../../animationAssests/agentChatLoader";
 
 function KiraWorkspace() {
   const [messages, setMessages] = useState([]); // chat history
@@ -87,7 +88,7 @@ function KiraWorkspace() {
                 <div className="chat-message-bubble">
                   {msg.content}
                   {loading && msg.role === "assistant" && i === messages.length - 1 && (
-                    <div className="chat-message loading">Thinking...</div>
+                    <AgentChatLoader></AgentChatLoader>
                   )}
                 </div>
               </div>

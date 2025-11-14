@@ -1,3 +1,13 @@
+.editor-tabs-main-wrapper {
+  display: flex;
+  align-items: center;
+  height: max-content;
+  width: 100%;
+  background-color: rgb(25, 25, 25);  backdrop-filter: blur(30px);          /* the actual blur effect */
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(45, 45, 45, 0.537);  /* for Safari support */
+}
+
 .editor-tabs-wrapper {
   display: flex;
   align-items: center;
@@ -10,9 +20,8 @@
   display: flex;
   height: 100%;
   padding: 0.15rem 0.5rem;
-  background-color: #212121b5;
-  border-right: 1.5px solid rgba(45, 45, 45, 0.537);
-  border-top: 1px solid rgba(45, 45, 45, 0.537);
+  background-color: rgb(25, 25, 25);
+  border-top: 1px solid transparent;
   cursor: pointer;
 }
 .editor-tabs-container.active {

@@ -1,0 +1,27 @@
+.loading-spinner {
+  display: flex;
+}
+
+.spinner-circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.8); /* dark top */
+  border-right-color: rgba(255, 255, 255, 0.8); /* gradient fade */
+  border-bottom-color: rgba(255, 255, 255, 0.8);
+
+  animation:  spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(120deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -5,13 +5,15 @@ import { SlOptions } from "react-icons/sl";
 import ContextMenu from './ContextMenu';
 import axios from 'axios';
 
-const NODE_HEIGHT = 24; // Height of each file node in pixels
-
 export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId, filesMap, setFilesMap, uiState,setUIState, updateLocalStorageUIState }) {
   const [menu, setMenu] = useState(null);
   const [creatingNode, setCreatingNode] = useState(null);  // { parentId | null, nodeType }
   const inputRef = useRef(null);
   const containerRef = useRef(null);
+  const nodeHeightsRef = useRef(new Map()); // Store measured heights by node ID
+  const nodeTopsRef = useRef(new Map()); // Store measured top positions by node ID (relative to container)
+  const nodeRefsRef = useRef(new Map()); // Store refs to DOM elements by node ID
+  const [nodeHeightsVersion, setNodeHeightsVersion] = useState(0); // Trigger recalculation when heights change
 
   async function createFileOrFolderAPI(name, parentId, projectId, nodeType) {
     if (!name?.trim()) return null;
@@ -86,7 +88,6 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
 
   // Calculate line segments for continuous vertical lines (VS Code style)
   const calculateLineSegments = useCallback((visibleNodes) => {
-    const nodeHeight = NODE_HEIGHT;
     const segmentsByLevel = {}; // Track segments by level and ancestor to merge
 
     // Helper: Check if node2 is a descendant of node1
@@ -157,8 +158,13 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
       // For each ancestor level, draw a continuous line
       for (let level = 1; level < firstSibling.node.depth; level++) {
         const left = level * 18;
-        // Line starts from middle of first sibling
-        const top = firstSibling.visibleIndex * nodeHeight + nodeHeight * 0.5;
+        
+        // Get actual top position of first sibling (accounts for borders automatically)
+        const firstSiblingTop = nodeTopsRef.current.get(firstSibling.node.id);
+        if (firstSiblingTop === undefined) continue; // Skip if not measured yet
+        
+        // Line starts at the TOP of the first node (VS Code style)
+        const top = firstSiblingTop;
         
         // Find the ancestor at this level
         const ancestorAtLevel = getAncestorAtLevel(firstSibling.node, level - 1);
@@ -181,17 +187,15 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
           }
         }
         
-        // Determine where line ends
-        const isDirectParentLevel = level === firstSibling.node.depth - 1;
-        let lineEnd;
+        // Get actual top position and height of last node (accounts for borders automatically)
+        const lastNodeId = visibleNodes[levelLastIndex].id;
+        const lastNodeTop = nodeTopsRef.current.get(lastNodeId);
+        const lastNodeHeight = nodeHeightsRef.current.get(lastNodeId);
         
-        if (levelLastIsLastChild && isDirectParentLevel) {
-          // Stop at middle of last descendant if it's the last child
-          lineEnd = levelLastIndex * nodeHeight + nodeHeight ;
-        } else {
-          // Extend to bottom of last descendant
-          lineEnd = (levelLastIndex + 1) * nodeHeight;
-        }
+        if (lastNodeTop === undefined || lastNodeHeight === undefined) continue; // Skip if not measured yet
+        
+        // Line ends at the BOTTOM of the last node (VS Code style)
+        const lineEnd = lastNodeTop + lastNodeHeight;
         
         const height = lineEnd - top;
         const segmentKey = `${level}-${ancestorAtLevel.id}`;
@@ -233,7 +237,54 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
 
   const lineSegments = useMemo(() => {
     return calculateLineSegments(visibleNodes);
-  }, [visibleNodes, calculateLineSegments]);
+  }, [visibleNodes, calculateLineSegments, nodeHeightsVersion]);
+
+  // Measure node heights and positions after render
+  useEffect(() => {
+    const measureHeights = () => {
+      if (!containerRef.current) return;
+      
+      const containerRect = containerRef.current.getBoundingClientRect();
+      let hasChanges = false;
+      
+      nodeRefsRef.current.forEach((element, nodeId) => {
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Get position relative to container
+          const top = rect.top - containerRect.top;
+          const height = rect.height;
+          
+          const oldHeight = nodeHeightsRef.current.get(nodeId);
+          const oldTop = nodeTopsRef.current.get(nodeId);
+          
+          if (oldHeight !== height || oldTop !== top) {
+            nodeHeightsRef.current.set(nodeId, height);
+            nodeTopsRef.current.set(nodeId, top);
+            hasChanges = true;
+          }
+        }
+      });
+      
+      if (hasChanges) {
+        setNodeHeightsVersion(prev => prev + 1);
+      }
+    };
+
+    // Measure after a short delay to ensure DOM is updated
+    const timeoutId = setTimeout(measureHeights, 0);
+    return () => clearTimeout(timeoutId);
+  }, [visibleNodes]);
+
+  // Callback to register node ref for height measurement
+  const registerNodeRef = useCallback((nodeId, element) => {
+    if (element) {
+      nodeRefsRef.current.set(nodeId, element);
+    } else {
+      nodeRefsRef.current.delete(nodeId);
+      nodeHeightsRef.current.delete(nodeId);
+      nodeTopsRef.current.delete(nodeId);
+    }
+  }, []);
 
   const menuOptions = menu ? [
     { label: 'New File...',   onClick: () => { handleStartCreate(menu.file.id, 'file'); closeMenu(); } },
@@ -316,6 +367,7 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
                       setUIState={setUIState}
                       updateLocalStorageUIState={updateLocalStorageUIState}
                       isLastChild={isLastChild}
+                      registerNodeRef={registerNodeRef}
                     />
                   </div>
                 );

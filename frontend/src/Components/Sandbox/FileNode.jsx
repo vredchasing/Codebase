@@ -21,7 +21,8 @@ export default function FileNode({
   setUIState,
   updateLocalStorageUIState,
   level = 0,
-  isLastChild = false
+  isLastChild = false,
+  registerNodeRef
 }) {
   // remove local expanded state (we'll derive it from uiState)
   // const [expanded, setExpanded] = useState(false);  
@@ -95,6 +96,7 @@ export default function FileNode({
     return (
       <>
         <div
+          ref={(el) => registerNodeRef && registerNodeRef(node.id, el)}
           className="file-label-container"
           onContextMenu={(e) => {
             if (onContextMenu) onContextMenu(e, node);
@@ -135,6 +137,7 @@ export default function FileNode({
                   setUIState={setUIState}
                   updateLocalStorageUIState={updateLocalStorageUIState}
                   isLastChild={childIsLast}
+                  registerNodeRef={registerNodeRef}
                 />
               );
             })}
@@ -202,6 +205,7 @@ export default function FileNode({
   // non-folder (file) branch
   return (
     <div
+      ref={(el) => registerNodeRef && registerNodeRef(node.id, el)}
       className={`file-label-container ${
         activeFile && node.name === activeFile.name ? 'active' : ''
       }`}

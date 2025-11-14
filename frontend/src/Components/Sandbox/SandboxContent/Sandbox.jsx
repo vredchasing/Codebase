@@ -9,6 +9,7 @@ import CodeEditor from '../CodeEditor/CodeEditor';
 import { useParams } from 'react-router-dom';
 import getLangFromExt from '../CodeEditor/getExtHelper';
 import { MdKeyboardArrowRight } from "react-icons/md";
+import getIcon from '../ExplorerIcons/iconHelperFuncs';
 
 export default function Sandbox() {
   const { projectId } = useParams();
@@ -563,11 +564,28 @@ export default function Sandbox() {
               {useMemo(() => {
                 if (!activeFile) return null;
                 const filePath = getFilePath(activeFile);
+                const isLastElement = (index) => index === filePath.length - 1;
+                // Map node_type to type for getIcon compatibility
+                const fileType = activeFile.node_type === 'folder' ? 'folder' : 'file';
+                const fileIcon = getIcon({ name: activeFile.name, type: fileType });
+                
                 return (
                   <div className="editor-path-wrapper">
                     <div className="editor-path">
                       {filePath.map((part, index) => (
                         <React.Fragment key={index}>
+                          {isLastElement(index) && fileIcon && (
+                            <img 
+                              src={fileIcon} 
+                              alt="file icon" 
+                              style={{ 
+                                width: '14px', 
+                                height: '14px', 
+                                marginRight: '0.25rem',
+                                opacity: 0.7
+                              }} 
+                            />
+                          )}
                           <span>{part}</span>
                           {index < filePath.length - 1 && (
                             <MdKeyboardArrowRight 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import axios from 'axios';
+import LoadingAnimation from '../../animationAssests/loadingAnimation';
 
 function CodeEditor({ fileData, editorFunctions }) {
   const { content: initialContent, language, name, id, projectId } = fileData;
@@ -127,6 +128,7 @@ function CodeEditor({ fileData, editorFunctions }) {
         onMount={(editor) => {
           editorRef.current = editor;
         }}
+        loading={<LoadingAnimation />}
       />
     </div>
   );

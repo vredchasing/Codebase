@@ -7,6 +7,7 @@ import SignUp from './Components/Auth/SignUp'
 import Login from './Components/Auth/Login'
 import Dashboard from './Components/dashboard/Dashboard'
 import ProjectCreator from './Components/projectsPipeline/ProjectCreator'
+import LoadingAnimation from './Components/animationAssests/loadingAnimation'
 
 export default function App() {
   return ( 
@@ -20,6 +21,8 @@ export default function App() {
           <Route path="login" element={<Login></Login>} />
           <Route path="dashboard" element={<Dashboard></Dashboard>} />
           <Route path="create-project" element={<ProjectCreator></ProjectCreator>} />
+          <Route path="uitest" element={<LoadingAnimation></LoadingAnimation>} />
+          <Route path="*" element={<div>404 Not Found</div>} />
         </Route>
       </Routes>
     </BrowserRouter>
