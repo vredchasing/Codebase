@@ -1,0 +1,42 @@
+-- make sure your schema exists
+CREATE SCHEMA IF NOT EXISTS projects;
+
+-- enable pgvector
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- chunk metadata table
+CREATE TABLE projects.chunk_meta (
+  id BIGSERIAL PRIMARY KEY,
+  file_id TEXT NOT NULL,
+  chunk_index INT NOT NULL,
+  start_index INT NOT NULL,
+  end_index INT NOT NULL,
+  chunk_hash TEXT NOT NULL,      -- for incremental diffing
+  content_ref jsonb,             -- optional pointer (e.g., { table: 'files', id: '...', offset: ... })
+  metadata JSONB,                -- user_id, project_id, tags, language, etc.
+  embedding_id BIGINT,           -- FK to embeddings(id) when an embedding exists
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- unique index for file + chunk
+CREATE UNIQUE INDEX ux_chunk_meta_file_chunk
+ON projects.chunk_meta (file_id, chunk_index);
+
+-- embeddings table
+CREATE TABLE projects.embeddings (
+  id BIGSERIAL PRIMARY KEY,
+  vec vector(1536) NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- vector index for nearest-neighbor search
+CREATE INDEX idx_embeddings_vector
+ON projects.embeddings USING ivfflat (vec vector_l2_ops)
+WITH (lists = 100);
+
+-- foreign key linking chunk_meta → embeddings
+ALTER TABLE projects.chunk_meta
+  ADD CONSTRAINT fk_chunk_meta_embedding
+  FOREIGN KEY (embedding_id)
+  REFERENCES projects.embeddings(id)
+  ON DELETE SET NULL;

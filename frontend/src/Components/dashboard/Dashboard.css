@@ -296,11 +296,10 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: scale 0.2s ease-out, border 0.2s ease-in-out;
+  transition: border 0.1s ease;
 }
 
 .dashboard-project-card:hover{
-  scale: 1.03;
   border: 1px solid rgb(35, 123, 255);
 }
 
