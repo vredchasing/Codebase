@@ -40,7 +40,7 @@
   display: flex;
   width:40vw;
   height: 30vw;
-  background-color: rgb(228, 228, 228);
+  background-color: rgb(28, 28, 28);
   position: absolute;
   border-radius: 15px;
   right: -10vw;
@@ -143,6 +143,7 @@
   font-family: 'Inter', sans-serif;
   line-height: 1.4;
   white-space: pre-wrap;
+  color: white;
 }
 
 .user-message2 {

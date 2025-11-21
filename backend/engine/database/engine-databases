@@ -16,7 +16,7 @@ CREATE TABLE projects.chunk_meta (
   metadata JSONB,                -- user_id, project_id, tags, language, etc.
   embedding_id BIGINT,           -- FK to embeddings(id) when an embedding exists
   created_at TIMESTAMP DEFAULT now()
-);
+)
 
 -- unique index for file + chunk
 CREATE UNIQUE INDEX ux_chunk_meta_file_chunk

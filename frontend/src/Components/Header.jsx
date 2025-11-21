@@ -32,9 +32,9 @@ function Header() {
         </div>
 
         <div className={`${scrollDirection === 'down' ? 'header-hidden' : 'header-visible'}`}>
-          <Link to="/workspace" className="header-link">Workspace</Link>
+          <Link to="/workspace" className="header-link">Dashboard</Link>
+          <Link to="/" className="header-link">Workspace</Link>
           <Link to="/" className="header-link">Collections</Link>
-          <Link to="/" className="header-link">Explore</Link>
           <Link to="/" className="header-link">Support</Link>
           <Link to="/" className="header-link">Docs</Link>
         </div>

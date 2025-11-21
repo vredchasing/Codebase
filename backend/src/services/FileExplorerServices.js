@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../../postgresdb.js';
+import { triggerRAGPipelineForFile } from './ragPipelineService.js';
 
 dotenv.config();
 
@@ -109,6 +110,13 @@ export async function updateFileContent({ fileId, fileName, content, projectId }
     const updateResult = await query(updateQuery, [fileId]);
 
     console.log('Updated file content in R2 and database:', updateResult.rows[0]);
+
+    // Trigger RAG pipeline asynchronously (fire and forget)
+    // Only process if file has content (not empty)
+    if (content && content.trim().length > 0) {
+      triggerRAGPipelineForFile(fileId, projectId, content);
+    }
+
     return updateResult.rows[0];
   } catch (error) {
     console.error('Error updating file content:', error);

@@ -35,10 +35,11 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.7rem;
   font-weight: 500;
-  color: rgba(200, 200, 200, 0.646);
-  background-color: rgb(67, 67, 67);
+  color: rgba(255, 255, 255, 0.646);
+  background-color: rgba(38, 38, 38, 0.7);
   border-radius: 5px;
   cursor: pointer;
+  box-shadow: 0px 0px 5px rgb(17, 17, 17);
 }
 
 .kira-workspace-nav-right {
@@ -118,8 +119,9 @@
   width: 93%;
   height: max-content;
   border-radius: 10px;
-  border: 1px solid rgb(75, 75, 75);
-  background-color: rgba(38, 38, 38, 0.7);
+  border: 1px solid rgb(61, 61, 61);
+  background-color: rgb(38, 38, 38);
+  box-shadow: 0px 0px 5px rgb(16, 16, 16);
 }
 
 .kira-workspace-chat-top {
@@ -179,6 +181,22 @@
   display: flex;
   align-items: center;
   margin-right: 0.25rem;
+  gap: 0.75rem;
+}
+
+.upload-photo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.send-message-container {
+  background-color: gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem;
+  border-radius: 100%;
 }
 
 .kira-workspace-footer-wrapper {
@@ -187,6 +205,8 @@
   width: 100%;
   justify-content: center;
 }
+
+
 
 .kira-workspace-footer-inner {
   display: flex;

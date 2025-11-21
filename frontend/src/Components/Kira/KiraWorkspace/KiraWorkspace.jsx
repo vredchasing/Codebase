@@ -5,6 +5,8 @@ import { BsCardImage } from "react-icons/bs";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiAddFill } from "react-icons/ri";
 import { MdHistory } from "react-icons/md";
+import { GoArrowUp } from "react-icons/go";
+
 import AgentChatLoader from "../../animationAssests/agentChatLoader";
 
 function KiraWorkspace() {
@@ -124,10 +126,12 @@ function KiraWorkspace() {
               </div>
               <div className="kira-workspace-chat-bottom-right">
                 <div className="upload-photo-container">
-                  <span>
-                    <BsCardImage color="gray" />
-                  </span>
+                  <BsCardImage color="gray" />
                 </div>
+                <div className="send-message-container">
+                  <GoArrowUp size={15} color="#141414f2-"></GoArrowUp>
+                </div>
+
               </div>
             </div>
           </div>
