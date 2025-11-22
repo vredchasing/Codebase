@@ -33,9 +33,10 @@
   height: max-content;
   font-size: 4.5rem;
   font-weight: 600;
+  letter-spacing: -1px;
   margin: 0px;
   color: rgb(255, 255, 255);
-  background: linear-gradient(120deg, #84d0ff, #2f66ef);
+  background: linear-gradient(120deg, #ffffff, #7fd6ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -90,7 +91,7 @@
   background-color: white;
   border-radius: 1rem;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
   cursor: pointer;
 }
@@ -99,10 +100,11 @@
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  background-color: rgb(255, 255, 255);
+  color: white;
+  border: 1.5px solid white;
   border-radius: 1rem;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
   gap: 0.25rem;
   cursor: pointer;

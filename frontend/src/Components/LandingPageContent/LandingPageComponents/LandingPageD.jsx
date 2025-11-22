@@ -13,7 +13,7 @@ export default function LandingPageD (){
           <div className='lp-d-card-container'>
             <div className='lp-d-card-header'>
               <h2 className='lp-d-card-title'>Create/Save</h2>
-              <h3 className='lp-d-card-description'>Create or discover code, save them to your vault.</h3>
+              <h3 className='lp-d-card-description'>Create or discover code, save them to your collections.</h3>
             </div>
 
             <div className='lp-d-card'></div>
@@ -23,7 +23,7 @@ export default function LandingPageD (){
           <div className='lp-d-card-container'>
             <div className='lp-d-card-header'>
               <h2 className='lp-d-card-title'>Drop</h2>
-              <h3 className='lp-d-card-description'>Easily drop code into your project. Use AI to integrate smoothly.</h3>
+              <h3 className='lp-d-card-description'>Easily drop components into your project. Use AI to integrate code smoothly.</h3>
             </div>
             <div className='lp-d-card'></div>
           </div>

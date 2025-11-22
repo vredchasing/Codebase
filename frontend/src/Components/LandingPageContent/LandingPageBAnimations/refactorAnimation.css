@@ -1,0 +1,148 @@
+.refactor-animation-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #171717;
+  padding: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+}
+
+.refactor-code-content {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.refactor-code-inner {
+  width: 90%;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+
+.refactor-code-pre {
+  margin: 0;
+  padding: 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: #d4d4d4;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.refactor-code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.refactor-code-line {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  transition: all 0.3s ease;
+  width: 100%;
+  min-width: 0;
+  line-height: 1.5;
+  align-items: flex-start;
+}
+
+.refactor-code-text {
+  flex: 1;
+  white-space: pre;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  min-width: 0;
+  padding: 0.2rem 0.25rem;
+  margin: 0;
+  border-radius: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.refactor-code-line.to-delete .refactor-code-text.to-delete {
+  background-color: rgba(255, 0, 0, 0.15);
+  color: #f48771 !important;
+}
+
+.refactor-code-line.added .refactor-code-text.added {
+  background-color: rgba(0, 255, 0, 0.15);
+  color: #89d185 !important;
+  animation: slideIn 0.3s ease;
+}
+
+/* Continuous highlight - remove gaps between adjacent highlighted lines */
+.refactor-code-line.to-delete + .refactor-code-line.to-delete .refactor-code-text.to-delete {
+  padding-top: 0.15rem;
+  margin-top: -0.2rem;
+}
+
+.refactor-code-line.added + .refactor-code-line.added .refactor-code-text.added {
+  padding-top: 0.15rem;
+  margin-top: -0.2rem;
+}
+
+.refactor-line-number {
+  display: inline-block;
+  width: 2rem;
+  text-align: right;
+  padding: 0;
+  padding-right: 0.75rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+}
+
+/* Syntax highlighting */
+.refactor-code-text.keyword {
+  color: #569cd6;
+}
+
+.refactor-code-text.function {
+  color: #dcdcaa;
+}
+
+.refactor-code-text.string {
+  color: #ce9178;
+}
+
+.refactor-code-text.variable {
+  color: #9cdcfe;
+}
+
+.refactor-code-text.property {
+  color: #9cdcfe;
+}
+
+.refactor-code-text.normal {
+  color: #d4d4d4;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+

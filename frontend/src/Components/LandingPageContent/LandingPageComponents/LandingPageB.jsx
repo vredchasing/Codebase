@@ -3,6 +3,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './LandingPageB.css';
 import FeaturesAnimation from '../../FeaturesAnimationFolder/FeaturesAnimation';
+import PlanAnimation from '../LandingPageBAnimations/PlanAnimation';
+import GenerateAnimation from '../LandingPageBAnimations/GenerateAnimation';
+import RefactorAnimation from '../LandingPageBAnimations/RefactorAnimation';
 
 export default function LandingPageB() {
 
@@ -22,7 +25,7 @@ export default function LandingPageB() {
               </h3>
             </div>
             <div className='lp-b-card'>
-
+              <PlanAnimation></PlanAnimation>
             </div>
           </div>
           <div className='lp-b-card-container'>
@@ -31,7 +34,7 @@ export default function LandingPageB() {
               <h3 className='lp-b-card-header-description'>Use top coding models to generate high quality code.</h3>
             </div>
             <div className='lp-b-card'>
-              
+              <GenerateAnimation></GenerateAnimation>
             </div>
           </div>
           <div className='lp-b-card-container'>
@@ -42,6 +45,7 @@ export default function LandingPageB() {
               </h3>           
             </div>
             <div className='lp-b-card'>
+              <RefactorAnimation></RefactorAnimation>
             </div>         
           </div>
         </div>  
