@@ -1,6 +1,6 @@
 // queryOptimizer.js
 
-import { callLLM } from './llmClient';  // your wrapper for LLM API
+import { callLLM } from '../models/llmClient.js';  // your wrapper for LLM API
 
 /**
  * @param {string} userQuery

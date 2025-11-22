@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api, API_ENDPOINTS, handleError } from "../../utils";
 
 import "./Dashboard.css";
-
 
 import { RxDashboard } from "react-icons/rx";
 import { IoIosFolderOpen } from "react-icons/io";
 import { FaRegFile } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import axios from "axios";
 import DashboardProjectsDefault from "./DashboardProjectsDefault";
 import ProjectCard from "./ProjectCard";
 
@@ -29,17 +28,15 @@ function Dashboard(){
   const [userProjects, setUserProjects] = useState([])
   const [loading, setLoading] = useState(true);
 
+  const [collections, setCollections] = useState([]);
+
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const response = await axios.get("http://localhost:3000/api/dashboard/get-user-projects", {
-          withCredentials: true,
-        });
-
-        setUserProjects(response.data);
-        console.log(response.data) // backend returns array of projects
+        const response = await api.get(API_ENDPOINTS.DASHBOARD.GET_PROJECTS);
+        setUserProjects(response.data || []);
       } catch (err) {
-        console.error("Error fetching projects:", err);
+        handleError(err, 'Dashboard - Fetch Projects');
         setUserProjects([]);
       } finally {
         setLoading(false);
@@ -49,20 +46,18 @@ function Dashboard(){
     fetchProjects();
   }, []);
 
-  const [collections, setCollections] = useState([]);
-
   useEffect(() => {
     async function fetchCollections() {
-      try{
-        const response = await axios.get("http://localhost:3000/api/collections/get-user-collections", {
-          withCredentials: true,
-        });
-        setCollections(response.data);
-      }
-      catch(err){
-        console.error("Error fetching collections:", err);
+      try {
+        const response = await api.get(API_ENDPOINTS.DASHBOARD.GET_COLLECTIONS);
+        setCollections(response.data || []);
+      } catch (err) {
+        handleError(err, 'Dashboard - Fetch Collections');
+        setCollections([]);
       }
     }
+    
+    fetchCollections();
   }, []);
   
 

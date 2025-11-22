@@ -2,30 +2,36 @@ import OpenAI from 'openai';
 
 export default class OpenAIWrapper {
   constructor({ apiKey, model }) {
-    const config = new Configuration({ apiKey });
-    this.client = new OpenAIApi(config);
+    this.client = new OpenAI({ apiKey });
     this.model = model;
   }
 
   /**
    * Call the LLM with a prompt and optional params.
-   * @param {string} prompt
-   * @param {object} [options]
+   * @param {string} prompt - The user prompt
+   * @param {object} [options] - Additional options (temperature, max_tokens, etc.)
+   * @param {string} [systemPrompt] - Optional system prompt
+   * @returns {Promise<string>} The response content
    */
-  async call(prompt, options = {}) {
-    // Example: build request
-    const resp = await this.client.createChatCompletion({
-      model: this.model,
-      messages: [
-        { role: 'system', content: loadPrompt('system') },
-        { role: 'user', content: prompt }
-      ],
-      ...options
-    });
+  async call(prompt, options = {}, systemPrompt = null) {
+    try {
+      const messages = [];
+      if (systemPrompt) {
+        messages.push({ role: 'system', content: systemPrompt });
+      }
+      messages.push({ role: 'user', content: prompt });
 
-    // Return response content
-    const msg = resp.data.choices[0].message;
-    return msg.content;
+      const response = await this.client.chat.completions.create({
+        model: this.model,
+        messages,
+        ...options
+      });
+
+      return response.choices[0]?.message?.content || '';
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      throw error;
+    }
   }
 }
 
@@ -38,8 +44,7 @@ export class OpenAIEmbeddingWrapper {
    * @param {string} config.model
    */
   constructor({ apiKey, model }) {
-    const configuration = new Configuration({ apiKey });
-    this.client = new OpenAIApi(configuration);
+    this.client = new OpenAI({ apiKey });
     this.model = model;
   }
 
@@ -50,16 +55,21 @@ export class OpenAIEmbeddingWrapper {
    * @returns {Promise<number[][]>} - Returns a list of embedding vectors
    */
   async embed(input, options = {}) {
-    const response = await this.client.createEmbedding({
-      model: this.model,
-      input,
-      ...options,
-    });
+    try {
+      const response = await this.client.embeddings.create({
+        model: this.model,
+        input,
+        ...options,
+      });
 
-    // response.data.data is an array of embeddings
-    // Each embedding object: { index, embedding: [...], object }
-    const embeddings = response.data.data.map((d) => d.embedding);
-    return embeddings;
+      // response.data is an array of embeddings
+      // Each embedding object: { index, embedding: [...], object }
+      const embeddings = response.data.map((d) => d.embedding);
+      return embeddings;
+    } catch (error) {
+      console.error('OpenAI Embedding API error:', error);
+      throw error;
+    }
   }
 
   /**

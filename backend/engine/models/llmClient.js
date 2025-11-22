@@ -1,5 +1,5 @@
-import AnthropicWrapper from './anthropicWrapper.js';
-import OpenAIWrapper from './openaiWrapper.js';
+import AnthropicWrapper from './anthropic.js';
+import OpenAIWrapper from './openAI.js';
 
 /**
  ****** OPENAI MODELS ******
@@ -37,6 +37,18 @@ export function getOpenAIModel(type) {
     default:
       throw new Error(`Unsupported OpenAI model type: ${type}`);
   }
+}
+
+/**
+ * Call LLM with a prompt (convenience function)
+ * @param {string} prompt - The prompt to send
+ * @param {string} [modelType='cheap'] - Model type: 'cheap', 'balanced', 'highQuality', 'turbo'
+ * @param {object} [options] - Additional options for the LLM call
+ * @returns {Promise<string>} The LLM response
+ */
+export async function callLLM(prompt, modelType = 'cheap', options = {}) {
+  const model = getOpenAIModel(modelType);
+  return await model.call(prompt, options);
 }
 
 /* 

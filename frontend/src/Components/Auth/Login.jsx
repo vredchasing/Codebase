@@ -1,17 +1,19 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import { AuthContext } from './AuthContext'; // Adjust the path as necessary
+import { AuthContext } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { api, API_ENDPOINTS, handleError, validateForm, VALIDATION_RULES } from '../../utils';
 
 import './Login.css';
 
 function Login() {
-  const { login } = useContext(AuthContext); // Access the login function from context
-  const navigate = useNavigate(); // Hook for navigation
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -19,33 +21,49 @@ function Login() {
       ...prev,
       [name]: value,
     }));
+    // Clear error for this field when user types
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: null,
+      }));
+    }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
+    // Validate form
+    const validation = validateForm(form, {
+      email: VALIDATION_RULES.EMAIL,
+      password: VALIDATION_RULES.PASSWORD,
+    });
+
+    if (!validation.valid) {
+      setErrors(validation.errors);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/login',
-        {
-          email: form.email,
-          password: form.password,
-        },
-        {
-          withCredentials: true, // Ensure cookies are sent with the request
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, {
+        email: form.email.trim(),
+        password: form.password,
+      });
 
-      if (response.data.user) {
+      if (response.data?.user) {
         login(response.data.user);
-        // Redirect or perform other actions as needed
-        navigate('/dashboard'); // Redirect to the dashboard after login
-
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Error during login:', error);
+      const errorMessage = handleError(error, 'Login', (msg) => {
+        setErrors({ submit: msg });
+      });
+      setErrors({ submit: errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -79,13 +97,24 @@ function Login() {
         </span>
         <div className="login-form-wrapper">
           <form className="login-form" onSubmit={handleSubmit}>
+            {errors.submit && (
+              <div className="login-error-message" style={{ color: 'red', marginBottom: '1rem' }}>
+                {errors.submit}
+              </div>
+            )}
             <div className="login-input-container">
               <input
                 className="login-email-input"
                 name="email"
+                type="email"
                 placeholder="Email"
+                value={form.email}
                 onChange={handleChange}
+                disabled={isLoading}
               />
+              {errors.email && (
+                <span style={{ color: 'red', fontSize: '0.75rem' }}>{errors.email}</span>
+              )}
             </div>
             <div className="login-input-container">
               <input
@@ -93,11 +122,16 @@ function Login() {
                 name="password"
                 type="password"
                 placeholder="Password"
+                value={form.password}
                 onChange={handleChange}
+                disabled={isLoading}
               />
+              {errors.password && (
+                <span style={{ color: 'red', fontSize: '0.75rem' }}>{errors.password}</span>
+              )}
             </div>
-            <button className="signup-button" type="submit">
-              Login
+            <button className="login-button" type="submit" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>

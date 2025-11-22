@@ -8,19 +8,13 @@ import projectRouter from './src/routes/projects/projectRoutes.js'
 import fileOrFolderCreation from './src/routes/fileExplorerRoutes/fileExplorerRoutes.js'
 
 import agentRoutes from './src/routes/agentRoutes/agentRoutes.js';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { config } from './src/config/index.js';
 
 const app = express();
 app.use(express.json());
-dotenv.config();
 app.use(cookieParser());
-const corsOptions ={
-    origin:'http://localhost:5173', 
-    credentials:true,
-    optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+app.use(cors(config.cors));
 
 // mount your auth routes (assuming prefix /api/auth)
 app.use('/api/auth', signUpRouter);
@@ -30,8 +24,6 @@ app.use('/api/dashboard', getUserProjectsRouter)
 app.use('/api/projects', projectRouter)
 app.use('/api/projects/files', fileOrFolderCreation)
 app.use('/api/agent', agentRoutes);
-
-console.log(process.env.DB_PASSWORD);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

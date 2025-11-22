@@ -1,6 +1,9 @@
 .landing-page-wrapper {
   display: flex;
   justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
 
 .lp-a-hero-wrapper {
@@ -10,6 +13,8 @@
   gap: 2rem;
   height: 100vh;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .lp-a-showcase-wrapper {
@@ -87,12 +92,15 @@
 }
 
 .lp-a-learn-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   background-color: white;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -102,10 +110,10 @@
   padding: 0.5rem 1rem;
   color: white;
   border: 1.5px solid white;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 13px;
   gap: 0.25rem;
   cursor: pointer;
 }

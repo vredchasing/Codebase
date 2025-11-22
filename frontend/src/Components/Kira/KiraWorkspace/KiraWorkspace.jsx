@@ -6,6 +6,7 @@ import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiAddFill } from "react-icons/ri";
 import { MdHistory } from "react-icons/md";
 import { GoArrowUp } from "react-icons/go";
+import { API_ENDPOINTS, handleError, MESSAGE_ROLES } from '../../../utils';
 
 import AgentChatLoader from "../../animationAssests/agentChatLoader";
 
@@ -18,30 +19,40 @@ function KiraWorkspace() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
+    const userMessage = { role: MESSAGE_ROLES.USER, content: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
+    const messageToSend = input.trim();
     setInput("");
     setLoading(true);
 
     try {
       // streaming request to backend
-      const res = await fetch("http://localhost:3000/api/agent/stream", {
+      const res = await fetch(API_ENDPOINTS.AGENT.STREAM, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: messageToSend }),
+        credentials: 'include',
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      if (!res.body) {
+        throw new Error("Response body is null");
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let aiMessage = "";
-      const streamMessage = { role: "assistant", content: "" };
+      const streamMessage = { role: MESSAGE_ROLES.ASSISTANT, content: "" };
       setMessages((prev) => [...prev, streamMessage]);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        aiMessage += decoder.decode(value);
+        aiMessage += decoder.decode(value, { stream: true });
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1].content = aiMessage;
@@ -49,10 +60,13 @@ function KiraWorkspace() {
         });
       }
     } catch (err) {
-      console.error("Streaming error:", err);
+      const errorMessage = handleError(err, 'KiraWorkspace');
       setMessages((prev) => [
         ...prev,
-        { role: "system", content: "Error fetching response" },
+        { 
+          role: MESSAGE_ROLES.SYSTEM, 
+          content: errorMessage || "Error fetching response. Please try again." 
+        },
       ]);
     } finally {
       setLoading(false);

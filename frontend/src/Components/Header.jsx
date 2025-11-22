@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './Auth/AuthContext';
+import { SlOptions } from 'react-icons/sl';
 
 import './Header.css'
 
 function Header() {
+  const { user } = useContext(AuthContext);
   const [scrollDirection, setScrollDirection] = useState('up');
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -32,7 +35,7 @@ function Header() {
         </div>
 
         <div className={`${scrollDirection === 'down' ? 'header-hidden' : 'header-visible'}`}>
-          <Link to="/workspace" className="header-link">Dashboard</Link>
+          <Link to="/dashboard" className="header-link">Dashboard</Link>
           <Link to="/" className="header-link">Workspace</Link>
           <Link to="/" className="header-link">Collections</Link>
           <Link to="/" className="header-link">Support</Link>
@@ -40,8 +43,25 @@ function Header() {
         </div>
 
         <div className="header-right-nav">
-          <Link to="/login" className="header-link">Login</Link>
-          <Link to="/register" className="header-link-try-for-free">Sign Up</Link>
+          {user ? (
+            <div className="header-right-nav-authenticated">
+              <div className="header-profile-picture-container">
+                <Link to="/dashboard" className="header-profile-picture">
+                  <img 
+                    src="/public/images/background-images/background2.webp" 
+                    alt="Profile" 
+                    className="profile-picture-img"
+                  />
+                </Link>
+              </div>
+              <SlOptions color='white' />
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="header-link">Login</Link>
+              <Link to="/register" className="header-link-try-for-free">Sign Up</Link>
+            </>
+          )}
         </div>
       </div>
     </header>

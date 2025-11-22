@@ -1,9 +1,8 @@
 .signup-wrapper {
   display: flex;
   width: 100%;
-  height: 100vh;
   justify-content: center;
-  align-items: center;
+  height: max-content;
 }
 
 .signup-header {
@@ -41,6 +40,7 @@
   margin: 0px;
   margin-top: 1rem;
   font-family: 'Inter';
+  color: white;
 }
 .signup-content-wrapper {
   display: flex;
@@ -174,12 +174,12 @@
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   padding: 1rem;
-  color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 0.3rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
 }
 
 .signup-login-option {
@@ -191,6 +191,7 @@
   font-weight: 500;
   letter-spacing: 0.3px;
   margin: 0px;
+  color: white;
 }
 
 .signup-login {

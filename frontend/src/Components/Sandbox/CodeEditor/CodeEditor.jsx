@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
-import axios from 'axios';
+import { api, API_ENDPOINTS, handleError } from '../../../utils';
 import LoadingAnimation from '../../animationAssests/loadingAnimation';
 
 function CodeEditor({ fileData, editorFunctions }) {
@@ -16,21 +16,18 @@ function CodeEditor({ fileData, editorFunctions }) {
 
   async function updateFileDB() {
     try {
-      console.log('Auto-sav­ing file', name, 'with contentState:', contentState);
-      const response = await axios.post('http://localhost:3000/api/projects/updateFile', {
+      const response = await api.post(API_ENDPOINTS.PROJECTS.UPDATE_FILE, {
         fileName: name,
         content: contentState,
         fileId: id,
         projectId: projectId,
-      }, {
-        withCredentials: true,
       });
       // After successful save: update contentRef
       contentRef.current = contentState;
-      console.log('Save response:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error updating file in DB:', error);
+      handleError(error, 'CodeEditor - Update File');
+      throw error; // Re-throw so caller knows save failed
     }
   }
 
@@ -77,17 +74,13 @@ function CodeEditor({ fileData, editorFunctions }) {
         const currentProjectId = projectId;
         
         // Make the save call with captured values
-        axios.post('http://localhost:3000/api/projects/updateFile', {
+        api.post(API_ENDPOINTS.PROJECTS.UPDATE_FILE, {
           fileName: currentName,
           content: currentContent,
           fileId: currentId,
           projectId: currentProjectId,
-        }, {
-          withCredentials: true,
-        }).then(() => {
-          console.log('Saved on unmount:', currentName);
         }).catch(err => {
-          console.error('Error saving on unmount:', err);
+          handleError(err, 'CodeEditor - Save on Unmount');
         });
       }
     };
@@ -106,13 +99,12 @@ function CodeEditor({ fileData, editorFunctions }) {
     }
   }, [initialContent]);
 
-  function handleEditorChange (value) {
+  function handleEditorChange(value) {
     const v = value || '';
     setContentState(v);
     contentStateRef.current = v; // Keep ref in sync
     updateFileContent(id, v);
-    setActiveFile(prev => ({ ...prev, content: v })); 
-    console.log('Editor content changed:', v);
+    setActiveFile(prev => ({ ...prev, content: v }));
   }
 
   return (

@@ -3,7 +3,7 @@ import './FileExplorer.css';
 import FileNode from '../FileNode';
 import { SlOptions } from "react-icons/sl";
 import ContextMenu from './ContextMenu';
-import axios from 'axios';
+import { api, API_ENDPOINTS, handleError } from '../../../utils';
 
 export default function FileExplorer({ files, activeFile, onFileSelect, onFileCreate, projectId, filesMap, setFilesMap, uiState,setUIState, updateLocalStorageUIState }) {
   const [menu, setMenu] = useState(null);
@@ -19,15 +19,10 @@ export default function FileExplorer({ files, activeFile, onFileSelect, onFileCr
     if (!name?.trim()) return null;
     try {
       const payload = { name: name.trim(), parentId, nodeType, projectId };
-      const response = await axios.post(
-        `http://localhost:3000/api/projects/files/file-folder-creation`,
-        payload,
-        { withCredentials: true }
-      );
-      console.log('Created file/folder response:', response.data);  
+      const response = await api.post(API_ENDPOINTS.PROJECTS.FILES.CREATE, payload);
       return response.data;
     } catch (error) {
-      console.error('Error creating file or folder:', error);
+      handleError(error, 'FileExplorer - Create File/Folder');
       return null;
     }
   }

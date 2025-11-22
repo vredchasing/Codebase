@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./SignUp.css";
 
 import { MdOutlineError } from "react-icons/md";
-import axios from "axios";
+import { api, API_ENDPOINTS, handleError, validateForm, VALIDATION_RULES } from '../../utils';
 
 
 
@@ -20,6 +20,8 @@ const SignUp = () => {
     password: false,
     confirmPassword: false,
   });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const isEmpty = (str) => str.trim().length === 0;
 
@@ -33,30 +35,60 @@ const SignUp = () => {
       ...prev,
       [name]: true,
     }));
+    // Clear error for this field when user types
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: null,
+      }));
+    }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/signup',
-        {
-          name: form.name,
-          email: form.email,
-          password: form.password,
+    
+    // Validate form
+    const validation = validateForm(form, {
+      name: VALIDATION_RULES.NAME,
+      email: VALIDATION_RULES.EMAIL,
+      password: VALIDATION_RULES.PASSWORD,
+      confirmPassword: {
+        required: true,
+        validator: (value, formData) => {
+          if (value !== formData.password) {
+            return 'Passwords do not match';
+          }
+          return null;
         },
-        {
-          withCredentials: false,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          mode: 'no-cors', // Disables CORS enforcement
-        }
-      );
-      console.log(response);
+      },
+    });
+
+    if (!validation.valid) {
+      setErrors(validation.errors);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const response = await api.post(API_ENDPOINTS.AUTH.SIGNUP, {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
+      
+      if (response.data?.user) {
+        // TODO: Redirect to dashboard or show success message
+        console.log('Signup successful:', response.data);
+      }
     } catch (error) {
-      console.error("Error during signup:", error);
+      const errorMessage = handleError(error, 'SignUp', (msg) => {
+        setErrors({ submit: msg });
+      });
+      setErrors({ submit: errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -141,17 +173,23 @@ const SignUp = () => {
               <MdOutlineError className="error-icon"/>
             )}           
           </div>
+          {errors.submit && (
+            <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+              {errors.submit}
+            </div>
+          )}
           <button
             className="signup-button"
             type="submit"
             disabled={
+              isLoading ||
               isEmpty(form.name) ||
               isEmpty(form.email) ||
               isEmpty(form.password) ||
               isEmpty(form.confirmPassword)
             }
           >
-            Create Account
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
         <h1 className="signup-login-option">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import axios from 'axios';
+import { api, API_ENDPOINTS, handleError } from '../../../utils';
 import Editor from '@monaco-editor/react';
 import './Sandbox.css';
 import FileExplorer from '../FileExplorer/FileExplorer';
@@ -67,15 +67,11 @@ export default function Sandbox() {
   // --- Build Tree from Backend ---
   async function buildContentTree(data) {
     try {
-      const response = await axios.post(
-        `http://localhost:3000/api/projects/get-file-tree-content`,
-        { data },
-        { withCredentials: true }
-      );
+      const response = await api.post(API_ENDPOINTS.PROJECTS.GET_FILE_TREE_CONTENT, { data });
+      
       if (response.data) {
         const treeDataWithContent = response.data;
         setMainTree(treeDataWithContent);
-        console.log('Built content tree:', treeDataWithContent);
         
         // Update files state with content
         const updateFilesWithContent = (nodes) => {
@@ -94,7 +90,8 @@ export default function Sandbox() {
         setFiles(prevFiles => updateFilesWithContent(prevFiles));
       }
     } catch (error) {
-      console.error('Error building content tree:', error);
+      handleError(error, 'Sandbox - Build Content Tree');
+      setError('Failed to load file tree. Please refresh the page.');
     }
   }
 
@@ -158,17 +155,13 @@ export default function Sandbox() {
 
       // 2️⃣ Otherwise fetch from DB
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/projects/get-workspace-ui-state/${projectId}`,
-          { withCredentials: true }
-        );
+        const response = await api.get(API_ENDPOINTS.PROJECTS.GET_WORKSPACE_UI_STATE(projectId));
         const dbState = response.data?.ui_state || defaultUIState;
         const key = `workspaceUIState_${projectId}`;
         localStorage.setItem(key, JSON.stringify(dbState));
         setUIState(dbState);
-        console.log('Loaded UI state from DB:', dbState);
       } catch (error) {
-        console.error('Error fetching UI state from DB:', error);
+        handleError(error, 'Sandbox - Fetch UI State');
         setUIState(defaultUIState);
       }
     }
@@ -178,18 +171,14 @@ export default function Sandbox() {
 
   // --- Fetch files from the database ---
   useEffect(() => {
-    const fetchFiles = async () => {
+    async function fetchFiles() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/projects/get-project/${projectId}`,
-          { withCredentials: true }
-        );
+        const response = await api.get(API_ENDPOINTS.PROJECTS.GET_PROJECT(projectId));
         const data = response.data || [];
         setFiles(data);
 
         const flattened = flattenFiles(data);
         setFilesMap(flattened);
-        console.log('Fetched file tree:', data);
 
         // Build content tree
         buildContentTree(data);
@@ -198,12 +187,12 @@ export default function Sandbox() {
         // after files and mainTree are loaded (see useEffect at line 203)
         // This ensures content is fetched from backend/R2, not stale localStorage
       } catch (err) {
-        console.error('Error fetching files:', err);
-        setError(err.message || 'Unknown error');
+        handleError(err, 'Sandbox - Fetch Files');
+        setError('Failed to load project files. Please refresh the page.');
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchFiles();
   }, [projectId]);

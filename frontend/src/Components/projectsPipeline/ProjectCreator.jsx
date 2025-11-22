@@ -1,33 +1,74 @@
 import React, { useState } from "react";
 import './ProjectCreator.css'
-import axios from 'axios';
+import { api, API_ENDPOINTS, handleError, validateForm, VALIDATION_RULES } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 import { IoMdArrowDropdown } from "react-icons/io";
 
-function ProjectCreator () {
-
+function ProjectCreator() {
+  const navigate = useNavigate();
   const [projectInfo, setProjectInfo] = useState({
     name: '',
     description: '',
     privacy: ''
   });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => {
+  function handleChange(e) {
     const { name, value } = e.target;
     setProjectInfo(prev => ({
       ...prev,
       [name]: value
     }));
+    // Clear error for this field when user types
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   }
 
-  async function handleCreateProject (){
-    try {
-      const response  = await axios.post('http://localhost:3000/api/projects/create-project', projectInfo, {
-        withCredentials: true
-      })
-      //redirect logic
+  async function handleCreateProject() {
+    // Validate form
+    const validation = validateForm(projectInfo, {
+      name: {
+        required: true,
+        minLength: 1,
+        maxLength: 100,
+      },
+      description: {
+        required: false,
+        maxLength: 500,
+      },
+    });
+
+    if (!validation.valid) {
+      setErrors(validation.errors);
+      return;
     }
-    catch (error){
-      console.log(error)
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
+      const response = await api.post(API_ENDPOINTS.PROJECTS.CREATE, {
+        name: projectInfo.name.trim(),
+        description: projectInfo.description.trim(),
+        privacy: projectInfo.privacy || 'private',
+      });
+
+      if (response.data?.project?.id) {
+        // Redirect to workspace
+        navigate(`/workspace/${response.data.project.id}`);
+      }
+    } catch (error) {
+      const errorMessage = handleError(error, 'ProjectCreator', (msg) => {
+        setErrors({ submit: msg });
+      });
+      setErrors({ submit: errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -127,8 +168,20 @@ function ProjectCreator () {
           </div>
         </div>
 
+        {errors.submit && (
+          <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            {errors.submit}
+          </div>
+        )}
+        {errors.name && (
+          <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            {errors.name}
+          </div>
+        )}
         <div className="create-button-container" onClick={handleCreateProject}>
-          <span className="create-button">Confirm</span>
+          <span className="create-button" style={{ opacity: isLoading ? 0.6 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}>
+            {isLoading ? 'Creating...' : 'Confirm'}
+          </span>
         </div>
       </div>
     </section>

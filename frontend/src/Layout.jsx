@@ -34,13 +34,20 @@ const Layout = () => {
   if (headerType === 'dashboard') headerElement = <HeaderDashboard />;
   else if (headerType === 'workspace') headerElement = <HeaderWorkspace />;
 
+  // Hide footer on workspace, dashboard, and create-project routes
+  const shouldShowFooter = !(
+    location.pathname.startsWith('/workspace') ||
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/create-project')
+  );
+
   return (
     <AuthProvider>
       {headerElement}
       <main className="main">
         <Outlet />
       </main>
-      <Footer />
+      {shouldShowFooter && <Footer />}
     </AuthProvider>
   );
 };
