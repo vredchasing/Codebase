@@ -7,7 +7,9 @@
   flex-direction: column;
   height: 95vh;
   width: 100%;
+  max-width: 100%;
   background-color: #171717;
+  overflow: hidden;
 }
 
 /* --------------------------------------- */
@@ -27,13 +29,17 @@
   justify-content: space-between;
   padding: 0.25rem 0;
   max-width: 93%;
+  width: 93%;
+  min-width: 0;
 }
 
 .kira-workspace-nav-left {
   display: flex;
   height: 100%;
+  flex: 1 1 0;
+  min-width: 0;
   max-width: 100%;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 
@@ -41,7 +47,10 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  overflow-x: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Scrollbar */
@@ -142,6 +151,7 @@
   display: flex;
   flex-direction: column;
   width: 93%;
+  max-width: 93%;
   align-items: center;
   padding: 0.5rem 0;
   min-height: 0;
@@ -152,6 +162,7 @@
   display: flex;
   flex-direction: column;
   width: 93%;
+  max-width: 93%;
   gap: 0.75rem;
 }
 
@@ -223,6 +234,7 @@
   display: flex;
   flex-direction: column;
   width: 93%;
+  max-width: 93%;
   border-radius: 10px;
   border: 1px solid rgb(61, 61, 61);
   background-color: rgb(38, 38, 38);
