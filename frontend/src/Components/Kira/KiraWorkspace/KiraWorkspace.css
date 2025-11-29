@@ -1,3 +1,7 @@
+/* --------------------------------------- */
+/* LAYOUT WRAPPER                          */
+/* --------------------------------------- */
+
 .kira-workspace-wrapper {
   display: flex;
   flex-direction: column;
@@ -5,6 +9,10 @@
   width: 100%;
   background-color: #171717;
 }
+
+/* --------------------------------------- */
+/* NAVIGATION BAR                          */
+/* --------------------------------------- */
 
 .kira-workspace-nav-wrapper {
   flex: 0 0 auto;
@@ -17,14 +25,34 @@
 .kira-workspace-nav-inner {
   display: flex;
   justify-content: space-between;
-  padding: 0.25rem 0rem;
-  width: 93%;
+  padding: 0.25rem 0;
+  max-width: 93%;
 }
 
 .kira-workspace-nav-left {
   display: flex;
   height: 100%;
-  width: 80%;
+  max-width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.chat-sessions-list {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  overflow-x: scroll;
+}
+
+/* Scrollbar */
+.chat-sessions-list::-webkit-scrollbar {
+  height: 3.5px;
+}
+.chat-sessions-list::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.chat-sessions-list::-webkit-scrollbar-track {
+  height: 4px;
 }
 
 .agent-nav-tab {
@@ -40,12 +68,26 @@
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0px 0px 5px rgb(17, 17, 17);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
+.agent-nav-tab:hover {
+  background-color: rgba(38, 38, 38, 0.9);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.agent-nav-tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+/* Right-side icons */
 .kira-workspace-nav-right {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .agent-nav-option-container {
@@ -56,11 +98,24 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
+
+.agent-nav-option-container:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --------------------------------------- */
+/* CHAT HISTORY CONTAINER                  */
+/* --------------------------------------- */
 
 .kira-workspace-chat-history-main-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
@@ -73,7 +128,6 @@
   max-height: 0;
   opacity: 0;
   margin: 0;
-  overflow: hidden;
 }
 
 .kira-workspace-chat-history-main-wrapper.expanded {
@@ -87,7 +141,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 93%;
   align-items: center;
   padding: 0.5rem 0;
   min-height: 0;
@@ -98,9 +152,62 @@
   display: flex;
   flex-direction: column;
   width: 93%;
-  gap: 0.25rem;
-  height: max-content;
+  gap: 0.75rem;
 }
+
+/* --------------------------------------- */
+/* CHAT MESSAGES                           */
+/* --------------------------------------- */
+
+.chat-message-wrapper {
+  display: flex;
+  margin: 4px 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(232, 232, 232, 0.929);
+  line-height: 1.8;
+  text-shadow: #323232 0px 0px 2px;
+}
+
+.chat-message-wrapper.user {
+  justify-content: flex-end;
+}
+
+.chat-message-wrapper.assistant {
+  justify-content: flex-start;
+}
+
+.chat-message-bubble {
+  max-width: 50%;
+  padding: 0.25rem 12px;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+/* User bubble */
+.chat-message-wrapper.user .chat-message-bubble {
+  background-color: #464646;
+  border: 1px solid #5a5a5a;
+}
+
+/* Assistant bubble */
+.chat-message-wrapper.assistant .chat-message-bubble {
+  border-bottom-left-radius: 0;
+  max-width: 100%;
+}
+
+/* System message */
+.chat-message-wrapper.system .chat-message-bubble {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: rgba(255, 193, 7, 0.9);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  text-align: center;
+  max-width: 50%;
+}
+
+/* --------------------------------------- */
+/* INPUT AREA                              */
+/* --------------------------------------- */
 
 .kira-workspace-chat-input-wrapper {
   flex: 0 0 auto;
@@ -115,9 +222,7 @@
 .kira-workspace-chat-input-inner {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   width: 93%;
-  height: max-content;
   border-radius: 10px;
   border: 1px solid rgb(61, 61, 61);
   background-color: rgb(38, 38, 38);
@@ -126,7 +231,7 @@
 
 .kira-workspace-chat-top {
   display: flex;
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem;
 }
 
 .add-context-button {
@@ -151,11 +256,10 @@
   color: white;
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
-  padding-left: calc(0.5rem + 1px);
 }
 
 .kira-workspace-chat-bottom {
-  padding: 0.5rem 0.5rem;
+  padding: 0.5rem;
 }
 
 .kira-workspace-chat-bottom-inner {
@@ -180,8 +284,8 @@
 .kira-workspace-chat-bottom-right {
   display: flex;
   align-items: center;
-  margin-right: 0.25rem;
   gap: 0.75rem;
+  margin-right: 0.25rem;
 }
 
 .upload-photo-container {
@@ -196,8 +300,12 @@
   align-items: center;
   justify-content: center;
   padding: 0.15rem;
-  border-radius: 100%;
+  border-radius: 50%;
 }
+
+/* --------------------------------------- */
+/* FOOTER                                  */
+/* --------------------------------------- */
 
 .kira-workspace-footer-wrapper {
   flex: 0 0 auto;
@@ -205,8 +313,6 @@
   width: 100%;
   justify-content: center;
 }
-
-
 
 .kira-workspace-footer-inner {
   display: flex;
@@ -220,39 +326,4 @@
   font-size: 0.75rem;
   color: rgba(199, 199, 199, 0.377);
   gap: 0.1rem;
-}
-
-.chat-message-wrapper {
-  display: flex;
-  margin: 4px 0;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: rgba(232, 232, 232, 0.929);
-  line-height: 1.8;
-  text-shadow: #323232 0px 0px 2px;
-}
-
-.chat-message-wrapper.user {
-  justify-content: flex-end;
-}
-
-.chat-message-wrapper.assistant {
-  justify-content: flex-start;
-}
-
-.chat-message-bubble {
-  max-width: 75%;
-  padding: 0.25rem 12px;
-  border-radius: 12px;
-  word-wrap: break-word;
-}
-
-.chat-message-wrapper.user .chat-message-bubble {
-  background-color: #464646;
-  border: 1px solid #5a5a5a;
-}
-
-.chat-message-wrapper.assistant .chat-message-bubble {
-  border-bottom-left-radius: 0;
-  max-width: 100%;
 }

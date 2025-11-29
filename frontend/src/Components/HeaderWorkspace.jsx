@@ -1,17 +1,18 @@
 import React from "react";
 import './HeaderWorkspace.css'
-
-
+import { useSettingsModal } from '../contexts/SettingsModalContext';
 import { LiaLongArrowAltLeftSolid } from "react-icons/lia";
 import { LiaLongArrowAltRightSolid} from "react-icons/lia"
 import { SlOptions } from "react-icons/sl";
 import { MdFullscreen } from "react-icons/md";
 import { MdFullscreenExit } from "react-icons/md";
+import { CiSettings } from "react-icons/ci";
 
 
 
 
 function HeaderWorkspace (){
+  const { openSettings } = useSettingsModal();
 
   return(
     <header className="workspace-header">
@@ -35,6 +36,21 @@ function HeaderWorkspace (){
         </div>
         <div className="workspace-header-right-wrapper">
           <div className="workspace-header-right-inner">
+            <button 
+              className="workspace-header-settings-btn"
+              onClick={openSettings}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                padding: '0.5rem', 
+                display: 'flex', 
+                alignItems: 'center',
+                color: '#b0b0b0ff'
+              }}
+            >
+              <CiSettings size={20} />
+            </button>
             <div className="workspace-header-avatar-container">
               <img className="workspace-header-avatar" src="/public/images/background-images/background2.webp"></img>
             </div>

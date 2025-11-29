@@ -6,4 +6,3 @@ export default function DotGridBackground() {
     <div className="dot-grid-background"></div>
   );
 }
-

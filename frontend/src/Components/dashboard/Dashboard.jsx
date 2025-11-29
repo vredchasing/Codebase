@@ -46,19 +46,20 @@ function Dashboard(){
     fetchProjects();
   }, []);
 
-  useEffect(() => {
-    async function fetchCollections() {
-      try {
-        const response = await api.get(API_ENDPOINTS.DASHBOARD.GET_COLLECTIONS);
-        setCollections(response.data || []);
-      } catch (err) {
-        handleError(err, 'Dashboard - Fetch Collections');
-        setCollections([]);
-      }
-    }
-    
-    fetchCollections();
-  }, []);
+  // Collections endpoint not implemented in backend yet
+  // useEffect(() => {
+  //   async function fetchCollections() {
+  //     try {
+  //       const response = await api.get(API_ENDPOINTS.DASHBOARD.GET_COLLECTIONS);
+  //       setCollections(response.data || []);
+  //     } catch (err) {
+  //       handleError(err, 'Dashboard - Fetch Collections');
+  //       setCollections([]);
+  //     }
+  //   }
+  //   
+  //   fetchCollections();
+  // }, []);
   
 
   return (

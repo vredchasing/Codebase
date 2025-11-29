@@ -4,8 +4,11 @@ import Lenis from 'lenis';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import { AuthProvider } from './Components/Auth/AuthContext';
+import { RetrievalScopeProvider } from './contexts/RetrievalScopeContext';
+import { SettingsModalProvider } from './contexts/SettingsModalContext';
 import HeaderDashboard from './Components/HeaderDashboard';
 import HeaderWorkspace from './Components/HeaderWorkspace';
+import AgentSettingsModal from './Components/Kira/AgentSettingsModal/AgentSettingsModal';
 
 const Layout = () => {
   React.useEffect(() => {
@@ -43,11 +46,16 @@ const Layout = () => {
 
   return (
     <AuthProvider>
-      {headerElement}
-      <main className="main">
-        <Outlet />
-      </main>
-      {shouldShowFooter && <Footer />}
+      <RetrievalScopeProvider>
+        <SettingsModalProvider>
+          {headerElement}
+          <main className="main">
+            <Outlet />
+          </main>
+          {shouldShowFooter && <Footer />}
+          <AgentSettingsModal />
+        </SettingsModalProvider>
+      </RetrievalScopeProvider>
     </AuthProvider>
   );
 };

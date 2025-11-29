@@ -8,6 +8,7 @@ import projectRouter from './src/routes/projects/projectRoutes.js'
 import fileOrFolderCreation from './src/routes/fileExplorerRoutes/fileExplorerRoutes.js'
 
 import agentRoutes from './src/routes/agentRoutes/agentRoutes.js';
+import chatRoutes from './src/routes/agentRoutes/chatRoutes/chatRoutes.js';
 import cookieParser from 'cookie-parser';
 import { config } from './src/config/index.js';
 
@@ -24,6 +25,7 @@ app.use('/api/dashboard', getUserProjectsRouter)
 app.use('/api/projects', projectRouter)
 app.use('/api/projects/files', fileOrFolderCreation)
 app.use('/api/agent', agentRoutes);
+app.use('/api/chat', chatRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
