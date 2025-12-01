@@ -14,6 +14,10 @@ function CodeEditor({ fileData, editorFunctions }) {
   const [contentState, setContentState] = useState(initialContent);
   const timerRef = useRef(null);
 
+  function incrementalTreeUpdate (oldContent, newContent) {
+    
+  };
+
   async function updateFileDB() {
     try {
       const response = await api.post(API_ENDPOINTS.PROJECTS.UPDATE_FILE, {

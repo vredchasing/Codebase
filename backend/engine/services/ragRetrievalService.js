@@ -1,9 +1,7 @@
 import { OpenAIEmbeddingWrapper } from "../models/openAI.js";
 import { query } from "../../postgresdb.js";
 
-/**
- * Production-grade RAG Retrieval Service
- * 
+/** 
  * Features:
  * - Vector similarity search using pgvector
  * - Metadata filtering (project_id, file_id, etc.)
