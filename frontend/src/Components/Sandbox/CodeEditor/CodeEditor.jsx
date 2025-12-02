@@ -106,10 +106,10 @@ function CodeEditor({ fileData, editorFunctions }) {
   function handleEditorChange(value) {
     const v = value || '';
     setContentState(v);
-    contentStateRef.current = v; // Keep ref in sync
-    updateFileContent(id, v);
+    contentStateRef.current = v;
     setActiveFile(prev => ({ ...prev, content: v }));
   }
+
 
   return (
     <div className="editor-container" style={{ height: '100%', width: '100%' }}>

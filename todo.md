@@ -2,6 +2,8 @@
   - API usage tracker/logger
   - Address users bypassing free trial limits (1 per person)
   -Redis integration for better persistent state management for backend + frontend
+    -Cache AST trees on demand via Redis to support lots of concurrent users (6 figure+ active users)
+  -Embedding updates can be offloaded to a queue (e.g., RabbitMQ, BullMQ).
   -Firecracker VM support
     - Sandbox users workspace via VMs
     - Address code execution security risks
@@ -34,3 +36,9 @@
 
 -Database
   1. Redesign database schemas for a more organized database
+
+
+
+-Notes
+  -AST update flow
+    -debounced save → update persistent storage → trigger pipeline → incremental parse → embeddings → update session cache

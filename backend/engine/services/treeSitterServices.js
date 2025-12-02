@@ -6,8 +6,13 @@ import { OpenAIEmbeddingWrapper } from "../models/openAI.js";
 
 const parser = new Parser();
 parser.setLanguage(JavaScript);
+//***************Distributed / multi-node scalable setup with Redis:************/
 
-// In-memory session store for incremental parsing
+// Code and pipeline need to be fixed to store sessions in Redis or another distributed store
+// to support tree-sitter incremental parsing, current code is incorrect, will address later
+
+// Temp In-memory session store for incremental parsing
+// In production, replace with Redis or another distributed store
 const fileSessions = {};
 
 /**
@@ -22,13 +27,13 @@ export function updateAST(fileId, oldContent, newContent) {
 
   if (!session) {
     session = {
-      text: oldContent || "",
-      tree: parser.parse(oldContent || ""),
-      lastUpdated: Date.now(),
+      text: oldContent,
+      tree: parser.parse(oldContent),
+      lastUpdated: Date.now()
     };
     fileSessions[fileId] = session;
+    console.log(fileSessions)
   }
-
   const newTree = parser.parse(newContent, session.tree);
   const changedRanges = newTree.getChangedRanges(session.tree);
 
@@ -44,16 +49,25 @@ export function updateAST(fileId, oldContent, newContent) {
  * @param {Tree} tree
  * @param {Array} changedRanges
  */
+
 export function extractChangedNodes(tree, changedRanges) {
   const changedNodes = [];
 
-  for (const range of changedRanges) {
+  for (const r of changedRanges) {
     const cursor = tree.walk();
+
+    const start = tree.rootNode.positionAt(r.startIndex);
+    const end = tree.rootNode.positionAt(r.endIndex);
+
+    const startRow = start.row;
+    const startCol = start.column;
+    const endRow = end.row;
+    const endCol = end.column;
 
     function traverse(cursor) {
       const node = cursor.currentNode;
 
-      if (node && node.intersectsRange(range.startIndex, range.endIndex)) {
+      if (node && node.intersectsRange(startRow, startCol, endRow, endCol)) {
         changedNodes.push(node);
       }
 
@@ -69,6 +83,7 @@ export function extractChangedNodes(tree, changedRanges) {
 
   return changedNodes;
 }
+
 
 // Utility to hash chunk text using SHA-256
 function getChunkHash(text) {
@@ -101,6 +116,7 @@ function nodesToChunks(nodes, fileId, projectId) {
  * @param {Array} changedNodes
  */
 export async function updateASTChunkEmbeddings(fileId, projectId, changedNodes) {
+  console.log(changedNodes)
   if (!changedNodes || changedNodes.length === 0) return;
 
   // 1. Convert nodes to chunks
