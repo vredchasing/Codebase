@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../../postgresdb.js';
-import { triggerRAGPipelineForFile } from '../../engine/services/treeSitterServices.js';
+import { triggerRAGPipelineForFile } from '../../engine/services/treeSitterServices/astPipeline.js';
 
 dotenv.config();
 

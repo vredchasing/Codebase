@@ -9,6 +9,7 @@
     - Address code execution security risks
   - Electron build for desktop app
   - Create analytics/logging/admin system for application insights/performance/errors
+  - Improve logging and analysis across the app 
 
 -Frontend/UI
   -LandingPage
@@ -42,3 +43,14 @@
 -Notes
   -AST update flow
     -debounced save → update persistent storage → trigger pipeline → incremental parse → embeddings → update session cache
+
+
+  Embedding Pipeline Optimization
+
+  Currently, each changed chunk triggers: insert embedding → update chunk meta.
+
+  Batching: Send multiple chunks per API call to OpenAI embeddings. Reduces network overhead.
+
+  Async write-back: Only update DB after embeddings are returned. Good. Consider bulk upserts instead of per-chunk queries.
+
+  Versioning chunks: Store a chunk_version to avoid re-embedding already processed content.
