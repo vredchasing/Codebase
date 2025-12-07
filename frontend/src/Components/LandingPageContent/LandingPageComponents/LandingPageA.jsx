@@ -7,7 +7,6 @@ function LandingPageA (){
 
   return(
     <section className='landing-page-wrapper'>
-      <DotGridBackground />
       <div className='lp-a-hero-wrapper'>
         <div className='lp-text-wrapper'>
           <h1 className='lp-codebase-text'>Everything Dev. One Platform.</h1>

@@ -18,6 +18,12 @@ const MAX_IN_MEMORY = 100; // max in-memory entries (LRU)
 // ----------------------
 const memoryCache = new Map();
 
+// access functions for memoryCache
+
+export function getMemoryCache (){
+  return memoryCache;
+}
+
 /**
  * Promote key (touch) to most-recent
  */
@@ -33,13 +39,18 @@ function touch(key) {
  * value: { tree, text, lastAccess, expireAt }
  */
 function setMemory(key, value) {
-  if (memoryCache.has(key)) memoryCache.delete(key);
-  else if (memoryCache.size >= MAX_IN_MEMORY) {
-    // Evict least-recently-used (first key)
-    const oldestKey = memoryCache.keys().next().value;
-    memoryCache.delete(oldestKey);
+  try{
+    if (memoryCache.has(key)) memoryCache.delete(key);
+    else if (memoryCache.size >= MAX_IN_MEMORY) {
+      // Evict least-recently-used (first key)
+      const oldestKey = memoryCache.keys().next().value;
+      memoryCache.delete(oldestKey);
+    }
+    memoryCache.set(key, value);
   }
-  memoryCache.set(key, value);
+  catch(err){
+    console.error("Error in setMemory:", err);
+  }
 }
 
 /**
@@ -66,14 +77,21 @@ function redisKeyFor(userId, projectId, fileId) {
   return `ast:${userId}:${projectId}:${fileId}`;
 }
 
+// Quick helper function to call tree-sitters parse to get a tree from text.
+
+export async function getTree(content){
+  const tree = parser.parse(content);
+  return tree;
+};
+
 // ----------------------
 // Public API
-// 1) getTree(userId,projectId,fileId,fileContent)
+// 1) getTree(userId,projectId,fileId, oldContent, newContent)
 //    -> returns { tree, text }
 //    behavior: memory -> redis -> parse incoming content (and populate caches)
-// 2) parseIncremental(userId,projectId,fileId, oldTree, newContent)
+// 2) parseIncremental(userId,projectId,fileId, oldContent, newContent)
 //    -> returns newTree and updates in-memory cache only (redis NOT updated)
-// 3) setSnapshot(userId,projectId,fileId, content)
+// 3) setSnapshot(userId,projectId,fileId, newContent)
 //    -> writes text snapshot to Redis (with TTL) and refreshes memory cache
 // ----------------------
 
@@ -81,30 +99,29 @@ function redisKeyFor(userId, projectId, fileId) {
  * Get AST tree for a file.
  * - If in-memory (LRU) hit -> return quickly
  * - Else if Redis has text -> parse(text) and populate memory
- * - Else parse provided fileContent and populate memory & (optionally) redis snapshot
+ * - Else parse provided oldContent and populate memory & (optionally) redis snapshot
  *
- * NOTE: caller should provide fileContent (from DB) so that on redis miss we can parse.
+ * NOTE: caller should provide oldContent (from DB) so that on redis miss we can parse.
  */
-export async function getTree(userId, projectId, fileId, fileContent) {
+export async function getTextCache(userId, projectId, fileId, oldContent) {
   const key = redisKeyFor(userId, projectId, fileId);
 
   // 1) memory
   const mem = getMemory(key);
   if (mem) {
-    return { tree: mem.tree, text: mem.text };
+    return {text: mem.text };
   }
 
   // 2) redis
+  await redis.del(key)
   const raw = await redis.get(key);
   if (raw) {
     try {
       const parsed = JSON.parse(raw);
       const text = parsed.text;
-      const tree = parser.parse(text);
 
       // store in-memory
       setMemory(key, {
-        tree,
         text,
         lastAccess: Date.now(),
         expireAt: Date.now() + CACHE_TTL
@@ -113,26 +130,26 @@ export async function getTree(userId, projectId, fileId, fileContent) {
       // refresh Redis TTL
       try { await redis.expire(key, AST_TTL); } catch (e) {/* ignore */ }
 
-      return { tree, text };
+      return text;
     } catch (err) {
       // bad data in redis; fall through to parse from provided content
       console.warn(`astCache.getTree: failed parsing redis payload for ${key}`, err);
     }
   }
 
-  // 3) cache miss: parse provided fileContent
-  const text = fileContent ?? "";
-  const tree = parser.parse(text);
+  //cache miss: parse provided oldContent, if oldContent is null, use empty string as this means
+  //that the file is new and has no prior content
+  const text = oldContent ?? "";
+  console.log('logging text in getTextCache', text)
 
   // populate memory (but DO NOT force redis snapshot here; caller decides)
   setMemory(key, {
-    tree,
     text,
     lastAccess: Date.now(),
     expireAt: Date.now() + CACHE_TTL
   });
 
-  return { tree, text };
+  return {text};
 }
 
 /**
@@ -140,13 +157,12 @@ export async function getTree(userId, projectId, fileId, fileContent) {
  * Updates only the in-memory cache (fast), does NOT write Redis.
  * Returns the new tree.
  */
-export async function parseIncremental(userId, projectId, fileId, oldTree, newContent) {
+export async function parseIncremental(userId, projectId, fileId, oldContent, newContent) {
   const key = redisKeyFor(userId, projectId, fileId);
-  const newTree = parser.parse(newContent, oldTree);
+  const newTree = parser.parse(newContent, oldContent);
 
-  // update in-memory LRU
+  // update in-memory LRU !!!!!! THIS PROB SHOULD NOT BE HERE !!!!!
   setMemory(key, {
-    tree: newTree,
     text: newContent,
     lastAccess: Date.now(),
     expireAt: Date.now() + CACHE_TTL
@@ -159,16 +175,16 @@ export async function parseIncremental(userId, projectId, fileId, oldTree, newCo
  * Persist text snapshot to Redis (with TTL) and refresh memory cache.
  * Use this after the embedding+db work completes successfully.
  */
-export async function setSnapshot(userId, projectId, fileId, content) {
+export async function setSnapshot(userId, projectId, fileId, newContent) {
   const key = redisKeyFor(userId, projectId, fileId);
-  const payload = JSON.stringify({ text: content });
+  const payload = JSON.stringify({ text: newContent });
 
   // set with TTL (atomic)
   await redis.setEx(key, AST_TTL, payload);
 
   // also refresh in-memory entry if present (or create)
   try {
-    const tree = parser.parse(content);
+    const tree = parser.parse(newContent);
     setMemory(key, {
       tree,
       text: content,

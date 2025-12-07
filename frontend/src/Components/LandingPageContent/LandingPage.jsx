@@ -4,10 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import './LandingPage.css'
 
-import HeroShowcase from "./CustomHero/HeroShowcase";
-import CodeSplitAnimation from "./LogoSplitAnimation";
-import IpadModel from '../ModelComponents/IpadModel';
-import CodebaseLogo from './LogoSplitAnimationB';
 import LandingPageB from './LandingPageComponents/LandingPageB';
 import LandingPageC from './LandingPageComponents/LandingPageC';
 import LandingPageD from './LandingPageComponents/LandingPageD';

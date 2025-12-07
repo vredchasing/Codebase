@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../../postgresdb.js';
+import redis from '../../redis/redisClient.js';
+import { getMemoryCache } from '../../engine/services/treeSitterServices/astCache.js';
 import { triggerRAGPipelineForFile } from '../../engine/services/treeSitterServices/astPipeline.js';
 
 dotenv.config();
@@ -69,8 +71,33 @@ export async function createFileOrFolder({ name, parentId, projectId, nodeType }
   return res.rows[0];
 }
 
+
+// get old content function for incremental AST update
+async function getOldContent (memoryCache, astCacheKey, contentKey) {
+  if (memoryCache.has(astCacheKey)) {
+    return memoryCache.get(astCacheKey).text;
+  }
+  else {
+    const redisCache = await redis.get(astCacheKey);
+    if (redisCache) {
+      return redisCache;
+    }
+  }
+
+  // if not in either cache, pull from R2 before we update to get the old content
+  const getObjectParams = {
+    Bucket: 'codebase-file-content',
+    Key: contentKey,
+  };
+  const response = await r2.send(new GetObjectCommand(getObjectParams));
+  // transform stream to string, maybe in the future, we can create our own streaming function
+  // to support large files
+  const oldContent = await response.Body.transformToString();
+  return oldContent;
+}
+
 // Update file content in R2 and database
-export async function updateFileContent({ fileId, fileName, content, projectId }) {
+export async function updateFileContent({ userId, fileId, fileName, content, projectId }) {
   try {
     // First, get the file's content_key from the database
     const fileQuery = `
@@ -90,6 +117,10 @@ export async function updateFileContent({ fileId, fileName, content, projectId }
     if (!contentKey || contentKey === '') {
       throw new Error('File does not have a content key');
     }
+    // Check for existing in-memory or Redis AST cache for updating AST tree & embeddings
+    const memoryCache = getMemoryCache();
+    const astCacheKey = `ast:${userId}:${projectId}:${fileId}`;
+    const oldContent = await getOldContent(memoryCache, astCacheKey, contentKey)
 
     // Update content in R2
     await r2.send(
@@ -114,7 +145,7 @@ export async function updateFileContent({ fileId, fileName, content, projectId }
     // Trigger RAG pipeline asynchronously (fire and forget)
     // Only process if file has content (not empty)
     if (content && content.trim().length > 0) {
-      triggerRAGPipelineForFile(fileId, projectId, content);
+      triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, content);
     }
 
     return updateResult.rows[0];

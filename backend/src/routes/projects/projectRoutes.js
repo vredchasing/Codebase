@@ -176,6 +176,7 @@ router.post('/updateFile', async (req, res) => {
 
     // Update the file content
     const updatedFile = await updateFileContent({
+      userId: decodedToken.user.id,
       fileId: resolvedFileId,
       fileName,
       content: content || '',
