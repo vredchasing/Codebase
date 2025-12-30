@@ -4,39 +4,89 @@ CREATE SCHEMA IF NOT EXISTS projects;
 -- enable pgvector
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- chunk metadata table
-CREATE TABLE projects.chunk_meta (
-  id BIGSERIAL PRIMARY KEY,
-  file_id TEXT NOT NULL,
-  chunk_index INT NOT NULL,
-  start_index INT NOT NULL,
-  end_index INT NOT NULL,
-  chunk_hash TEXT NOT NULL,      -- for incremental diffing
-  content_ref jsonb,             -- optional pointer (e.g., { table: 'files', id: '...', offset: ... })
-  metadata JSONB,                -- user_id, project_id, tags, language, etc.
-  embedding_id BIGINT,           -- FK to embeddings(id) when an embedding exists
-  created_at TIMESTAMP DEFAULT now()
-)
+-- Embeddings table (vectors)
+CREATE TABLE projects.embeddings (
+    id SERIAL PRIMARY KEY,
+    vec vector(1536) NOT NULL,  -- adjust dim to your embedding size
+    created_at TIMESTAMP DEFAULT NOW()
+);
 
+CREATE TABLE projects.semantic_nodes (
+    id SERIAL PRIMARY KEY,
+    file_id INTEGER NOT NULL REFERENCES projects.project_node(id) ON DELETE CASCADE,
+    
+    stable_id TEXT NOT NULL,          -- "class:Foo#method:bar"
+    node_type TEXT NOT NULL,          -- "function_declaration", etc.
+    name TEXT,                        -- extracted from node (optional)
+    start_index INTEGER NOT NULL,     -- position in file
+    end_index INTEGER NOT NULL,       -- position in file
+    node_hash TEXT NOT NULL,          -- hash of the node text for fast diff
+    primary_embedding_id INTEGER REFERENCES projects.embeddings(id) ON DELETE SET NULL,
+    
+    extra JSONB,                      -- any optional metadata
+    
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    
+    UNIQUE (file_id, stable_id)
+);
+
+-- Chunk metadata table (representation chunks)
+CREATE TABLE projects.chunk_meta (
+    id SERIAL PRIMARY KEY,
+    file_id INTEGER NOT NULL REFERENCES projects.project_node(id) ON DELETE CASCADE,
+    chunk_key TEXT NOT NULL,          -- instanceId::reprType
+    chunk_hash TEXT NOT NULL,
+    stable_id TEXT NOT NULL,          -- redundant but useful for joins
+    instance_id TEXT NOT NULL,
+    repr_type TEXT NOT NULL,          -- 'signature', 'summary', 'body'
+    node_type TEXT NOT NULL,          -- duplicate from semantic node
+    embedding_id INTEGER REFERENCES projects.embeddings(id) ON DELETE CASCADE,
+    
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    
+    CONSTRAINT chunk_meta_unique_key UNIQUE (file_id, chunk_key)
+);
 -- unique index for file + chunk
 CREATE UNIQUE INDEX ux_chunk_meta_file_chunk
 ON projects.chunk_meta (file_id, chunk_index);
-
--- embeddings table
-CREATE TABLE projects.embeddings (
-  id BIGSERIAL PRIMARY KEY,
-  vec vector(1536) NOT NULL,
-  created_at TIMESTAMP DEFAULT now()
-);
 
 -- vector index for nearest-neighbor search
 CREATE INDEX idx_embeddings_vector
 ON projects.embeddings USING ivfflat (vec vector_l2_ops)
 WITH (lists = 100);
 
--- foreign key linking chunk_meta → embeddings
-ALTER TABLE projects.chunk_meta
-  ADD CONSTRAINT fk_chunk_meta_embedding
-  FOREIGN KEY (embedding_id)
-  REFERENCES projects.embeddings(id)
-  ON DELETE SET NULL;
+
+-- File snapshot table for incremental AST chunks
+CREATE TABLE projects.file_snapshot (
+    id BIGSERIAL PRIMARY KEY,
+    project_id BIGINT NOT NULL REFERENCES projects.projects(id) ON DELETE CASCADE,
+    file_id INTEGER NOT NULL REFERENCES projects.files(id) ON DELETE CASCADE,
+    
+    -- Node identity
+    stable_id TEXT NOT NULL,       -- semantic identity: type+name+ancestry
+    instance_id TEXT NOT NULL,     -- guarantees uniqueness even among duplicate siblings
+    node_type TEXT NOT NULL,       -- 'function_declaration', 'class_declaration', etc.
+
+    -- Representation type
+    repr_type TEXT NOT NULL,       -- 'signature', 'summary', 'body'
+
+    -- Chunk data
+    chunk_key TEXT NOT NULL,       -- instanceId::repr_type
+    chunk_text TEXT NOT NULL,      -- raw text of the chunk
+    chunk_hash TEXT NOT NULL,      -- SHA256 of chunk_text
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Unique constraint to avoid duplicate chunkKey per file
+ALTER TABLE projects.file_snapshot
+ADD CONSTRAINT uq_file_chunk UNIQUE(file_id, chunk_key);
+
+-- Indexes for efficient lookups
+CREATE INDEX idx_file_snapshot_file_id ON projects.file_snapshot(file_id);
+CREATE INDEX idx_file_snapshot_chunk_hash ON projects.file_snapshot(chunk_hash);
+CREATE INDEX idx_file_snapshot_stable_id ON projects.file_snapshot(stable_id);
+CREATE INDEX idx_file_snapshot_repr_type ON projects.file_snapshot(repr_type);

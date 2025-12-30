@@ -88,9 +88,6 @@ function Dashboard(){
         </div>
         <div className="dashboard-main-content-wrapper">
           <div className="dashboard-main-content-inner">
-            <div className="dashboard-greeting-wrapper">
-              <h1 className="dashboard-greeting">Good Evening, Abishek</h1>
-            </div>
             <div className="dashboard-projects-wrapper">
               <div className="dashboard-projects-header">
                 <div className="projects-header-left">

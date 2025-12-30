@@ -26,7 +26,6 @@ export const decodeToken = (token) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded)
     return decoded;
      // contains user info, e.g., { userId: 1, iat: ..., exp: ... }
   } catch (err) {
