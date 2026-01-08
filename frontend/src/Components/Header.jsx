@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './Auth/AuthContext';
 import { SlOptions } from 'react-icons/sl';
+import { MdKeyboardArrowDown } from "react-icons/md";
 
 import './Header.css'
 
@@ -35,10 +36,9 @@ function Header() {
         </div>
 
         <div className={`${scrollDirection === 'down' ? 'header-hidden' : 'header-visible'}`}>
-          <Link to="/dashboard" className="header-link">Dashboard</Link>
+          <Link to="/dashboard" className="header-link">Product <MdKeyboardArrowDown size={14}/></Link>
+          <Link to="/" className="header-link">Pricing</Link>
           <Link to="/" className="header-link">Workspace</Link>
-          <Link to="/" className="header-link">Collections</Link>
-          <Link to="/" className="header-link">Support</Link>
           <Link to="/" className="header-link">Docs</Link>
         </div>
 

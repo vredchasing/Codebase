@@ -273,7 +273,7 @@ function KiraWorkspace() {
       </div>
 
       <div className={`kira-workspace-chat-history-main-wrapper ${isEmpty ? "collapsed" : "expanded"}`}>
-        <div className="kira-workspace-chat-history-wrapper">
+        <div className="kira-workspace-chat-history-wrapper" data-lenis-prevent>
           <div className="kira-workspace-chat-history-container">
             {messages.map((msg, i) => (
               <div

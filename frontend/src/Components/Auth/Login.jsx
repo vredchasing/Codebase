@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { api, API_ENDPOINTS, handleError, validateForm, VALIDATION_RULES } from '../../utils';
-
+import { AiFillGithub } from "react-icons/ai";
 import './Login.css';
 
 function Login() {
@@ -71,17 +71,10 @@ function Login() {
     <section className="login-wrapper">
       <div className="login-inner-content">
         <div className="login-header-wrapper">
-          <div className="signup-logo-container">
-            <div className="custom-logo-container-signup">
-              <img
-                className="square-signup"
-                src="/public/images/square-logo.svg"
-                alt="Logo"
-              />
-              <p className="logo-c-signup">C</p>
-            </div>
+          <div className='login-title-wrapper'>
+            <h1 className="login-title">Welcome to Codebase</h1>
+            <h1 className="login-title-2">The best way to build software</h1>
           </div>
-          <h1 className="login-title">Sign in to Codebase</h1>
         </div>
 
         <div className="external-signup-wrapper">
@@ -89,7 +82,13 @@ function Login() {
             <div className="signup-google-icon-container">
               <img className="google-icon" src="/public/images/google-icon.svg" />
             </div>
-            Sign in with Google
+            Continue with Google
+          </span>
+          <span className='signin-github'>
+            <div className="signup-github-icon-container">
+              <AiFillGithub size={24} color={'#ffffff'} />
+            </div>
+            Continue with GitHub
           </span>
         </div>
         <span className="or-span">
@@ -116,22 +115,8 @@ function Login() {
                 <span style={{ color: 'red', fontSize: '0.75rem' }}>{errors.email}</span>
               )}
             </div>
-            <div className="login-input-container">
-              <input
-                className="login-password-input"
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <span style={{ color: 'red', fontSize: '0.75rem' }}>{errors.password}</span>
-              )}
-            </div>
             <button className="login-button" type="submit" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? 'Logging in...' : 'Continue'}
             </button>
           </form>
         </div>

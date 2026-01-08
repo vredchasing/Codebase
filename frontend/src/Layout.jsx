@@ -28,7 +28,7 @@ const Layout = () => {
   const location = useLocation();
   let headerType = 'default';
   if (location.pathname.startsWith('/dashboard')) {
-    headerType = 'dashboard';
+    headerType = 'default';
   } else if (location.pathname.startsWith('/workspace')) {
     headerType = 'workspace';
   }

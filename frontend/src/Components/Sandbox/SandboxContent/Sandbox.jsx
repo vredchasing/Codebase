@@ -10,9 +10,14 @@ import { useParams } from 'react-router-dom';
 import getLangFromExt from '../CodeEditor/getExtHelper';
 import { MdKeyboardArrowRight } from "react-icons/md";
 import getIcon from '../ExplorerIcons/iconHelperFuncs';
+import { CodeEditorStatusBar } from '../CodeEditor/CodeEditorStatusBar';
+import { useWebSocket } from '../../../hooks/useWebSocket';
 
 export default function Sandbox() {
   const { projectId } = useParams();
+  
+  // Initialize WebSocket connection
+  useWebSocket(projectId);
   const [files, setFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
   const [tabs, setTabs] = useState([]);
@@ -464,7 +469,7 @@ export default function Sandbox() {
 
   return (
     <section className="sandbox-wrapper">
-      <div className="sandbox">
+        <div className="sandbox">
         <div className="sandbox-fe-wrapper">
           <FileExplorer
             files={files}
@@ -611,6 +616,7 @@ export default function Sandbox() {
           </div>
         </div>
       </div>
+      <CodeEditorStatusBar></CodeEditorStatusBar>
     </section>
   );
 }

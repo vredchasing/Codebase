@@ -3,7 +3,6 @@
   width: 100%;
   min-height: 100vh;
   margin-top: 8vh;
-  background-color: rgb(20, 18, 11);
 }
 
 .dashboard-inner-content {
@@ -136,8 +135,8 @@
   border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 1px 1px 5px rgb(18, 18, 18);
-  background-color: #1b1913;
+  box-shadow: 1px 1px 5px rgb(16, 16, 16);
+  background-color: rgb(22, 22, 22);
 }
 .dashboard-projects-header {
   display: flex;
@@ -375,7 +374,7 @@
   position: relative;
   overflow: hidden;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-  background-color: #1b1913;
+  background-color: rgb(22, 22, 22);
 }
 .dashboard-collections-header {
   display: flex;

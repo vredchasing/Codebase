@@ -1,0 +1,73 @@
+.status-bar-action-status {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.action-status-spinner,
+.action-status-success,
+.action-status-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.action-status-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-status-success {
+  color: #4ade80;
+  animation: checkmarkPop 0.3s ease-out;
+}
+
+.action-status-error {
+  color: #f48771;
+  animation: errorPop 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes errorPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+

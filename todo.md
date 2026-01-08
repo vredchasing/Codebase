@@ -64,3 +64,9 @@
 
 
   metadata, embedding 
+
+
+
+  UI-
+    -glasify cards
+    -change the theme a bit to be a bit more uniform in style/theme

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { createServer } from 'http';
 import signUpRouter from './src/auth/signup.js';
 import loginRouter from './src/auth/login.js';
 import getUserRouter from './src/auth/getUser.js';
@@ -11,6 +12,8 @@ import agentRoutes from './src/routes/agentRoutes/agentRoutes.js';
 import chatRoutes from './src/routes/agentRoutes/chatRoutes/chatRoutes.js';
 import cookieParser from 'cookie-parser';
 import { config } from './src/config/index.js';
+import { createWSServer } from './websocket.js';
+import { setWSServer } from './websocketInstance.js';
 
 const app = express();
 app.use(express.json());
@@ -28,6 +31,18 @@ app.use('/api/agent', agentRoutes);
 app.use('/api/chat', chatRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+
+// Create HTTP server and attach WebSocket server
+const httpServer = createServer(app);
+const wsServer = createWSServer(httpServer);
+
+// Set wsServer instance for use in other modules
+setWSServer(wsServer);
+
+// Export wsServer for use in other modules
+export { wsServer };
+
+httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`WebSocket server available at ws://localhost:${PORT}/ws`);
 });

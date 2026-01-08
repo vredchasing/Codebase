@@ -2,7 +2,9 @@
   display: flex;
   width: 100%;
   justify-content: center;
-  height: max-content;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
 }
 
 .signup-header {
@@ -45,13 +47,15 @@
 .signup-content-wrapper {
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 35%;
   height: max-content;
   gap: 1rem;
+  margin-top: 5vh;
 }
 
 .external-signup-wrapper {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   width: 100%;
   height: 6.5vh;
@@ -63,13 +67,14 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: rgb(241, 241, 241);
+  background-color: rgb(47, 47, 47);
   width: 100%;
   border-radius: 0.3rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 0.8rem;
   cursor: pointer;
+  color: white;
 }
 .signup-google-icon-container {
   height: 1.5rem;
@@ -95,7 +100,7 @@
 }
 .line {
   height: 1px;
-  background-color: rgb(200, 200, 200);
+  background-color: rgb(47, 47, 47);
   flex: 1;
 }
 .signup-form {
@@ -121,32 +126,33 @@
   position: relative;
 }
 .name-input {
-  height: 4vh;
-  font-size: 0.8rem;
-  font-weight: 400;
+  height: 2.5rem;
+  font-size: 1rem;
+  font-weight: 500;
   font-family: 'Inter', sans-serif  ;
   padding: 0.5rem 1rem;
-  background-color: rgb(241, 241, 241);
+  background-color: rgb(47, 47, 47);
   border: none;
   outline: none;
   border-radius: 0.3rem;
+  color: rgba(255, 255, 255, 0.922);
+  box-sizing: border-box;
   width: 100%;
-  color: rgba(20, 20, 20, 0.922);
 }
 
 .email-input {
-  height: 4vh;
-  font-size: 0.8rem;
-  font-weight: 400;
+  height: 2.5rem;
+  font-size: 1rem;
+  font-weight: 500;
   font-family: 'Inter', sans-serif  ;
   padding: 0.5rem 1rem;
-  background-color: rgb(241, 241, 241);
+  background-color: rgb(47, 47, 47);
   border: none;
   outline: none;
   border-radius: 0.3rem;
+  color: rgba(255, 255, 255, 0.922);
+  box-sizing: border-box;
   width: 100%;
-  color: rgba(20, 20, 20, 0.922);
-
 }
 
 .password-input {
@@ -160,26 +166,23 @@
   outline: none;
   border-radius: 0.3rem;
   width: 100%;
-  color: rgba(20, 20, 20, 0.922);
+  color: rgba(255, 255, 255, 0.922);
 
 }
 
 .signup-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 6.5vh;
-  width: 100%;
-  font-size: 0.9rem;
+  height: 2.5rem;
+  font-size: 1rem;
   font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  padding: 1rem;
-  color: rgb(0, 0, 0);
+  font-family: 'Inter', sans-serif  ;
+  padding: 0.5rem 1rem;
+  background-color: rgb(47, 47, 47);
   border: none;
+  outline: none;
   border-radius: 0.3rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  background-color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.922);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .signup-login-option {
@@ -187,21 +190,21 @@
   width: 100%;
   justify-content: center;
   font-family: 'Inter', sans-serif;
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   margin: 0px;
-  color: white;
+  color: rgb(198, 198, 198);
 }
 
 .signup-login {
   display: flex;
   justify-content: center;
   font-family: 'Inter', sans-serif;
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   font-weight: 500;
   padding-left: 0.1rem;
-  color: #F54E00;
+  color: rgb(75, 75, 75);
 }
 
 .error-icon {

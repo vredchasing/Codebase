@@ -332,9 +332,19 @@ export async function updateASTChunkEmbeddings(fileId, changedNodes, getParent, 
  * MAIN TRIGGER (FIXED)
  * ============================
  */
-export async function triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, newContent) {
+export async function triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, newContent, actionId = null, wsServer = null) {
   setImmediate(async () => {
     try {
+      // Send pipeline started status
+      if (wsServer && actionId && projectId) {
+        wsServer.sendToProject(String(projectId), {
+          type: 'pipeline_status',
+          status: 'started',
+          actionId,
+          fileId,
+        });
+      }
+
       const { text: prevText, chunkHashes = {} } =
         await getTextCache(userId, projectId, fileId, oldContent);
 
@@ -344,6 +354,16 @@ export async function triggerRAGPipelineForFile(userId, fileId, projectId, oldCo
 
       if (!changedRanges.length) {
         await setSnapshot(userId, projectId, fileId, newContent, chunkHashes);
+        
+        // Send pipeline completed status (no changes needed)
+        if (wsServer && actionId && projectId) {
+          wsServer.sendToProject(String(projectId), {
+            type: 'pipeline_status',
+            status: 'completed',
+            actionId,
+            fileId,
+          });
+        }
         return;
       }
 
@@ -362,8 +382,30 @@ export async function triggerRAGPipelineForFile(userId, fileId, projectId, oldCo
       );
 
       await setSnapshot(userId, projectId, fileId, newContent, chunkHashes);
+
+      // Send pipeline completed status
+      if (wsServer && actionId && projectId) {
+        wsServer.sendToProject(String(projectId), {
+          type: 'pipeline_status',
+          status: 'completed',
+          actionId,
+          fileId,
+        });
+      }
     } catch (err) {
       console.error('triggerRAGPipelineForFile error:', err);
+      
+      // Send pipeline error status
+      if (wsServer && actionId && projectId) {
+        wsServer.sendToProject(String(projectId), {
+          type: 'pipeline_status',
+          status: 'error',
+          actionId,
+          fileId,
+          error: err.message || 'Embedding pipeline failed',
+          details: err.stack,
+        });
+      }
     }
   });
 }

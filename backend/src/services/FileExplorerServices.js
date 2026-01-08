@@ -97,7 +97,7 @@ async function getOldContent (memoryCache, astCacheKey, contentKey) {
 }
 
 // Update file content in R2 and database
-export async function updateFileContent({ userId, fileId, fileName, content, projectId }) {
+export async function updateFileContent({ userId, fileId, fileName, content, projectId, actionId = null, wsServer = null }) {
   try {
     // First, get the file's content_key from the database
     const fileQuery = `
@@ -145,7 +145,7 @@ export async function updateFileContent({ userId, fileId, fileName, content, pro
     // Trigger RAG pipeline asynchronously (fire and forget)
     // Only process if file has content (not empty)
     if (content && content.trim().length > 0) {
-      triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, content);
+      triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, content, actionId, wsServer);
     }
 
     return updateResult.rows[0];

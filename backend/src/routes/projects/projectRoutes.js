@@ -3,6 +3,7 @@ import { query } from '../../../postgresdb.js';
 import { decodeToken } from '../../middleware/authMiddleware.js';
 import { buildFileTreeWithContent, getFilesForProject } from '../../services/getFilesForProject.js';
 import { updateFileContent } from '../../services/FileExplorerServices.js';
+import { getWSServer } from '../../../websocketInstance.js';
 
 const router = express.Router();
 
@@ -123,7 +124,7 @@ router.post('/updateFile', async (req, res) => {
     const decodedToken = decodeToken(token);
     if (!decodedToken) return res.status(401).json({ message: 'Invalid token' });
 
-    const { fileName, content, fileId, projectId } = req.body;
+    const { fileName, content, fileId, projectId, actionId } = req.body;
 
     if (!fileName && !fileId) {
       return res.status(400).json({ message: 'File name or file ID is required' });
@@ -175,12 +176,15 @@ router.post('/updateFile', async (req, res) => {
     }
 
     // Update the file content
+    const wsServer = getWSServer();
     const updatedFile = await updateFileContent({
       userId: decodedToken.user.id,
       fileId: resolvedFileId,
       fileName,
       content: content || '',
       projectId: resolvedProjectId,
+      actionId: actionId || null,
+      wsServer: wsServer || null,
     });
 
     return res.json({ 

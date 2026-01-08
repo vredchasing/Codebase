@@ -96,18 +96,11 @@ const SignUp = () => {
   return (
     <div className="signup-wrapper">
       <div className="signup-content-wrapper">
-        <div className="signup-header">
-          <div className="signup-logo-container">
-            <div className="custom-logo-container-signup">
-              <img
-                className="square-signup"
-                src="/public/images/square-logo.svg"
-                alt="Logo"
-              />
-              <p className="logo-c-signup">C</p>
-            </div>
+        <div className="login-header-wrapper">
+          <div className='login-title-wrapper'>
+            <h1 className="login-title">Welcome to Codebase</h1>
+            <h1 className="login-title-2">The best way to build software</h1>
           </div>
-          <h1 className="signup-title">Sign up to Codebase</h1>
         </div>
         <form className="signup-form" onSubmit={handleSubmit}>
           <div className="external-signup-wrapper">
@@ -115,7 +108,7 @@ const SignUp = () => {
               <div className="signup-google-icon-container">
                 <img className="google-icon" src="/public/images/google-icon.svg" />
               </div>
-              Sign up with Google
+              Continue with Google
             </span>
           </div>
           <span className="or-span">
@@ -145,33 +138,6 @@ const SignUp = () => {
             {touched.email && isEmpty(form.email) && (
               <MdOutlineError className="error-icon"/>
             )}            
-          </div>
-
-          <div className="signup-input-container">
-            <input
-              className="password-input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-            />
-            {touched.password && isEmpty(form.password) && (
-              <MdOutlineError className="error-icon"/>
-            )}            
-          </div>
-          <div className="signup-input-container">
-            <input
-              className="password-input"
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirm Password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-            />
-            {touched.confirmPassword && isEmpty(form.confirmPassword) && (
-              <MdOutlineError className="error-icon"/>
-            )}           
           </div>
           {errors.submit && (
             <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>

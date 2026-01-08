@@ -1,0 +1,229 @@
+.status-bar-error-widget {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  max-width: 30%;
+  overflow: hidden;
+}
+
+.error-widget-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.error-widget-icons:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.error-icon,
+.warning-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #ffffff;
+}
+
+.error-icon {
+  color: #f48771;
+}
+
+.warning-icon {
+  color: #cca700;
+}
+
+.error-icon svg,
+.warning-icon svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.error-count,
+.warning-count {
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 0.125rem;
+}
+
+.error-widget-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+  background: transparent;
+}
+
+.error-widget-panel {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 0.25rem;
+  width: 400px;
+  max-height: 300px;
+  background-color: rgb(37, 37, 38);
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.error-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  background-color: rgb(45, 45, 45);
+}
+
+.error-widget-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #cccccc;
+}
+
+.error-widget-close {
+  background: none;
+  border: none;
+  color: #cccccc;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.error-widget-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.error-widget-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.error-widget-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #888888;
+  font-size: 0.75rem;
+}
+
+.error-widget-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+  transition: background-color 0.2s;
+}
+
+.error-widget-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.error-widget-item-error {
+  border-left: 3px solid #f48771;
+}
+
+.error-widget-item-warning {
+  border-left: 3px solid #cca700;
+}
+
+.error-widget-item-icon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.error-widget-item-error .error-widget-item-icon {
+  color: #f48771;
+}
+
+.error-widget-item-warning .error-widget-item-icon {
+  color: #cca700;
+}
+
+.error-widget-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-widget-item-message {
+  font-size: 0.75rem;
+  color: #cccccc;
+  margin-bottom: 0.25rem;
+  word-wrap: break-word;
+}
+
+.error-widget-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: #888888;
+}
+
+.error-widget-item-source {
+  font-weight: 500;
+}
+
+.error-widget-item-time {
+  opacity: 0.7;
+}
+
+.error-widget-item-details {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  color: #aaaaaa;
+  font-family: 'Courier New', monospace;
+  word-wrap: break-word;
+}
+
+.error-widget-item-remove {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: #888888;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.error-widget-item:hover .error-widget-item-remove {
+  opacity: 1;
+}
+
+.error-widget-item-remove:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+

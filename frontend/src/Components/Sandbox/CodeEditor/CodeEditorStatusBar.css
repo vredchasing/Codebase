@@ -1,0 +1,133 @@
+.code-editor-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 22px;
+  width: 100%;
+  background-color: rgb(25, 25, 25);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(42, 42, 42, 0.858);
+  gap: 0.4rem;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.status-bar-left,
+.status-bar-right {
+  display: flex;
+  align-items: center;
+}
+
+.status-bar-left {
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  height: 100%;
+  width: max-content;
+}
+
+.status-bar-right {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 40%;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.connection-indicators {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 100%;
+  width: max-content;
+  cursor: pointer;
+}
+.connection-indicators:hover {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: rgb(42, 42, 42);
+}
+
+.status-indicator {
+  font-size: 0.75rem;
+  line-height: 1;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+  cursor: help;
+  margin: 0 0.5rem;
+}
+
+.status-indicator.status-connected {
+  color: #4ade80;
+}
+
+.status-indicator.status-connecting {
+  color: #fbbf24;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.status-indicator.status-disconnected {
+  color: #9ca3af;
+  animation: none;
+}
+
+.error-logger {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0.25rem;
+  cursor: pointer;
+  gap: 0.25rem;
+}
+.error-logger:hover {
+  background-color: rgb(42, 42, 42);
+}
+
+.error-logger-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.7rem;
+}
+
+.error-logger-count {
+  color: #d1d5db;
+}
+
+.status-indicator.status-error {
+  color: #ef4444;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-item {
+  font-size: 0.7rem;
+  color: #d1d5db;
+  padding: 0 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-item.cursor-info {
+  font-family: 'Inter', sans-serif;
+  max-width: 100%;
+}
+
+.status-item:hover {
+  color: #ffffff;
+}

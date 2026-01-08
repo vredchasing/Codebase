@@ -1,17 +1,17 @@
 .header {
   display: flex;
   flex-direction: row;
-  position: absolute;
+  position: fixed;
   width: 100%;
-  background-color: transparent;
   height: 8vh;
-  overflow: hidden;
-  z-index: 9999;
   top: 0;
   left: 0;
-  position: fixed;
-  background-color: rgb(20, 18, 11);
+  z-index: 9999;
+  /* Glass effect */
+  backdrop-filter: blur(10px); /* blurs content behind */
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
 }
+
 
 .header-hidden {
   position: absolute;
@@ -21,24 +21,23 @@
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  width: 450px;
   opacity: 0;
   transform: translate(-50%, -10px);
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  gap: 2rem;
 }
 .header-visible {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  width: 450px;
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
   transform: translate(-50%, 0);
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  gap: 2rem;
 } 
 
 
@@ -73,6 +72,9 @@
 }
 
 .header-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: rgb(255, 255, 255);
   text-decoration: none;
   font-family: "Inter", sans-serif;
@@ -82,6 +84,7 @@
   will-change: color;
   transition: color 0.3s ease-in;
   text-wrap: nowrap;
+  gap: 0.2rem;
 }
 
 .header-link:hover {
@@ -122,8 +125,8 @@
 
 .header-profile-picture-container {
   display: flex;
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 100%;
   overflow: hidden;
 }
