@@ -5,9 +5,8 @@ import LoadingAnimation from '../../animationAssests/loadingAnimation';
 import useStatusBarStore from '../../../stores/statusBarStore';
 import websocketService from '../../../services/websocketService';
 
-function CodeEditor({ fileData, editorFunctions }) {
+function CodeEditor({ fileData}) {
   const { content: initialContent, language, name, id, projectId, path } = fileData;
-  const { setFiles, updateFileContent, setActiveFile } = editorFunctions;
 
   const editorRef = useRef(null);
   const contentRef = useRef(initialContent);

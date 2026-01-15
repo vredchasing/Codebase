@@ -1,87 +1,35 @@
+// src/Components/Sandbox/EditorTabs/EditorTabs.jsx
 import React, { useCallback } from 'react';
 import './EditorTabs.css';
-
 import getIcon from '../ExplorerIcons/iconHelperFuncs';
-import WindowControls from '../../FunctionalComponents/WindowControls';
+import { useSelector, useDispatch } from 'react-redux';
+import { setOpenedTabs, setActiveTab } from '../../../stores/reduxTK/slices/UI/uiSlice';
 
-export default function EditorTabs({
-  // tabs could be the full list of available tab objects (for opening new ones)
-  tabs,
-  uiState,
-  setUIState,
-  updateLocalStorageUIState,
-  onTabClick,
-  onCloseTab
-}) {
-  // Derive openedTabs and activeTab from uiState
-  const openedTabs = uiState.openedTabs || [];
-  const activeTabName = uiState.activeTab;
+export default function EditorTabs() {
+  const dispatch = useDispatch();
+  const openedTabs = useSelector(state => state.workspaceUI.workspace.openedTabs) || [];
+  const activeTabName = useSelector(state => state.workspaceUI.workspace.activeTab);
 
   const handleTabClick = useCallback((tab) => {
     if (!tab) return;
-
-    // If parent provides onTabClick callback, use it
-    if (onTabClick) {
-      onTabClick(tab);
-      return;
-    }
-
-    // Otherwise, use internal state management
     const tabName = tab.name;
-    let newOpenedTabs = openedTabs;
-    // If tab isn't already opened, add it
-    if (!openedTabs.some(t => t.name === tabName)) {
-      newOpenedTabs = [...openedTabs, tab];
-    }
-    const newActiveTab = tabName;
 
-    const newUIState = {
-      ...uiState,
-      openedTabs: newOpenedTabs,
-      activeTab: newActiveTab,
-      lastUpdated: Date.now(),
-    };
-
-    setUIState(newUIState);
-    if (updateLocalStorageUIState) {
-      updateLocalStorageUIState(newUIState);
-    }
-  }, [openedTabs, uiState, setUIState, updateLocalStorageUIState, onTabClick]);
+    // Derive fresh state directly from Redux
+    const newOpenedTabs = openedTabs.some(t => t.name === tabName) ? openedTabs : [...openedTabs, tab];
+    dispatch(setOpenedTabs(newOpenedTabs));
+    dispatch(setActiveTab(tabName));
+  }, [openedTabs, dispatch]);
 
   const handleCloseTab = useCallback((tabName) => {
-    // If parent provides onCloseTab callback, use it
-    if (onCloseTab) {
-      onCloseTab(tabName);
-      return;
-    }
-
-    // Otherwise, use internal state management
     const newOpenedTabs = openedTabs.filter(t => t.name !== tabName);
+    const newActiveTab = activeTabName === tabName && newOpenedTabs.length > 0
+      ? newOpenedTabs[newOpenedTabs.length - 1].name
+      : (newOpenedTabs.length === 0 ? null : activeTabName);
 
-    let newActiveTab = activeTabName;
-    if (activeTabName === tabName) {
-      // If closing the active tab, pick last tab in list (if any)
-      if (newOpenedTabs.length > 0) {
-        newActiveTab = newOpenedTabs[newOpenedTabs.length - 1].name;
-      } else {
-        newActiveTab = null;
-      }
-    }
+    dispatch(setOpenedTabs(newOpenedTabs));
+    dispatch(setActiveTab(newActiveTab));
+  }, [openedTabs, activeTabName, dispatch]);
 
-    const newUIState = {
-      ...uiState,
-      openedTabs: newOpenedTabs,
-      activeTab: newActiveTab,
-      lastUpdated: Date.now(),
-    };
-
-    setUIState(newUIState);
-    if (updateLocalStorageUIState) {
-      updateLocalStorageUIState(newUIState);
-    }
-  }, [openedTabs, activeTabName, uiState, setUIState, updateLocalStorageUIState, onCloseTab]);
-
-  // Filter out any folders that might have been added incorrectly
   const validTabs = openedTabs.filter(tab => tab && tab.node_type === 'file');
 
   return (
@@ -89,7 +37,6 @@ export default function EditorTabs({
       <div className="editor-tabs-wrapper">
         {validTabs.map(tab => {
           const isActive = tab.name === activeTabName;
-
           return (
             <div key={tab.name} className={`editor-tabs-container ${isActive ? 'active' : ''}`}>
               <div
@@ -103,7 +50,7 @@ export default function EditorTabs({
                 <span
                   className='editor-tabs-close-btn-container'
                   onClick={(e) => {
-                    e.stopPropagation(); // prevent triggering the tab click
+                    e.stopPropagation();
                     handleCloseTab(tab.name);
                   }}
                 >

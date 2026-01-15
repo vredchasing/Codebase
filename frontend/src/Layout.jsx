@@ -1,14 +1,20 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import Lenis from 'lenis';
+
+import store, {persistor} from './stores/reduxTK/clientStore';
+
 import Header from './Components/Header';
 import Footer from './Components/Footer';
-import { AuthProvider } from './Components/Auth/AuthContext';
-import { RetrievalScopeProvider } from './contexts/RetrievalScopeContext';
-import { SettingsModalProvider } from './contexts/SettingsModalContext';
 import HeaderDashboard from './Components/HeaderDashboard';
 import HeaderWorkspace from './Components/HeaderWorkspace';
 import AgentSettingsModal from './Components/Kira/AgentSettingsModal/AgentSettingsModal';
+
+import { AuthProvider } from './Components/Auth/AuthContext';
+import { RetrievalScopeProvider } from './contexts/RetrievalScopeContext';
+import { SettingsModalProvider } from './contexts/SettingsModalContext';
 
 const Layout = () => {
   React.useEffect(() => {
@@ -17,46 +23,50 @@ const Layout = () => {
       lerp: 0.1,
       autoRaf: false,
     });
+
     function raf(time) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
+
     requestAnimationFrame(raf);
     return () => lenis.destroy();
   }, []);
 
   const location = useLocation();
-  let headerType = 'default';
-  if (location.pathname.startsWith('/dashboard')) {
-    headerType = 'default';
-  } else if (location.pathname.startsWith('/workspace')) {
-    headerType = 'workspace';
-  }
 
   let headerElement = <Header />;
-  if (headerType === 'dashboard') headerElement = <HeaderDashboard />;
-  else if (headerType === 'workspace') headerElement = <HeaderWorkspace />;
+  if (location.pathname.startsWith('/dashboard')) {
+    headerElement = <HeaderDashboard />;
+  } else if (location.pathname.startsWith('/workspace')) {
+    headerElement = <HeaderWorkspace />;
+  }
 
-  // Hide footer on workspace, dashboard, and create-project routes
   const shouldShowFooter = !(
     location.pathname.startsWith('/workspace') ||
     location.pathname.startsWith('/dashboard') ||
-    location.pathname.startsWith('/create-project')
+    location.pathname.startsWith('/create-project') ||
+    location.pathname.startsWith('/login') ||
+    location.pathname.startsWith('/signup')
   );
 
   return (
-    <AuthProvider>
-      <RetrievalScopeProvider>
-        <SettingsModalProvider>
-          {headerElement}
-          <main className="main">
-            <Outlet />
-          </main>
-          {shouldShowFooter && <Footer />}
-          <AgentSettingsModal />
-        </SettingsModalProvider>
-      </RetrievalScopeProvider>
-    </AuthProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthProvider>
+          <RetrievalScopeProvider>
+            <SettingsModalProvider>
+              {headerElement}
+              <main className="main">
+                <Outlet />
+              </main>
+              {shouldShowFooter && <Footer />}
+              <AgentSettingsModal />
+            </SettingsModalProvider>
+          </RetrievalScopeProvider>
+        </AuthProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 

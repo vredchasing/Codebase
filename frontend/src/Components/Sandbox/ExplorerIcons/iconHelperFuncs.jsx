@@ -1,4 +1,4 @@
-import { extensionIconMap } from './Icons';
+import {extensionIconMap} from './Icons';
 
 export default function getIcon(file) {
   if (file.type === 'folder') {

@@ -59,7 +59,7 @@ function Header() {
           ) : (
             <>
               <Link to="/login" className="header-link">Login</Link>
-              <Link to="/register" className="header-link-try-for-free">Sign Up</Link>
+              <Link to="/signup" className="header-link-try-for-free">Sign Up</Link>
             </>
           )}
         </div>

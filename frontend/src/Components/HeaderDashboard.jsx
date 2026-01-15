@@ -1,29 +1,64 @@
-import React from "react"
-import './HeaderDashboard.css'
+import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from './Auth/AuthContext';
+import { SlOptions } from 'react-icons/sl';
+import { MdKeyboardArrowDown } from "react-icons/md";
 
+import './Header.css'
 
-import { SlSettings } from "react-icons/sl";
-import { SlOptions } from "react-icons/sl";
+function Header() {
+  const { user } = useContext(AuthContext);
+  const [scrollDirection, setScrollDirection] = useState('up');
+  const [lastScrollY, setLastScrollY] = useState(0);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY) {
+        setScrollDirection('down');
+      } else {
+        setScrollDirection('up');
+      }
+      setLastScrollY(currentScrollY);
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
-
-
-function HeaderDashboard (){
-
-  return(
-    <header className="header-dashboard-wrapper">
-      <div className="header-dashboard-left">
-        <h1 className="header-dashboard-logo">CODEBASE</h1>
-      </div>
-      <div className="header-dashboard-right">
-        <div className="header-dashboard-avatar-container">
-          <img className="header-dashboard-avatar" src="/public/images/background-images/background2.webp"></img>
+  return (
+    <header
+      className='header'
+    >
+      <div className="header-content">
+        <div className="custom-logo-container">
+          <p className="logo">CODEBASE</p>
         </div>
-        <SlOptions color='white'></SlOptions>
+
+        <div className="header-right-nav">
+          {user ? (
+            <div className="header-right-nav-authenticated">
+              <div className="header-profile-picture-container">
+                <Link to="/dashboard" className="header-profile-picture">
+                  <img 
+                    src="/public/images/background-images/background2.webp" 
+                    alt="Profile" 
+                    className="profile-picture-img"
+                  />
+                </Link>
+              </div>
+              <SlOptions color='white' />
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="header-link">Login</Link>
+              <Link to="/signup" className="header-link-try-for-free">Sign Up</Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
-  )
+  );
 }
 
-export default HeaderDashboard
+export default Header;

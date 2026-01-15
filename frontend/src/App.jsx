@@ -17,7 +17,7 @@ export default function App() {
           <Route index element={<LandingPage />} /> {/* This is your main page content */}
           <Route path="workspace/:projectId" element={<Sandbox></Sandbox>} />
           <Route path="kira" element = {<Kira></Kira>}/>
-          <Route path="register" element={<SignUp></SignUp>} />
+          <Route path="signup" element={<SignUp></SignUp>} />
           <Route path="login" element={<Login></Login>} />
           <Route path="dashboard" element={<Dashboard></Dashboard>} />
           <Route path="create-project" element={<ProjectCreator></ProjectCreator>} />
