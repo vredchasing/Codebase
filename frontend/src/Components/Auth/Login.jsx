@@ -1,41 +1,44 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { api, API_ENDPOINTS, handleError, validateForm, VALIDATION_RULES } from '../../utils';
+import { setUserInfo } from '../../stores/reduxTK/slices/user/userSlice';
 import { AiFillGithub } from "react-icons/ai";
 import './Login.css';
 
-function Login() {
-  const { login } = useContext(AuthContext);
+export default function Login() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+
+  const [step, setStep] = useState('email'); // first ask email
+  const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error for this field when user types
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: null,
-      }));
-    }
+    setForm(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
   }
 
-  async function handleSubmit(e) {
+  function handleContinue(e) {
     e.preventDefault();
-    
-    // Validate form
-    const validation = validateForm(form, {
+    const validation = validateForm({ email: form.email }, {
       email: VALIDATION_RULES.EMAIL,
+    });
+
+    if (!validation.valid) {
+      setErrors(validation.errors);
+      return;
+    }
+    setErrors({});
+    setStep('password');
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    const validation = validateForm({ password: form.password }, {
       password: VALIDATION_RULES.PASSWORD,
     });
 
@@ -53,12 +56,13 @@ function Login() {
         password: form.password,
       });
 
-      if (response.data?.user) {
-        login(response.data.user);
-        navigate('/dashboard');
-      }
+      const { user, accessToken } = response.data;
+
+      dispatch(setUserInfo({ userInfo: user, accessToken }));
+
+      navigate('/dashboard');
     } catch (error) {
-      const errorMessage = handleError(error, 'Login', (msg) => {
+      const errorMessage = handleError(error, 'Login', msg => {
         setErrors({ submit: msg });
       });
       setErrors({ submit: errorMessage });
@@ -91,38 +95,55 @@ function Login() {
             Continue with GitHub
           </span>
         </div>
+
         <span className="or-span">
           <span className="line"></span> or <span className="line"></span>
         </span>
+
         <div className="login-form-wrapper">
-          <form className="login-form" onSubmit={handleSubmit}>
-            {errors.submit && (
-              <div className="login-error-message" style={{ color: 'red', marginBottom: '1rem' }}>
-                {errors.submit}
+          {step === 'email' && (
+            <form className="login-form" onSubmit={handleContinue}>
+              {errors.submit && <div className="login-error-message" style={{color:'red', marginBottom:'1rem'}}>{errors.submit}</div>}
+              <div className="login-input-container">
+                <input
+                  className="login-email-input"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                />
+                {errors.email && <span style={{color:'red', fontSize:'0.75rem'}}>{errors.email}</span>}
               </div>
-            )}
-            <div className="login-input-container">
-              <input
-                className="login-email-input"
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <span style={{ color: 'red', fontSize: '0.75rem' }}>{errors.email}</span>
-              )}
-            </div>
-            <button className="login-button" type="submit" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Continue'}
-            </button>
-          </form>
+              <button className="login-button" type="submit" disabled={isLoading}>
+                Continue
+              </button>
+            </form>
+          )}
+
+          {step === 'password' && (
+            <form className="login-form" onSubmit={handleLogin}>
+              {errors.submit && <div className="login-error-message" style={{color:'red', marginBottom:'1rem'}}>{errors.submit}</div>}
+              <div className="login-input-container">
+                <input
+                  className="login-email-input"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  value={form.password}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                />
+                {errors.password && <span style={{color:'red', fontSize:'0.75rem'}}>{errors.password}</span>}
+              </div>
+              <button className="login-button" type="submit" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>
   );
 }
-
-export default Login;

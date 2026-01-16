@@ -1,5 +1,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import uiReducer from "./slices/UI/uiSlice";
+import userReducer from './slices/user/userSlice';
+import workspaceSettingsReducer from './slices/workspace/workspaceSettingsSlice';
 
 import {
   persistStore,
@@ -18,12 +20,13 @@ import storage from "redux-persist/lib/storage"; // localStorage
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["workspaceUI"], // only persist UI slice
+  whitelist: ["workspaceUI", "user", "workspaceSettings"], // only persist UI and user slices
 };
 
 const rootReducer = combineReducers({
   workspaceUI: uiReducer,
-  // other reducers here
+  user: userReducer,
+  workspaceSettings: workspaceSettingsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

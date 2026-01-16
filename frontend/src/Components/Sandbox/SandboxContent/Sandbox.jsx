@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
+import HeaderWorkspace from '../../HeaderWorkspace';
 
 import { api, API_ENDPOINTS, handleError } from '../../../utils';
 import './Sandbox.css';
@@ -13,27 +14,44 @@ import { CodeEditorStatusBar } from '../CodeEditor/CodeEditorStatusBar';
 import getLangFromExt from '../CodeEditor/getExtHelper';
 import getIcon from '../ExplorerIcons/iconHelperFuncs';
 import { useWebSocket } from '../../../hooks/useWebSocket';
-import { setOpenedTabs, setActiveTab } from '../../../stores/reduxTK/slices/UI/uiSlice';
+import LoadingAnimation from '../../animationAssests/loadingAnimation';
+
+import {
+  setOpenedTabs,
+  setActiveTab,
+  setWorkspaceProject,
+  closeTab
+} from '../../../stores/reduxTK/slices/UI/uiSlice';
+
+import { AGENT_SETTINGS_TAB } from '../../../stores/reduxTK/slices/workspace/workspaceSettingsSlice';
+import AgentSettingsTab from '../../Kira/AgentSettingsModal/AgentSettingsTab';
 
 export default function Sandbox() {
   const { projectId } = useParams();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!projectId) return;
+    dispatch(setWorkspaceProject(projectId));
+  }, [projectId, dispatch]);
+
   useWebSocket(projectId);
 
-  // Local file cache state
+  // Local file state
   const [files, setFiles] = useState([]);
   const [filesMap, setFilesMap] = useState({});
   const [mainTree, setMainTree] = useState([]);
+  const [filesContentMap, setFilesContentMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Redux persisted workspace UI state
+  // Redux workspace tabs
   const openedTabs = useSelector(state => state.workspaceUI.workspace.openedTabs || []);
-  const activeTabName = useSelector(state => state.workspaceUI.workspace.activeTab);
+  const activeTabId = useSelector(state => state.workspaceUI.workspace.activeTab);
 
-  // —————————————————————————————————————————
+  // =============================================================================
   // Helpers
+  // =============================================================================
 
   const findFileInTree = useCallback((tree, fileName) => {
     for (const node of tree) {
@@ -80,6 +98,21 @@ export default function Sandbox() {
       const treeWithContent = response.data || [];
       setMainTree(treeWithContent);
 
+      // Build a content map (id → file with content)
+      const buildFilesContentMap = (nodes, result = {}) => {
+        for (const node of nodes) {
+          if (node.node_type === 'file') {
+            result[node.id] = node;
+          }
+          if (node.children?.length) {
+            buildFilesContentMap(node.children, result);
+          }
+        }
+        return result;
+      };
+      const contentMap = buildFilesContentMap(treeWithContent);
+      setFilesContentMap(contentMap);
+
       const mergeContent = (nodes) =>
         nodes.map(node => {
           const matching = findFileInTree(treeWithContent, node.name);
@@ -97,7 +130,10 @@ export default function Sandbox() {
     }
   }, [findFileInTree]);
 
-  // — Fetch project files once
+  // =============================================================================
+  // Fetch files once
+  // =============================================================================
+
   useEffect(() => {
     async function fetchFiles() {
       try {
@@ -105,7 +141,7 @@ export default function Sandbox() {
         const data = res.data || [];
         setFiles(data);
         setFilesMap(flattenFiles(data));
-        buildContentTree(data);
+        await buildContentTree(data);
       } catch (err) {
         handleError(err, 'Sandbox - Fetch Files');
         setError('Failed to load project files. Please refresh.');
@@ -116,31 +152,35 @@ export default function Sandbox() {
     fetchFiles();
   }, [projectId, flattenFiles, buildContentTree]);
 
-  // — Derive current active file object
+  // =============================================================================
+  // Determine active tab
+  // =============================================================================
+
+  // Find the active tab object
+  const activeTab = useMemo(() => {
+    return openedTabs.find(t => t.id === activeTabId) || null;
+  }, [openedTabs, activeTabId]);
+
+  // Determine if we’re on the settings tab
+  const isSettingsTab = activeTabId === AGENT_SETTINGS_TAB;
+
+  // If this is a file tab, locate the file object with content
   const activeFile = useMemo(() => {
-    if (!activeTabName) return null;
-    let result = files.find(f => f.name === activeTabName);
-    if (!result && mainTree.length > 0) {
-      result = findFileInTree(mainTree, activeTabName);
-    }
-    return result || null;
-  }, [activeTabName, files, mainTree, findFileInTree]);
+    if (!activeTab || isSettingsTab) return null;
 
-  // — File selection handler
-  const handleFileSelect = useCallback((file) => {
-    if (!file || file.node_type !== 'file') return;
+    const fileId = activeTab.id;
+    // Prefer the content map (backend content)
+    const fileFromContent = filesContentMap[fileId];
+    if (fileFromContent) return fileFromContent;
 
-    // Add to openedTabs if not already
-    const exists = openedTabs.some(t => t.id === file.id);
-    if (!exists) dispatch(setOpenedTabs([...openedTabs, file]));
+    // Fallback: find in mainTree by name
+    return findFileInTree(mainTree, activeTab.name) || null;
+  }, [activeTab, filesContentMap, mainTree, findFileInTree, isSettingsTab]);
 
-    dispatch(setActiveTab(file.name));
-  }, [openedTabs, dispatch]);
-
-  // — Build props for CodeEditor
+  // Build fileData if a file is active
   const fileData = useMemo(() => {
     if (!activeFile) return null;
-    let content = activeFile.content || '';
+    const content = activeFile.content || '';
     return {
       content,
       language: getLangFromExt(activeFile.name),
@@ -151,10 +191,25 @@ export default function Sandbox() {
     };
   }, [activeFile, files, projectId]);
 
+  // Handle file clicks in explorer
+  const handleFileSelect = useCallback((file) => {
+    if (!file || file.node_type !== 'file') return;
+
+    const exists = openedTabs.some(t => t.id === file.id);
+    if (!exists) dispatch(setOpenedTabs([...openedTabs, { id: file.id, name: file.name, node_type: 'file' }]));
+
+    dispatch(setActiveTab(file.id));
+  }, [openedTabs, dispatch]);
+
+  // =============================================================================
+  // Render
+  // =============================================================================
+
   return (
     <section className="sandbox-wrapper">
+      <HeaderWorkspace></HeaderWorkspace>
       <div className="sandbox">
-        {/* File Explorer Panel */}
+        {/* File Explorer */}
         <div className="sandbox-fe-wrapper">
           <FileExplorer
             files={files}
@@ -174,7 +229,7 @@ export default function Sandbox() {
               {/* Tabs */}
               <div className="editor-tabs-wrapper">
                 <div className="editor-tabs-container-main">
-                  <EditorTabs projectId={projectId} />
+                  <EditorTabs />
                 </div>
               </div>
 
@@ -192,12 +247,14 @@ export default function Sandbox() {
                 </div>
               )}
 
-              {/* Editor */}
+              {/* Editor / Settings */}
               <div className="editor-wrapper">
                 {loading ? (
-                  <div>Loading...</div>
+                  <LoadingAnimation />
                 ) : error ? (
                   <div>Error: {error}</div>
+                ) : isSettingsTab ? (
+                  <AgentSettingsTab />
                 ) : activeFile ? (
                   <CodeEditor fileData={fileData} />
                 ) : (

@@ -1,19 +1,16 @@
 import React from "react";
 import './HeaderWorkspace.css'
-import { useSettingsModal } from '../contexts/SettingsModalContext';
 import { LiaLongArrowAltLeftSolid } from "react-icons/lia";
 import { LiaLongArrowAltRightSolid} from "react-icons/lia"
-import { SlOptions } from "react-icons/sl";
 import { MdFullscreen } from "react-icons/md";
 import { MdFullscreenExit } from "react-icons/md";
 import { CiSettings } from "react-icons/ci";
+import { IoSearch } from "react-icons/io5";
 
 
 
 
 function HeaderWorkspace (){
-  const { openSettings } = useSettingsModal();
-
   return(
     <header className="workspace-header">
       <div className="workspace-header-inner">
@@ -32,13 +29,18 @@ function HeaderWorkspace (){
           </div>
         </div>
         <div className='workspace-header-center-wrapper'>
-          
+          <div className="workspace-header-center-inner">
+            <span className="workspace-search-input-placeholder">
+              <IoSearch className="workspace-search-icon"></IoSearch>
+              Codebase
+            </span>
+            <input className="workspace-search-input"></input>
+          </div>
         </div>
         <div className="workspace-header-right-wrapper">
           <div className="workspace-header-right-inner">
             <button 
               className="workspace-header-settings-btn"
-              onClick={openSettings}
               style={{ 
                 background: 'none', 
                 border: 'none', 
@@ -54,13 +56,11 @@ function HeaderWorkspace (){
             <div className="workspace-header-avatar-container">
               <img className="workspace-header-avatar" src="/public/images/background-images/background2.webp"></img>
             </div>
-            <SlOptions color="#b0b0b0ff"></SlOptions>
           </div>
         </div>
       </div>
     </header>
   )
-
 }
 
 export default HeaderWorkspace

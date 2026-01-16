@@ -10,11 +10,6 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import HeaderDashboard from './Components/HeaderDashboard';
 import HeaderWorkspace from './Components/HeaderWorkspace';
-import AgentSettingsModal from './Components/Kira/AgentSettingsModal/AgentSettingsModal';
-
-import { AuthProvider } from './Components/Auth/AuthContext';
-import { RetrievalScopeProvider } from './contexts/RetrievalScopeContext';
-import { SettingsModalProvider } from './contexts/SettingsModalContext';
 
 const Layout = () => {
   React.useEffect(() => {
@@ -37,9 +32,9 @@ const Layout = () => {
 
   let headerElement = <Header />;
   if (location.pathname.startsWith('/dashboard')) {
-    headerElement = <HeaderDashboard />;
+    headerElement = <Header />;
   } else if (location.pathname.startsWith('/workspace')) {
-    headerElement = <HeaderWorkspace />;
+    headerElement = null;
   }
 
   const shouldShowFooter = !(
@@ -53,18 +48,11 @@ const Layout = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AuthProvider>
-          <RetrievalScopeProvider>
-            <SettingsModalProvider>
-              {headerElement}
-              <main className="main">
-                <Outlet />
-              </main>
-              {shouldShowFooter && <Footer />}
-              <AgentSettingsModal />
-            </SettingsModalProvider>
-          </RetrievalScopeProvider>
-        </AuthProvider>
+        {headerElement}
+        <main className="main">
+          <Outlet />
+        </main>
+        {shouldShowFooter && <Footer />}
       </PersistGate>
     </Provider>
   );

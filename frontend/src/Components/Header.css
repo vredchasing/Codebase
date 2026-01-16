@@ -1,3 +1,7 @@
+/* =============================================================================
+   Header Base Styles (unchanged)
+   ============================================================================= */
+
 .header {
   display: flex;
   flex-direction: row;
@@ -12,7 +16,6 @@
   -webkit-backdrop-filter: blur(12px); /* Safari support */
 }
 
-
 .header-hidden {
   position: absolute;
   left: 50%;
@@ -26,6 +29,7 @@
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   gap: 2rem;
 }
+
 .header-visible {
   position: absolute;
   left: 50%;
@@ -38,8 +42,7 @@
   transform: translate(-50%, 0);
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   gap: 2rem;
-} 
-
+}
 
 .header-content {
   display: flex;
@@ -47,7 +50,6 @@
   max-width: 100%;
   justify-content: space-between;
   align-items: center;
-  overflow: hidden;
 }
 
 .custom-logo-container {
@@ -60,12 +62,12 @@
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 550;
   letter-spacing: -0.1px;
-  margin: 0.75rem 0rem;
   color: rgb(255, 255, 255);
 }
+
 .circle {
   width: 7px;
   transform: translateX(0.9px) translateY(1px);
@@ -75,10 +77,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.95);
   text-decoration: none;
   font-family: "Inter", sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.7px;
   will-change: color;
@@ -87,13 +89,10 @@
   gap: 0.2rem;
 }
 
-.header-link:hover {
-}
-
 .header-right-nav {
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  alignments: center;
   height: 100%;
   margin-right: 20px;
   gap: 1rem;
@@ -113,10 +112,6 @@
   font-weight: 500;
 }
 
-.header-link-try-for-free:hover{
-
-}
-
 .header-right-nav-authenticated {
   display: flex;
   align-items: center;
@@ -129,6 +124,7 @@
   height: 1.25rem;
   border-radius: 100%;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .header-profile-picture {
@@ -151,3 +147,83 @@
   object-fit: cover;
 }
 
+/* =============================================================================
+   Dropdown Menu (NEW)
+   -----------------------------------------------------------------------------
+   These styles support the dropdown that appears when clicking the profile
+   picture. They are scoped to the header and should work with your existing
+   layout without breaking anything.
+   ============================================================================= */
+
+/* Container for the dropdown — positioned relative to the icon */
+.header-right-nav-authenticated {
+  position: relative; /* Ensures the dropdown is positioned relative to this */
+}
+
+/* Dropdown menu panel */
+.header-dropdown {
+  position: absolute;
+  top: 46px; /* Slightly below the header */
+  right: 0;
+  min-width: 200px;
+  background: rgb(16, 16, 16);
+  border: 1px solid rgba(50, 50, 50, 0.5);
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Individual item inside dropdown */
+.header-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Last item shouldn’t have a border-bottom */
+.header-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover state for dropdown items */
+.header-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Logout item specifically */
+.header-dropdown-item.logout {
+  color: #ff6b6b;
+  font-weight: 500;
+}
+
+/* Optional icon + text alignment for dropdown */
+.header-dropdown-item svg {
+  vertical-align: middle;
+}
+
+/* =============================================================================
+   Optional Utility Classes
+   -----------------------------------------------------------------------------
+   You can add variants if needed (e.g., small text, bold, disabled, etc.)
+   ============================================================================= */
+
+/* Small text utility */
+.text-sm {
+  font-size: 0.75rem;
+}
+
+/* Bold text utility */
+.text-bold {
+  font-weight: 600;
+}

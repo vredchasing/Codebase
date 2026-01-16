@@ -1,0 +1,58 @@
+/* Container */
+.ios-toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+  font-family: "Inter", sans-serif;
+}
+
+/* Hide native checkbox */
+.ios-toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Medium track */
+.ios-toggle-switch .slider {
+  position: relative;
+  width: 34px;     /* in between 30px and 38px */
+  height: 18px;    /* in between 16px and 20px */
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 11px;
+  transition: background 0.25s ease-in-out;
+  flex-shrink: 0;
+}
+
+/* Medium handle */
+.ios-toggle-switch .slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;     /* a bit smaller than original 18px */
+  height: 16px;
+  left: 1px;
+  top: 1px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s ease-in-out;
+}
+
+/* Checked: green + slide */
+.ios-toggle-switch input:checked + .slider {
+  background: #1c9643;
+}
+
+/* Slide handle */
+.ios-toggle-switch input:checked + .slider::before {
+  transform: translateX(16px); /* track width (34) - handle width (16) - 2px padding */
+}
+
+/* Optional label text */
+.ios-toggle-switch .toggle-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #fff;
+}

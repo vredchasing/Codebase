@@ -1,60 +1,96 @@
 // src/Components/Sandbox/EditorTabs/EditorTabs.jsx
 import React, { useCallback } from 'react';
 import './EditorTabs.css';
+import { VscSettings } from "react-icons/vsc";
 import getIcon from '../ExplorerIcons/iconHelperFuncs';
 import { useSelector, useDispatch } from 'react-redux';
-import { setOpenedTabs, setActiveTab } from '../../../stores/reduxTK/slices/UI/uiSlice';
+import {
+  setOpenedTabs,
+  setActiveTab,
+  closeTab,
+} from '../../../stores/reduxTK/slices/UI/uiSlice';
+import { AGENT_SETTINGS_TAB } from '../../../stores/reduxTK/slices/workspace/workspaceSettingsSlice';
 
 export default function EditorTabs() {
   const dispatch = useDispatch();
-  const openedTabs = useSelector(state => state.workspaceUI.workspace.openedTabs) || [];
-  const activeTabName = useSelector(state => state.workspaceUI.workspace.activeTab);
 
-  const handleTabClick = useCallback((tab) => {
-    if (!tab) return;
-    const tabName = tab.name;
+  const openedTabs = useSelector(
+    (state) => state.workspaceUI.workspace.openedTabs
+  ) || [];
 
-    // Derive fresh state directly from Redux
-    const newOpenedTabs = openedTabs.some(t => t.name === tabName) ? openedTabs : [...openedTabs, tab];
-    dispatch(setOpenedTabs(newOpenedTabs));
-    dispatch(setActiveTab(tabName));
-  }, [openedTabs, dispatch]);
+  const activeTabId = useSelector(
+    (state) => state.workspaceUI.workspace.activeTab
+  );
 
-  const handleCloseTab = useCallback((tabName) => {
-    const newOpenedTabs = openedTabs.filter(t => t.name !== tabName);
-    const newActiveTab = activeTabName === tabName && newOpenedTabs.length > 0
-      ? newOpenedTabs[newOpenedTabs.length - 1].name
-      : (newOpenedTabs.length === 0 ? null : activeTabName);
+  const handleTabClick = useCallback(
+    (tab) => {
+      if (!tab) return;
+      dispatch(setActiveTab(tab.id));
+    },
+    [dispatch]
+  );
 
-    dispatch(setOpenedTabs(newOpenedTabs));
-    dispatch(setActiveTab(newActiveTab));
-  }, [openedTabs, activeTabName, dispatch]);
+  const handleCloseTab = useCallback(
+    (tabId) => {
+      dispatch(closeTab(tabId));
+    },
+    [dispatch]
+  );
 
-  const validTabs = openedTabs.filter(tab => tab && tab.node_type === 'file');
+  // Filter for files + the special settings tab
+  const validTabs = openedTabs.filter((tab) => {
+    if (!tab) return false;
+    // Always include settings tab
+    if (tab.id === AGENT_SETTINGS_TAB) return true;
+    // Only include real files
+    return tab.node_type === 'file';
+  });
 
   return (
-    <div className='editor-tabs-main-wrapper'>
-      <div className="editor-tabs-wrapper">
-        {validTabs.map(tab => {
-          const isActive = tab.name === activeTabName;
+    <div className="editor-tabs-main-wrapper">
+      <div className="editor-tabs-inner-wrapper">
+        {validTabs.map((tab) => {
+          const isActive = tab.id === activeTabId;
+          const displayName = tab.name;
+
+          const isSettings = tab.id === AGENT_SETTINGS_TAB;
+          const iconSrc = !isSettings ? getIcon(tab) : null;
+
           return (
-            <div key={tab.name} className={`editor-tabs-container ${isActive ? 'active' : ''}`}>
+            <div
+              key={tab.id}
+              className={`editor-tabs-container ${isActive ? 'active' : ''}`}
+            >
               <div
                 className={`editor-tab ${isActive ? 'active' : ''}`}
                 onClick={() => handleTabClick(tab)}
               >
-                <div className='editor-tabs-icon-container'>
-                  <img className='editor-tabs-icon-img' src={getIcon(tab)} alt={tab.name} />
+                {/* Icon */}
+                <div className="editor-tabs-icon-container">
+                  {isSettings ? (
+                    // Settings icon (use your preferred SVG/Icon)
+                    <span className="settings-tab-icon"><VscSettings color='#a7a7a7' size={11}></VscSettings></span>
+                  ) : (
+                    <img
+                      className="editor-tabs-icon-img"
+                      src={iconSrc}
+                      alt={displayName}
+                    />
+                  )}
                 </div>
-                <h1 className='editor-tabs-text'>{tab.name}</h1>
+
+                {/* Tab Title */}
+                <h1 className="editor-tabs-text">{displayName}</h1>
+
+                {/* Close Button */}
                 <span
-                  className='editor-tabs-close-btn-container'
+                  className="editor-tabs-close-btn-container"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleCloseTab(tab.name);
+                    handleCloseTab(tab.id);
                   }}
                 >
-                  <span className='editor-tabs-close-btn'>×</span>
+                  <span className="editor-tabs-close-btn">×</span>
                 </span>
               </div>
             </div>

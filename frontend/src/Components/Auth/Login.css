@@ -27,14 +27,14 @@
   font-size: 1.5rem;
   font-weight: 500;
   margin: 0px;
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   color: white;
 }
 .login-title-2 {
   font-size: 1.5rem;
   font-weight: 500;
   margin: 0px;
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   color: rgb(92, 92, 92);
 }
 

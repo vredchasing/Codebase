@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import './KiraWorkspace.css';
 import { RiClaudeFill } from "react-icons/ri";
 import { BsCardImage } from "react-icons/bs";
@@ -8,13 +8,14 @@ import { MdHistory } from "react-icons/md";
 import { GoArrowUp } from "react-icons/go";
 import { CiSettings } from "react-icons/ci";
 import { API_ENDPOINTS, handleError, MESSAGE_ROLES } from '../../../utils';
-import { useRetrievalScope } from '../../../contexts/RetrievalScopeContext';
-import AgentSettingsModal from '../AgentSettingsModal/AgentSettingsModal';
 import {
   getUserChatSessions,
   getChatHistory,
   transformMessageToComponent,
 } from '../../../services/chatService';
+
+import { useSelector, useDispatch } from "react-redux";
+import { openSettingsTab } from "../../../stores/reduxTK/slices/UI/uiSlice";
 
 import AgentChatLoader from "../../animationAssests/agentChatLoader";
 
@@ -24,13 +25,11 @@ function KiraWorkspace() {
   const [messages, setMessages] = useState([]); // chat history
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sessionId, setSessionId] = useState(null); // Current active session ID
   const [chatSessions, setChatSessions] = useState([]); // List of all sessions
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loadingSessions, setLoadingSessions] = useState(false);
-  const { getRetrievalOptions } = useRetrievalScope();
-
+  const dispatch = useDispatch();
   // Load chat history for a session
   const loadChatHistory = useCallback(async (sessionIdToLoad) => {
     if (!sessionIdToLoad) return;
@@ -127,6 +126,33 @@ function KiraWorkspace() {
     initializeSessions();
   }, [loadChatHistory]); // Include loadChatHistory in dependencies
 
+  // Access current projectId + workspace settings from Redux
+  const projectId = useSelector(
+    (state) => state.workspaceUI.workspace.projectId
+  );
+
+  const workspaceSettings = useSelector(
+    (state) => state.workspaceSettings.workspaceSettings
+  );
+
+  const retrievalOptions = useMemo(() => {
+    if (!projectId) {
+      console.warn("No project selected for retrieval options.");
+      return null;
+    }
+
+    return {
+      projectId,
+      crossProjectRetrieval: workspaceSettings?.crossProjectRetrieval ?? false,
+      addedProjects: workspaceSettings?.addedProjects ?? [],
+      agentApproach: workspaceSettings?.agentApproach ?? 'quick',
+      autoApplyPatches: workspaceSettings?.autoApplyPatches ?? true,
+      preventAutoDeletes: workspaceSettings?.preventAutoDeletes ?? false,
+    };
+  }, [projectId, workspaceSettings]);
+
+  // Handle sending a message
+
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -138,9 +164,6 @@ function KiraWorkspace() {
     setLoading(true);
 
     try {
-      // Get retrieval scope options
-      const retrievalOptions = getRetrievalOptions();
-      
       // streaming request to backend (sessionId will be created if not provided)
       const res = await fetch(API_ENDPOINTS.AGENT.STREAM, {
         method: "POST",
@@ -217,7 +240,7 @@ function KiraWorkspace() {
       <div className="kira-workspace-nav-wrapper">
         <div className="kira-workspace-nav-inner">
           <div className="kira-workspace-nav-left">
-            <div className="chat-sessions-list">
+            <div className="chat-sessions-list" data-lenis-prevent>
               {!sessionId && chatSessions.length === 0 && (
                 <span 
                   className={`agent-nav-tab ${!sessionId ? 'active' : ''}`}
@@ -263,7 +286,7 @@ function KiraWorkspace() {
             </span>
             <span 
               className="agent-nav-option-container"
-              onClick={() => setIsSettingsOpen(true)}
+              onClick={() => dispatch(openSettingsTab())}
               title="Settings"
             >
               <CiSettings></CiSettings>
@@ -336,11 +359,6 @@ function KiraWorkspace() {
           <span className="past-chats-label"></span>
         </div>
       </div>
-
-      <AgentSettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-      />
     </section>
   );
 }

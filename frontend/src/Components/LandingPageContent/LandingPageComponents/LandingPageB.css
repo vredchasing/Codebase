@@ -18,7 +18,7 @@
 .lp-b-title {
     display: flex;
     font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 500;
     color: white;
     margin: 0;
@@ -45,7 +45,7 @@
 .lp-b-card-header-title {
     display: flex;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 0.9rem;
     color: white;
     font-weight: 400;
     margin: 0;

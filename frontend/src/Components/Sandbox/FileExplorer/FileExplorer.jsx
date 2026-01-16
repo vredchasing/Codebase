@@ -3,6 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import './FileExplorer.css';
 import FileNode from '../FileNode';
 import { SlOptions } from "react-icons/sl";
+import { TbFiles } from "react-icons/tb";
+import { IoSearch } from "react-icons/io5";
+import { GoGitBranch } from "react-icons/go";
+import { MdDashboardCustomize } from "react-icons/md";
+
+
+
+
 import ContextMenu from './ContextMenu';
 import { api, API_ENDPOINTS, handleError } from '../../../utils';
 import { 
@@ -158,9 +166,18 @@ export default function FileExplorer({ files, onFileSelect, onFileCreate, projec
       <div className='file-explorer-content-wrapper'>
         <div className='file-explorer-header-wrapper'>
           <div className='file-explorer-quick-nav-container'>
-            <span className='file-explorer-quick-nav-widget'></span>
-            <span className='file-explorer-quick-nav-widget'></span>
-            <span className='file-explorer-quick-nav-widget'></span>
+            <span className='file-explorer-quick-nav-widget'>
+              <TbFiles color='rgb(112, 112, 112)'></TbFiles>
+            </span>
+            <span className='file-explorer-quick-nav-widget'>
+              <IoSearch color='rgb(112, 112, 112)'></IoSearch>
+            </span>
+            <span className='file-explorer-quick-nav-widget'>
+              <GoGitBranch color='rgb(112, 112, 112)'></GoGitBranch>
+            </span>
+            <span className='file-explorer-quick-nav-widget'>
+              <MdDashboardCustomize color='rgb(112, 112, 112)'></MdDashboardCustomize>
+            </span>
           </div>
           <SlOptions className='explorer-options' />
         </div>

@@ -1,33 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, API_ENDPOINTS, handleError } from "../../utils";
-
 import "./Dashboard.css";
-
-import { RxDashboard } from "react-icons/rx";
-import { IoIosFolderOpen } from "react-icons/io";
-import { FaRegFile } from "react-icons/fa6";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import DashboardProjectsDefault from "./DashboardProjectsDefault";
 import ProjectCard from "./ProjectCard";
-
-import { MdSpaceDashboard } from "react-icons/md";
-import { MdOutlineBookmark } from "react-icons/md";
+import {
+  MdOutlineKeyboardArrowDown,
+  MdSpaceDashboard,
+  MdOutlineBookmark
+} from "react-icons/md";
 import { AiOutlineTeam } from "react-icons/ai";
 import { PiFileFill } from "react-icons/pi";
 import { IoSearchSharp } from "react-icons/io5";
 
-
-
-
-
-
-
 function Dashboard(){
-
   const [userProjects, setUserProjects] = useState([])
   const [loading, setLoading] = useState(true);
-
   const [collections, setCollections] = useState([]);
 
   useEffect(() => {
@@ -42,25 +30,8 @@ function Dashboard(){
         setLoading(false);
       }
     }
-
     fetchProjects();
   }, []);
-
-  // Collections endpoint not implemented in backend yet
-  // useEffect(() => {
-  //   async function fetchCollections() {
-  //     try {
-  //       const response = await api.get(API_ENDPOINTS.DASHBOARD.GET_COLLECTIONS);
-  //       setCollections(response.data || []);
-  //     } catch (err) {
-  //       handleError(err, 'Dashboard - Fetch Collections');
-  //       setCollections([]);
-  //     }
-  //   }
-  //   
-  //   fetchCollections();
-  // }, []);
-  
 
   return (
     <section className="dashboard-wrapper">
@@ -111,7 +82,6 @@ function Dashboard(){
                 <div className="projects-create-container">
                   <Link to='/create-project' className="projects-create-button">+ Create New File</Link>
                 </div>
-
               </div>
               <div className="dashboard-projects-content">
                 <div className="dashboard-project-wrapper">
@@ -145,7 +115,6 @@ function Dashboard(){
           </div>
         </div>
       </div>
-
     </section>
   )
 }

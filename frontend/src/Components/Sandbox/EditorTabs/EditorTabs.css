@@ -1,24 +1,26 @@
 .editor-tabs-main-wrapper {
   display: flex;
   align-items: center;
-  height: max-content;
+  height: 2rem;
   width: 100%;
   background-color: rgb(25, 25, 25);  backdrop-filter: blur(30px);          /* the actual blur effect */
   -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(45, 45, 45, 0.537);  /* for Safari support */
 }
-
+.editor-tabs-inner-wrapper {
+  display: flex;
+  height: 100%;
+}
 .editor-tabs-wrapper {
   display: flex;
   align-items: center;
-  height: max-content;
-  background-color: rgb(25, 25, 25);  backdrop-filter: blur(30px);          /* the actual blur effect */
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(45, 45, 45, 0.537);  /* for Safari support */
+  max-height: 100%;
+  width: 100%;
+  background-color: rgb(25, 25, 25);  backdrop-filter: blur(30px);     /* the actual blur effect */
+  box-sizing: border-box;
 }
 .editor-tabs-container {
   display: flex;
-  height: 100%;
+  max-height: 100%;
   padding: 0.15rem 0.5rem;
   background-color: rgb(25, 25, 25);
   border-top: 1px solid transparent;
@@ -26,22 +28,24 @@
 }
 .editor-tabs-container.active {
   border-top: 1px solid rgb(40, 129, 255);
+  background-color: rgb(30, 30, 30);
 }
 
 .editor-tab {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
   align-items: center;
   min-width: 90px;
-  height: 100%;
 }
 
 .editor-tabs-icon-container {
   display: flex;
-  width: 1.12vw;
+  align-items: center;
+  width: 1rem;
 }
-.editor-tabs-icon-img {
+.editor-tabs-icon {
   display: flex;
   height: 100%;
   width: 100%;
@@ -49,11 +53,15 @@
 }
 
 .editor-tabs-text {
-  font-size: 0.7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.73rem;
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   color: rgb(224, 224, 224);
   width: max-content;
+  margin: 0;
 }
 .editor-tabs-close-btn-container {
   display: flex;
