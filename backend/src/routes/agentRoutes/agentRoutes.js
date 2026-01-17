@@ -1,7 +1,6 @@
 // server/routes/agentRoutes.js
 import express from "express";
 import OpenAI from "openai";
-import { retrieveEmbeddingsWithContent } from "../../../engine/services/ragRetrievalService.js";
 import { verifyToken } from "../../middleware/authMiddleware.js";
 import {
   getChatHistoryForLLM,

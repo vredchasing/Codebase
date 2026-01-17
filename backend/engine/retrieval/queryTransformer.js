@@ -1,63 +1,145 @@
-//MAIN QUERY TRANSFORMER FUNCTION- INCLUDES THE TRANSFORMATION PIPELINE
-function transformQuery (query){
-  const analyzedQuery = contextRequirementAnalysis(query);
-  const structeredOutput = structureTransformedQuery(query, analyzedQuery);
-  return structeredOutput
+// =============================================================================
+// Agent Query Transformer & Context Requirement Analyzer (Production Ready)
+// =============================================================================
+
+/**
+ * @file
+ * Transforms user queries into structured query info for orchestration.
+ * Analyzes query clarity, complexity, context requirements, and execution hints.
+ * Does NOT execute tools or make decisions — purely analysis.
+ */
+
+import { llmClient } from './llmClient'; // assumed LLM wrapper, replace as needed
+
+// -----------------------------------------------------------------------------
+// QUERY DIMENSIONS
+// -----------------------------------------------------------------------------
+export const QUERY_CLARITY = {
+  CLEAR: 'CLEAR',
+  AMBIGUOUS: 'AMBIGUOUS'
+};
+
+export const QUERY_COMPLEXITY = {
+  SINGLE_STEP: 'SINGLE_STEP',
+  MULTI_STEP: 'MULTI_STEP'
+};
+
+export const CONTEXT_TYPES = {
+  CHAT_HISTORY: 'CHAT_HISTORY',
+  VECTOR_DB: 'VECTOR_DB'
+};
+
+// -----------------------------------------------------------------------------
+// STANDARDIZED OUTPUT FORMAT
+// -----------------------------------------------------------------------------
+export const contextRequirementAnalysisOutputFormat = {
+  classification: 'SIMPLE_QUERY | CHAT_HISTORY_CONTEXT | VECTORDB_CONTEXT | CHAT_HISTORY_VECTORDB_CONTEXT | AMBIGUOUS | TOOL_REQUIRED | MULTI_STEP',
+  clarity: 'CLEAR | AMBIGUOUS',
+  complexity: 'SINGLE_STEP | MULTI_STEP',
+  requiredContext: {
+    chatHistory: false,
+    vectorDB: false
+  },
+  executionHints: {
+    mayRequireTools: false,
+    likelyToolTypes: [] // e.g. ["filesystem", "search", "tests"]
+  },
+  requiredTools: [] // for TOOL_REQUIRED queries
+};
+
+// -----------------------------------------------------------------------------
+// MAIN QUERY TRANSFORMER
+// -----------------------------------------------------------------------------
+
+/**
+ * Transforms a user query into structured query info for orchestration.
+ * @param {string} query - Raw user query.
+ * @returns {Promise<{query: string, queryInfo: object}>}
+ */
+export async function transformQuery(query) {
+  const analyzedQuery = await contextRequirementAnalysis(query);
+  return structureTransformedQuery(query, analyzedQuery);
 }
-// Strucure the output of transformQuery function 
-function structureTransformedQuery(query, analayzedQuery){
+
+/**
+ * Structures the output of transformQuery.
+ * Guarantees the format { query, queryInfo } for orchestration.
+ * @param {string} query
+ * @param {object} analyzedQuery
+ * @returns {{query: string, queryInfo: object}}
+ */
+export function structureTransformedQuery(query, analyzedQuery) {
+  // Ensure classification exists
+  const classification = analyzedQuery.classification || 'SIMPLE_QUERY';
   return {
-    query: query,
-    queryInfo: analayzedQuery
+    query,
+    queryInfo: {
+      classification,
+      ...analyzedQuery
+    }
+  };
+}
+
+// -----------------------------------------------------------------------------
+// CONTEXT REQUIREMENT ANALYSIS
+// -----------------------------------------------------------------------------
+
+/**
+ * Analyzes a query to determine clarity, complexity, context needs, and execution hints.
+ * Does NOT execute tools.
+ * @param {string} query
+ * @returns {Promise<object>} JSON object in the standardized output format
+ */
+export async function contextRequirementAnalysis(query) {
+  const prompt = `
+You are an expert query analyst for an AI agent system.
+Your job is ONLY to analyze the query — do NOT solve it.
+
+--------------------------------------------------
+AVAILABLE DIMENSIONS:
+
+CLARITY:
+- CLEAR
+- AMBIGUOUS
+
+COMPLEXITY:
+- SINGLE_STEP
+- MULTI_STEP
+
+CONTEXT TYPES:
+- chatHistory
+- vectorDB
+- both
+
+--------------------------------------------------
+IMPORTANT RULES:
+1. Do NOT decide which tools to call.
+2. If tools MAY be required (grep, read file, run tests, etc),
+   set executionHints.mayRequireTools = true.
+3. MULTI_STEP means planning or iteration is likely.
+4. AMBIGUOUS means user clarification may be required.
+
+--------------------------------------------------
+RETURN JSON in EXACTLY THIS FORMAT (wrap in triple-backticks to ensure proper parsing):
+\`\`\`json
+${JSON.stringify(contextRequirementAnalysisOutputFormat, null, 2)}
+\`\`\`
+
+--------------------------------------------------
+QUERY:
+"""${query}"""
+`;
+
+  const rawOutput = await llmClient.generate({ query: prompt });
+
+  try {
+    const cleanedOutput = rawOutput.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleanedOutput);
+    // Ensure classification is present
+    if (!parsed.classification) parsed.classification = 'SIMPLE_QUERY';
+    return parsed;
+  } catch (err) {
+    console.warn('Failed to parse LLM output as JSON. Returning default structure.', err);
+    return { ...contextRequirementAnalysisOutputFormat };
   }
 }
-//======== CONTEXT REQUIREMENT ANALYSIS =========//
-
-// AVAILABLE AGENT TOOLS FOR ANALYSIS ONLY
-const contextRequirementAnalysisTools = {
-  
-}
-
-// variables that store info related to helping the agent understand how to perform its task
-
-//1. a categorizer object that helps classify what type of query was given- classification is used to perform selective tasks
-const contextRequirementAnalysisClassifications = {
-  SIMPLE_QUERY: 'This query does not need ANY CONTEXT (e.g., "What is the capital of France?")',  
-  CHAT_HISTORY_CONTEXT: 'This query requires only chat history context (e.g., "Continue refactoring the function we discussed before")',
-  VECTORDB_CONTEXT: 'This query requires only context from the DB that stores AST code chunks (e.g., "Explain this function from the codebase")',
-  CHAT_HISTORY_VECTORDB_CONTEXT: 'This query requires both chat history and context from vector DB which holds AST code chunks (e.g., "Update the function based on our previous discussion and project files")',  
-  AMBIGUOUS: 'This query is ambiguous or unclear and may need disambiguation from the user (e.g., "How do I optimize this?")',  
-  TOOL_REQUIRED: 'This query requires execution of tools or access to external systems (e.g., "Run a linter or test suite")',  
-  MULTI_STEP: 'This query requires multiple steps or reasoning over multiple contexts (e.g., "Summarize all TODOs and propose refactors")',  
-};
-//2. Desired output structure, helps to normalize what type of response should be given- mandatory structure to normalize orchestration tasks
-const contextRequirementAnalysisOutputFormat = {
-  classification: "",      // e.g., SIMPLE_QUERY, PROJECT_SPECIFIC
-  needsContext: false,     // true/false
-  requiredTools: []        // list of tools needed
-};
-
-//3. examples
-
-const contextRequirementAnalysisExamples = {
-  
-}
-
-//ANALYZER TRIGGER FUNCTION
-function contextRequirementAnalysis (query){
-  // Analyze the query to determine what context is needed
-  // This function would parse the query and identify key elements
-  // such as entities, relationships, and intent.
-  const prompt = `
-   You are an expert at analyzing user queries to determine context requirements.
-   Read all of these steps below to perform the analysis - FOLLOW THEM CAREFULLY!:
-   1. Understand the tools given to you for to help analyze -> GIVEN_TOOLS: ${contextRequirementAnalysisTools}.
-   2. You are given classifications to normalize your analysis across different queries. *YOU MUST PICK ONE OF THESE* -> CLASSIFICATION_CATEGORIES: ${contextRequirementAnalysisClassifications}.
-   3. Understand the following desired OUTPUT_FORMAT. Your final output should be formatted EXACTLY as shown here -> DESIRED_OUTPUT_FORMAT : ${contextRequirementAnalysisOutputFormat}.
-   4. Here are some examples for you to look at to help establish your role -> Examples : ${contextRequirementAnalysisExamples}
-   4. Analyze the following query and identify the context requirements, then pick from the classification categories and format your output as specified.
-   QUERY: ${query}
-   5. Return your analysis in the desired output format.
-  `
-}
-

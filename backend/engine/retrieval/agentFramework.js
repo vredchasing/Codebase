@@ -1,26 +1,6 @@
 // =============================================================================
 // Agent Framework for Retrieval-Augmented Agents
 // =============================================================================
-
-// This module defines the structure and behavior of agents that utilize
-// retrieval mechanisms to enhance their capabilities. It includes classes
-// and functions to manage agent interactions, retrieval processes, and
-// integration with external data sources.
-
-// Agent tools - define what tools the agent has access to to understand and generate the
-// best possible responses.
-
-// Execution environment - define the environment in which the agent operates, so it understands
-// how to interact with the available tools and data sources.
-
-// Retrieval mechanisms - outline how the agent retrieves relevant information from
-
-// Analysis metrics - define how the agent evaluates given data and conditions, to utilize the
-// metrics in its decision-making process.
-
-// Agent orchestration - manage the flow of information between the agent, retrieval systems,
-// and external data sources to ensure coherent and contextually relevant responses.
-
 /* 
    ┌───────────────┐
    │  User Query   │
@@ -72,7 +52,7 @@
    │ Return Output │
    └───────────────┘
 */
-
+import { MCP } from '../MCP/mcpHub';
 import { transformQuery } from './queryTransformer'
 
 // BRANCHES OF ORCHESTRATION PIPELINE - Dependant on various metrics
@@ -80,121 +60,154 @@ import { transformQuery } from './queryTransformer'
 //1. Ambiguous query handler - determines if pipeline can continue or if clarification from user is needed
 async function handleAmbiguousQuery(transformedQuery, agentContext, llmClient, retriever, toolManager) {
   const query = transformedQuery.query;
-
-  // Step 1: Check if ambiguity can be resolved automatically
-  const ambiguityAnalysisPrompt = `
-    Analyze this query for ambiguity:
-    QUERY: "${query}"
-    Consider chat history and vector DB if needed.
-    Determine if clarification is required from the user or if a best-effort response can be generated.
-    Return JSON with:
-    {
-      "requiresClarification": true/false,
-      "recommendedContext": "chatHistory" | "vectorDB" | "both" | null
-    }
-  `;
-
-  const analysisResultRaw = await llmClient.generate({ query: ambiguityAnalysisPrompt });
-  let analysisResult;
-  try {
-    analysisResult = JSON.parse(analysisResultRaw);
-  } catch (err) {
-    console.warn("Failed to parse ambiguity analysis, defaulting to clarification:", err);
-    analysisResult = { requiresClarification: true, recommendedContext: null };
-  }
-
-  // Step 2: Decide action based on analysis
-  if (analysisResult.requiresClarification) {
-    // Generate clarifying question to user
-    const clarificationPrompt = `The user query is ambiguous: "${query}". What clarifying question should I ask to resolve intent?`;
-    const clarificationResponse = await llmClient.generate({ query: clarificationPrompt });
-    return { type: "clarification", message: clarificationResponse };
-  } else {
-    // Attempt best-effort response using recommended context
-    let context = null;
-    if (analysisResult.recommendedContext === "chatHistory") context = agentContext.chatHistory;
-    if (analysisResult.recommendedContext === "vectorDB") context = await retriever.retrieve(query);
-    if (analysisResult.recommendedContext === "both") {
-      const vectorDocs = await retriever.retrieve(query);
-      context = { chatHistory: agentContext.chatHistory, vectorDocs };
-    }
-
-    const response = await llmClient.generate({ query, context });
-    return { type: "response", message: response };
-  }
 }
 
 //2. MULTI-STEP QUERY HANDLER 
 
 async function handleMultiStepQuery(transformedQuery){
-  
+
+  /*
+
+  - preflight sim, tombstoning, 
+1. Query Analysis & Intent Classification
+   - Determine clarity, context, required tools
+2. High-Level Planner (Dynamic)
+   - Break query into steps
+   - Rank & prioritize steps
+3. Actionable Step Planner (Normalized for MCP)
+   - Format DAG of tasks with dependencies
+4. Executor / Task Manager
+   - Parallel & sequential execution
+   - Includes resource gating, retry, fallback
+   - Emits output + confidence + assumptions per step
+5. Context Aggregation & Filtering
+   - Combine outputs intelligently
+   - Weight by confidence
+   - KV cache
+6. LLM Synthesis / Response Generation
+   - Uses aggregated, weighted context
+7. Response Analyzer
+   - Check correctness, relevance, assumptions
+8. Verification / Bugbot / Safety Layer
+   - Execute code if needed, policy checks
+   - Escalate or retry if issues
+9. Memory & Knowledge Update
+   - Store insights, plans, reusable artifacts
+10. Output / Escalation / Clarification
+   - Deliver final response
+   - Trigger clarification if confidence is low
+
+  */
 }
 
 
 //============== MAIN ORCHESTRATOR FOR AGENTIC PIPELINE ===============//
-async function agentOrchestrationLoop(query, agentContext, llmClient, retriever, toolManager) {
-  const transformedQuery = transformQuery(query);
-  const queryInfo = transformedQuery.queryInfo;
-
+async function agentOrchestrationLoop(
+  query,
+  llmClient,
+  retriever,
+  toolManager,
+  retrievalSettings = {}
+) {
+  const transformedQuery = await transformQuery(query);
+  const { queryInfo } = transformedQuery;
   let response;
 
-  switch(queryInfo.classification) {
-    case 'SIMPLE_QUERY':
-      // Call LLM directly with the query
-      response = await llmClient.generate({ query: transformedQuery.query });
-      break;
+  switch (queryInfo.classification) {
 
-    case 'CHAT_HISTORY_CONTEXT':
-      // Provide chat history to the LLM
+    case 'SIMPLE_QUERY': {
       response = await llmClient.generate({
-        query: transformedQuery.query,
-        context: agentContext.chatHistory
+        query: transformedQuery.query
       });
       break;
+    }
 
-    case 'VECTORDB_CONTEXT':
-      // Retrieve relevant documents from vector DB
-      const docs = await retriever.retrieve(transformedQuery.query);
+    case 'CHAT_HISTORY_CONTEXT': {
+      const chatHistory = await retriever.getChatHistory({
+        query: transformedQuery.query,
+        retrievalSettings
+      });
+
       response = await llmClient.generate({
         query: transformedQuery.query,
-        context: docs
+        context: { chatHistory }
       });
       break;
+    }
 
-    case 'CHAT_HISTORY_VECTORDB_CONTEXT':
-      // Combine both chat history and vector DB
-      const vectorDocs = await retriever.retrieve(transformedQuery.query);
-      const combinedContext = {
-        chatHistory: agentContext.chatHistory,
-        vectorDocs
-      };
+    case 'VECTORDB_CONTEXT': {
+      const vectorContext = await retriever.queryVectorDB({
+        query: transformedQuery.query,
+        retrievalSettings
+      });
+
       response = await llmClient.generate({
         query: transformedQuery.query,
-        context: combinedContext
+        context: { vectorContext }
       });
       break;
+    }
 
-    case 'AMBIGUOUS':
-      response = await handleAmbiguousQuery(transformedQuery, agentContext, llmClient, retriever, toolManager);
-      break;
+    case 'CHAT_HISTORY_VECTORDB_CONTEXT': {
+      const [chatHistory, vectorContext] = await Promise.all([
+        retriever.getChatHistory({ query: transformedQuery.query }),
+        retriever.queryVectorDB({ query: transformedQuery.query, retrievalSettings })
+      ]);
 
-    case 'TOOL_REQUIRED':
-      // Execute tools as needed, then feed outputs to LLM
-      const toolOutputs = await toolManager.execute(queryInfo.requiredTools, transformedQuery.query);
       response = await llmClient.generate({
         query: transformedQuery.query,
-        context: toolOutputs
+        context: { chatHistory, vectorContext }
       });
       break;
+    }
 
-    case 'MULTI_STEP':
-      // Possibly orchestrate multiple retrievals / LLM calls
-      response = await handleMultiStepQuery(transformedQuery, agentContext, llmClient, retriever, toolManager);
+    case 'AMBIGUOUS': {
+      const clarificationContext = await handleAmbiguousQuery({
+        transformedQuery,
+        llmClient
+      });
+
+      response = await llmClient.generate({
+        query: transformedQuery.query,
+        context: clarificationContext
+      });
       break;
+    }
 
-    default:
-      // Fallback
-      response = await llmClient.generate({ query: transformedQuery.query });
+    case 'TOOL_REQUIRED': {
+      const toolContext = await handleTool({
+        query: transformedQuery.query,
+        executionHints: queryInfo.executionHints,
+        toolManager
+      });
+
+      response = await llmClient.generate({
+        query: transformedQuery.query,
+        context: toolContext
+      });
+      break;
+    }
+
+    case 'MULTI_STEP': {
+      const multiStepContext = await handleMultiStepQuery({
+        transformedQuery,
+        toolManager,
+        retriever,
+        llmClient
+      });
+
+      response = await llmClient.generate({
+        query: transformedQuery.query,
+        context: multiStepContext
+      });
+      break;
+    }
+
+    default: {
+      response = await llmClient.generate({
+        query: transformedQuery.query
+      });
+    }
   }
 
   return response;
