@@ -76,3 +76,5 @@ bugs-
 fix workspace ui not saving to DB bug
 
 Current pipeline uses a flat hash+AST diffing via tree-sitter -> we can further improve this design by transforming it into a merkle tree based system.
+
+weird status bar bug on site auto rerender due to afk then coming back to it on fullscreen

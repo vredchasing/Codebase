@@ -98,6 +98,29 @@ async function handleMultiStepQuery(transformedQuery){
    - Trigger clarification if confidence is low
 
   */
+  const query = transformQuery.query;
+  // call general planner
+  const plan = await planner(query);
+  // call actionablePlanner
+  const actionablePlan = await actionablePlanner(query, plan);
+  executePlan(actionablePlan, MCP);
+}
+
+//
+
+async function actionablePlanner(query, plan, mcpOutputFormat, llmClient){
+  const queryPrompt = `
+    You are an agent that is required to generate a plan with a normalized output so that an MCP
+    can utilize your response to execute the plan.
+
+    Expected output description: ${mcpOutputFormat.description},
+    Expected output format: ${mcpOutputFormat.format},
+    Examples of output format ${mcpOutputFormat.examples}
+    Query: ${query},
+    High level general plan outline: ${plan}
+  `
+  const actionablePlan = await llmClient.generate(queryPrompt);
+  return actionablePlan
 }
 
 

@@ -234,6 +234,7 @@ function CodeEditor({ fileData}) {
         theme="vs-dark"
         options={{
           minimap: { enabled: false },
+          smoothScrolling: false,
         }}
         onChange={handleEditorChange}
         onMount={(editor) => {
