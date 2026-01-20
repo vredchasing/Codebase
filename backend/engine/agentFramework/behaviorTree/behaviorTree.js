@@ -71,8 +71,7 @@ const behaviorsDescriptionPrompt = {
   }
 }
 
-
-// btEngine.js
+// bTreeEngine.js
 
 // STATUS constants for tick return values
 export const STATUS = Object.freeze({
@@ -108,9 +107,7 @@ export class Sequence extends BTNode {
       const node = this.children[this.currentIndex];
       const status = await node.tick(blackboard);
 
-      if (status === STATUS.RUNNING) {
-        return STATUS.RUNNING;
-      }
+      if (status === STATUS.RUNNING) return STATUS.RUNNING;
       if (status === STATUS.FAILURE) {
         this.reset();
         return STATUS.FAILURE;
@@ -122,7 +119,7 @@ export class Sequence extends BTNode {
   }
 }
 
-// Composite: tries until one succeeds
+// Selector that tries children until one succeeds
 export class Selector extends BTNode {
   constructor(name, children = []) {
     super(name);
@@ -135,6 +132,29 @@ export class Selector extends BTNode {
       if (status === STATUS.SUCCESS) return STATUS.SUCCESS;
       if (status === STATUS.RUNNING) return STATUS.RUNNING;
     }
+    return STATUS.FAILURE;
+  }
+}
+
+// Selector with memory (doesn't restart at index 0 each tick)
+export class SelectorWithMemory extends BTNode {
+  constructor(name, children = []) {
+    super(name);
+    this.children = children;
+    this.currentIndex = 0;
+  }
+
+  async tick(blackboard) {
+    while (this.currentIndex < this.children.length) {
+      const status = await this.children[this.currentIndex].tick(blackboard);
+      if (status === STATUS.SUCCESS) {
+        this.currentIndex = 0;
+        return STATUS.SUCCESS;
+      }
+      if (status === STATUS.RUNNING) return STATUS.RUNNING;
+      this.currentIndex++;
+    }
+    this.currentIndex = 0;
     return STATUS.FAILURE;
   }
 }
@@ -161,12 +181,65 @@ export class DecoratorNode extends BTNode {
   }
 }
 
+// Timeout Decorator — fail if child takes too long
+export class Timeout extends DecoratorNode {
+  constructor(name, child, timeoutMs) {
+    super(name, child);
+    this.timeoutMs = timeoutMs;
+  }
+
+  async tick(blackboard) {
+    return await Promise.race([
+      this.child.tick(blackboard),
+      new Promise((resolve) =>
+        setTimeout(() => resolve(STATUS.FAILURE), this.timeoutMs)
+      )
+    ]);
+  }
+}
+
+// 🔁 Retry Decorator — retry on failure up to N times
+export class Retry extends DecoratorNode {
+  constructor(name, child, maxRetries = 3) {
+    super(name, child);
+    this.maxRetries = maxRetries;
+    this.attempts = 0;
+  }
+
+  async tick(blackboard) {
+    while (this.attempts < this.maxRetries) {
+      const status = await this.child.tick(blackboard);
+      if (status === STATUS.SUCCESS) {
+        this.attempts = 0;
+        return STATUS.SUCCESS;
+      }
+      this.attempts++;
+    }
+    this.attempts = 0;
+    return STATUS.FAILURE;
+  }
+}
+
+// 🧪 Condition Decorator — only runs child if condition passes
+export class ConditionNode extends DecoratorNode {
+  constructor(name, conditionFn, child) {
+    super(name, child);
+    this.conditionFn = conditionFn;
+  }
+
+  async tick(blackboard) {
+    if (await this.conditionFn(blackboard)) {
+      return await this.child.tick(blackboard);
+    }
+    return STATUS.FAILURE;
+  }
+}
+
 // Runner to step the behavior tree
 export async function runTree(root, blackboard, opts = {}) {
   let status;
   do {
     status = await root.tick(blackboard);
-    // optionally inspect or log state here
   } while (status === STATUS.RUNNING);
   return { status, blackboard };
 }
@@ -178,130 +251,152 @@ export async function runTree(root, blackboard, opts = {}) {
 import { STATUS } from "./btEngine.js";
 import { record } from "./blackboard.js";
 
-// High‑level planning orchestrated by the LLM
-export const HighLevelPlan = (llmClient) => new LeafNode(
-  "HighLevelPlan",
-  async (bb) => {
+// High-level planning orchestrated by the LLM
+export const HighLevelPlan = (llmClient) =>
+  new LeafNode("HighLevelPlan", async (bb) => {
     record(bb, "HighLevelPlan invoked.");
     const prompt = `Generate a high level plan for this query: ${bb.initialQuery}`;
     bb.highLevelPlan = await llmClient.generate(prompt);
     return STATUS.SUCCESS;
-  }
-);
+  });
 
-// Turns high‑level plan into actionable steps
-export const ActionablePlan = (llmClient) => new LeafNode(
-  "ActionablePlan",
-  async (bb) => {
+// Turns high-level plan into actionable steps
+export const ActionablePlan = (llmClient) =>
+  new LeafNode("ActionablePlan", async (bb) => {
     record(bb, "ActionablePlan invoked.");
     const prompt = `Convert this plan to steps:\n${JSON.stringify(bb.highLevelPlan)}`;
     bb.actionableSteps = await llmClient.generate(prompt);
     bb.nextActionIndex = 0;
     return STATUS.SUCCESS;
-  }
-);
+  });
 
-// Executes current actionable step via MCP
-export const ExecuteTool = (MCP) => new LeafNode(
-  "ExecuteTool",
-  async (bb) => {
+// Executes current actionable step via MCP,
+// auto-advances on success, flags replanning on failure
+export const ExecuteTool = (MCP) =>
+  new LeafNode("ExecuteTool", async (bb) => {
     const step = bb.actionableSteps[bb.nextActionIndex];
-    if (!step) return STATUS.FAILURE;
+    if (!step) return STATUS.SUCCESS; // done
     record(bb, `ExecuteTool: ${step.tool}`);
     try {
       const result = await MCP.executeTool(step.tool, step.args);
       bb.lastToolOutput = result;
+      bb.nextActionIndex++;
       return STATUS.SUCCESS;
     } catch (err) {
       bb.lastToolError = err;
       bb.errorCount++;
+      bb.needsReplan = true;
       return STATUS.FAILURE;
     }
-  }
-);
+  });
 
 // Reflection (LLM interpret outcome)
-export const Reflect = (llmClient) => new LeafNode(
-  "Reflect",
-  async (bb) => {
+export const Reflect = (llmClient) =>
+  new LeafNode("Reflect", async (bb) => {
     record(bb, "Reflect invoked.");
     const prompt = `Reflect on last output: ${JSON.stringify(bb.lastToolOutput)}`;
     bb.reflectionNotes = await llmClient.generate(prompt);
     return STATUS.SUCCESS;
-  }
-);
+  });
 
 // Replan based on new context
-export const Replan = (llmClient) => new LeafNode(
-  "Replan",
-  async (bb) => {
+export const Replan = (llmClient) =>
+  new LeafNode("Replan", async (bb) => {
     record(bb, "Replan invoked.");
     const prompt = `Given partial execution and errors, replan:\n${JSON.stringify(bb)}`;
     bb.highLevelPlan = await llmClient.generate(prompt);
+    bb.needsReplan = false;
+    bb.replans++;
+    bb.nextActionIndex = 0;
     return STATUS.SUCCESS;
-  }
-);
+  });
 
 // Final synthesis for user
-export const SynthesizeOutput = (llmClient) => new LeafNode(
-  "SynthesizeOutput",
-  async (bb) => {
+export const SynthesizeOutput = (llmClient) =>
+  new LeafNode("SynthesizeOutput", async (bb) => {
     record(bb, "SynthesizeOutput invoked.");
     const prompt = `Produce user answer from context:\n${JSON.stringify(bb)}`;
     bb.finalOutput = await llmClient.generate(prompt);
     return STATUS.SUCCESS;
-  }
-);
+  });
 
+
+  import {
+  Sequence,
+  Selector,
+  Retry,
+  Timeout,
+  ConditionNode
+} from "./btEngine.js";
+import {
+  HighLevelPlan,
+  ActionablePlan,
+  ExecuteTool,
+  Reflect,
+  Replan,
+  SynthesizeOutput
+} from "./treeNodes.js";
+
+export function buildBehaviorTree(llmClient, MCP) {
+  return new Sequence("Root", [
+
+    HighLevelPlan(llmClient),
+    ActionablePlan(llmClient),
+
+    // Core execution loop
+    new Selector("ExecOrReplan", [
+      
+      // If we need a replan, do that first
+      new ConditionNode(
+        "NeedsReplan?",
+        bb => bb.needsReplan,
+        new Replan(llmClient)
+      ),
+
+      // Normal execution sub-sequence
+      new Sequence("PlanExec", [
+        new Retry(
+          "RetryExecTool",
+          new Timeout("ToolTimeout", ExecuteTool(MCP), 5000),
+          2
+        ),
+        Reflect(llmClient)
+      ])
+    ]),
+
+    SynthesizeOutput(llmClient)
+  ]);
+}
 
 
 // agentRunner.js
 
 import { createBlackboard } from "./blackboard.js";
 
-/**
- * runAgent
- * The true entry point into your agentic loop.
- *
- * @param {string} userQuery - The user’s natural language request
- * @param {Object} llmClient - Your LLM client instance (e.g., OpenAI, Claude, etc.)
- * @param {Object} MCP - Your MCP hub instance (with registered tools/resources)
- *
- * @returns {Promise<Object>} - The final output plus trace logs
- */
-export async function runAgent(userQuery, llmClient, MCP) {
-  // 1) Initialize the Blackboard with the user’s query
-  const blackboard = createBlackboard(userQuery);
+import { createBlackboard } from "./blackboard.js";
 
-  // (Optional) Record the initial state
+export async function runAgent(userQuery, llmClient, MCP) {
+  const blackboard = createBlackboard(userQuery);
   blackboard.trace.push({
     timestamp: Date.now(),
     message: `Initialized blackboard for query: "${userQuery}"`
   });
 
-  // 2) Build the behavior tree using your LLM and MCP clients
   const tree = buildBehaviorTree(llmClient, MCP);
 
-  // 3) Tick the tree until it completes (no longer RUNNING)
   let result;
   try {
     result = await runTree(tree, blackboard);
   } catch (err) {
-    // Catch unexpected exceptions and log them
     blackboard.trace.push({
       timestamp: Date.now(),
       message: `Exception running tree: ${err.stack || err.message}`
     });
-    return {
-      status: STATUS.FAILURE,
-      blackboard
-    };
+    return { status: STATUS.FAILURE, blackboard };
   }
 
-  // 4) Collect the final output (if any) and status
   const { status, blackboard: finalState } = result;
 
-  // 5) Return the final status and blackboard (including finalOutput & trace)
   return {
     status,
     finalOutput: finalState.finalOutput,
