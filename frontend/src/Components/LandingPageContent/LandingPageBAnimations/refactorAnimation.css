@@ -13,7 +13,7 @@
   background: rgba(255, 255, 255, 0.05); /* light tint over dark BG */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); /* Safari support */
-  border: 1.5px solid rgba(119, 119, 119, 0.338);
+  border: 1.4px solid rgba(119, 119, 119, 0.338);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   border-radius: 0.75rem;
 }

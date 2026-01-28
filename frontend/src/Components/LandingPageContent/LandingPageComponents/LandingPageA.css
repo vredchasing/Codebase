@@ -41,9 +41,6 @@
   letter-spacing: -1px;
   margin: 0px;
   color: rgb(255, 255, 255);
-  background: linear-gradient(120deg, #ffffff, #3b3b3b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 
