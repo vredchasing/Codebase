@@ -14,7 +14,7 @@ Allows users to integrate the core engine into different applications. Use our p
 
 ### Custom RAG Engine
 
-Provides low cost embedding capabilities, with incremental updates via merkle trees. Users can efficently embed and retrieve across large repositories, allowing agents to quickly catch up to speed on your codebase. Utilizing KV caches, users can store relevant context without bloating LLM providers, drastically reducing computing costs.
+Provides low cost embedding capabilities, with incremental updates via merkle trees. Users can efficiently embed and retrieve across large repositories, allowing agents to quickly catch up to speed on your codebase. Utilizing KV caches, users can store relevant context without bloating LLM providers, drastically reducing computing costs.
 
 ### Agentic Workflows
 Our core engine is built to provide a highly intelligent, adaptive, self-correcting agent, handling complex multi-step tasks, while being fully integrated into your codebase, it's a hands off approach to agentic coding.

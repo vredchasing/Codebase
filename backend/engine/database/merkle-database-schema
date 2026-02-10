@@ -1,0 +1,114 @@
+/* merkle tree root schema */
+CREATE TABLE projects.merkle_root (
+  file_id UUID PRIMARY KEY,
+  project_id UUID NOT NULL,
+  path TEXT NOT NULL,
+  language TEXT,
+  last_root_hash TEXT,
+  last_updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE projects.merkle_nodes (
+  merkle_hash TEXT PRIMARY KEY,
+  stable_id TEXT NOT NULL,
+  instance_id TEXT NOT NULL,
+  file_id UUID NOT NULL REFERENCES projects.merkle_root(file_id),
+  node_type TEXT NOT NULL,
+  parent_hash TEXT NULL,
+  canonical_text TEXT NOT NULL,
+  start_index INT,
+  end_index INT,
+  depth INT,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE projects.merkle_edges (
+  parent_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  child_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  file_id UUID NOT NULL REFERENCES projects.merkle_root(file_id),
+  PRIMARY KEY (parent_hash, child_hash)
+);
+
+CREATE TABLE projects.embeddings (
+  id BIGSERIAL PRIMARY KEY,
+  merkle_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  repr_type TEXT NOT NULL,   -- e.g. 'signature', 'body', 'summary'
+  embedding vector(1536) NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE projects.chunk_meta (
+  file_id UUID NOT NULL REFERENCES projects.merkle_root(file_id),
+  chunk_key TEXT NOT NULL,
+  stable_id TEXT,
+  instance_id TEXT,
+  repr_type TEXT,
+  node_type TEXT,
+  merkle_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  PRIMARY KEY (file_id, chunk_key)
+);
+
+CREATE TABLE projects.dependencies (
+  from_merkle_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  to_merkle_hash TEXT NOT NULL REFERENCES projects.merkle_nodes(merkle_hash),
+  dep_type TEXT NOT NULL,   -- e.g. 'call', 'import', 'extends'
+  file_id UUID NOT NULL REFERENCES projects.merkle_root(file_id),
+  PRIMARY KEY (from_merkle_hash, to_merkle_hash, dep_type)
+);
+
+CREATE TABLE projects.file_snapshots (
+  file_id UUID PRIMARY KEY REFERENCES projects.merkle_root(file_id),
+  last_text TEXT NOT NULL,
+  last_merkle_root TEXT,
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE SCHEMA IF NOT EXISTS projects;
+
+-- 1. The Global Content Store (Deduplicated)
+-- If 100 files have the same function, it exists here ONCE.
+CREATE TABLE projects.nodes_content (
+    merkle_hash      TEXT PRIMARY KEY, -- Pure content fingerprint
+    node_type        TEXT NOT NULL,
+    canonical_text   TEXT NOT NULL,
+    embedding_id     UUID REFERENCES projects.embeddings(id),
+    created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. The Vector Store
+CREATE TABLE projects.embeddings (
+    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    vec              VECTOR(1536), -- Adjust dimensions (e.g., 1536 for OpenAI/Voyage)
+    created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 3. The File-to-Content Map (The "Location" Table)
+-- This maps your Stable IDs to the deduplicated content.
+CREATE TABLE projects.file_nodes (
+    file_id          UUID NOT NULL,
+    chunk_key        TEXT NOT NULL, -- instance_id + repr_type
+    stable_id        TEXT NOT NULL, -- Semantic path (Class#Method#0)
+    repr_type        TEXT NOT NULL, -- 'signature' | 'body' | 'body_part_N'
+    merkle_hash      TEXT REFERENCES projects.nodes_content(merkle_hash),
+    updated_at       TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (file_id, chunk_key)
+);
+
+-- Indexing for fast retrieval
+CREATE INDEX idx_file_nodes_stable_id ON projects.file_nodes(stable_id);
+CREATE INDEX idx_nodes_content_embedding_id ON projects.nodes_content(embedding_id);

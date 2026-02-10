@@ -3,8 +3,7 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../../postgresdb.js';
 import redis from '../../redis/redisClient.js';
-import { getMemoryCache } from '../../engine/services/treeSitterServices/astCache.js';
-import { triggerRAGPipelineForFile } from '../../engine/services/treeSitterServices/astPipeline.js';
+import { triggerRAGPipelineForFile } from '../../engine/pipeline/treeSitterServices/astPipeline.js';
 
 dotenv.config();
 
@@ -73,84 +72,66 @@ export async function createFileOrFolder({ name, parentId, projectId, nodeType }
 
 
 // get old content function for incremental AST update
-async function getOldContent (memoryCache, astCacheKey, contentKey) {
-  if (memoryCache.has(astCacheKey)) {
-    return memoryCache.get(astCacheKey).text;
-  }
-  else {
-    const redisCache = await redis.get(astCacheKey);
-    if (redisCache) {
-      return redisCache;
-    }
-  }
+async function getOldContentFromR2(contentKey) {
+  const response = await r2.send(
+    new GetObjectCommand({
+      Bucket: 'codebase-file-content',
+      Key: contentKey,
+    })
+  );
 
-  // if not in either cache, pull from R2 before we update to get the old content
-  const getObjectParams = {
-    Bucket: 'codebase-file-content',
-    Key: contentKey,
-  };
-  const response = await r2.send(new GetObjectCommand(getObjectParams));
-  // transform stream to string, maybe in the future, we can create our own streaming function
-  // to support large files
-  const oldContent = await response.Body.transformToString();
-  return oldContent;
+  return await response.Body.transformToString();
 }
 
+
 // Update file content in R2 and database
-export async function updateFileContent({ userId, fileId, fileName, content, projectId, actionId = null, wsServer = null }) {
+export async function updateFileContent({ userId, fileId, content, projectId, actionId = null, wsServer = null }) {
   try {
-    // First, get the file's content_key from the database
-    const fileQuery = `
-      SELECT content_key, name, project_id 
-      FROM projects.project_node 
-      WHERE id = $1 AND project_id = $2 AND node_type = 'file'
-    `;
-    const fileResult = await query(fileQuery, [fileId, projectId]);
-    
-    if (fileResult.rows.length === 0) {
-      throw new Error('File not found or is not a file');
-    }
+    // 1) Lookup file metadata
+    const { rows } = await query(
+      `SELECT content_key FROM projects.project_node 
+       WHERE id=$1 AND project_id=$2 AND node_type='file'`,
+      [fileId, projectId]
+    );
 
-    const file = fileResult.rows[0];
-    const contentKey = file.content_key;
+    if (!rows.length) throw new Error("File not found");
+    const contentKey = rows[0].content_key;
+    if (!contentKey) throw new Error("Missing content_key");
 
-    if (!contentKey || contentKey === '') {
-      throw new Error('File does not have a content key');
-    }
-    // Check for existing in-memory or Redis AST cache for updating AST tree & embeddings
-    const memoryCache = getMemoryCache();
-    const astCacheKey = `ast:${userId}:${projectId}:${fileId}`;
-    const oldContent = await getOldContent(memoryCache, astCacheKey, contentKey)
+    // 2) Fetch OLD content from R2
+    const oldContent = await getOldContentFromR2(contentKey);
 
-    // Update content in R2
+    // 3) Upload NEW content to R2
     await r2.send(
       new PutObjectCommand({
         Bucket: 'codebase-file-content',
         Key: contentKey,
-        Body: content || '', // Ensure content is a string
+        Body: content ?? "",
       })
     );
 
-    // Update modified_at timestamp in database
-    const updateQuery = `
-      UPDATE projects.project_node 
-      SET modified_at = NOW() 
-      WHERE id = $1
-      RETURNING *
-    `;
-    const updateResult = await query(updateQuery, [fileId]);
+    // 4) Update modified timestamp
+    await query(
+      `UPDATE projects.project_node SET modified_at = NOW() WHERE id=$1`,
+      [fileId]
+    );
 
-    console.log('Updated file content in R2 and database:', updateResult.rows[0]);
-
-    // Trigger RAG pipeline asynchronously (fire and forget)
-    // Only process if file has content (not empty)
-    if (content && content.trim().length > 0) {
-      triggerRAGPipelineForFile(userId, fileId, projectId, oldContent, content, actionId, wsServer);
+    // 5) Trigger incremental AST pipeline
+    if (content?.trim()) {
+      triggerRAGPipelineForFile(
+        userId,
+        fileId,
+        projectId,
+        oldContent,
+        content,
+        actionId,
+        wsServer
+      );
     }
 
-    return updateResult.rows[0];
-  } catch (error) {
-    console.error('Error updating file content:', error);
-    throw error;
+    return { success: true };
+  } catch (err) {
+    console.error("updateFileContent failed:", err);
+    throw err;
   }
 }
