@@ -64,19 +64,10 @@ function Dashboard(){
                 <div className="projects-header-left">
                   <h2 className="dashboard-projects-title">Recent Files</h2>
                   <div className="projects-filter-wrapper">
-                    <div className="projects-filter-container">
-                      <div className="projects-filter-type">Type <MdOutlineKeyboardArrowDown /></div>
-                    </div>
-                    <div className="projects-filter-file-size-container">
-                      <div className="projects-filter-file-size">File Size <MdOutlineKeyboardArrowDown /></div>
-                    </div>
-                    <div className="projects-filter-date-modified-container">
-                      <div className="projects-filter-date-modified">Date Modified <MdOutlineKeyboardArrowDown /></div>
-                    </div>
-                  </div>
                   <div className="projects-search-container">
                     <IoSearchSharp className="projects-search-icon"/>
                     <input className="projects-search-input" placeholder="Search Files"></input>
+                  </div>  
                   </div>
                 </div>
                 <div className="projects-create-container">

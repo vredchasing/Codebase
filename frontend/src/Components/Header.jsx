@@ -51,7 +51,7 @@ export default function Header() {
     <header className='header'>
       <div className="header-content">
         <div className="custom-logo-container">
-          <p className="logo">CODEBASE</p>
+          <Link to="/" className="logo">CODEBASE</Link>
         </div>
 
         <div className='header-visible'>

@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './DotGridBackground.css';
 
-export default function DotGridBackground() {
+export default function AnimationLPA() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []); // runs once on mount
+
   return (
-    <div className="dot-grid-background"></div>
+    <div className="animation-lpa-background">
+      <div className={`animation-lpa-container ${loaded ? 'loaded' : ''}`}>
+      </div>
+    </div>
   );
 }

@@ -34,7 +34,7 @@
   justify-content: space-between;
   flex-direction: column;
   margin-top: 2rem;
-  height: 80vh;
+  height: 85vh;
 }
 
 .dashboard-options-inner-wrapper {
@@ -261,9 +261,10 @@
   border-radius: 1rem;
   cursor: pointer;
   text-decoration: none;
-  color: rgb(255, 255, 255);
+  background-color: rgb(53, 53, 53);
   text-wrap: nowrap;
   border: 1px solid rgb(78, 78, 78);
+  color: white;
 }
 
 .projects-create-button:hover {
@@ -287,7 +288,7 @@
 }
 .dashboard-project-card {
   min-width: 200px;
-  height: 120px;
+  height: 70%;
   background-color: rgb(53, 53, 53);
   border: 1px solid rgb(56, 56, 56);
   border-radius: 0.5rem;

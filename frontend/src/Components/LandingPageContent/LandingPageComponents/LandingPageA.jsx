@@ -2,6 +2,7 @@ import React from "react"
 import './LandingPageA.css'
 import { FiArrowUpRight } from "react-icons/fi";
 import DotGridBackground from './DotGridBackground';
+import AnimationLPA from "./DotGridBackground";
 
 function LandingPageA (){
 
@@ -22,6 +23,7 @@ function LandingPageA (){
           </span>
         </div>
       </div>
+      <AnimationLPA></AnimationLPA>
     </section>
   )
 }

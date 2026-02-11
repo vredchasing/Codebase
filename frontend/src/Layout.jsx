@@ -32,7 +32,7 @@ const Layout = () => {
 
   let headerElement = <Header />;
   if (location.pathname.startsWith('/dashboard')) {
-    headerElement = <Header />;
+    headerElement = <HeaderDashboard />;
   } else if (location.pathname.startsWith('/workspace')) {
     headerElement = null;
   }
