@@ -1,0 +1,27 @@
+-- unique symbol declarations per file
+CREATE TABLE project_symbols (
+  id TEXT PRIMARY KEY,           -- stable unique ID
+  project_id UUID NOT NULL,
+  file_id UUID NOT NULL,
+  name TEXT NOT NULL,
+  kind TEXT NOT NULL,            -- function / class / var / import etc.
+  start_idx INT,
+  end_idx INT,
+  scope TEXT,
+  UNIQUE(file_id, name, start_idx)
+);
+
+-- references/usages of symbols
+CREATE TABLE symbol_references (
+  id SERIAL PRIMARY KEY,
+  symbol_id TEXT REFERENCES project_symbols(id),
+  file_id UUID NOT NULL,
+  start_idx INT,
+  end_idx INT,
+  context TEXT                  -- e.g. call / usage text
+);
+
+-- index for fast search
+CREATE INDEX ON project_symbols (project_id, name);
+CREATE INDEX ON symbol_references (symbol_id);
+
